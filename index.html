@@ -168,7 +168,7 @@ button{cursor:pointer;font-family:inherit;font-size:inherit;border:none;backgrou
 </head>
 <body>
 <div id="app">
-<header class="app-header"><h1>🐰 OP TT 生活台</h1><div class="hdr-right"><span class="hdr-date" id="dateDisplay"></span><button onclick="exportData()" style="width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:var(--surface2);font-size:.85rem" title="导出数据">📤</button><button onclick="document.getElementById('importFile').click()" style="width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:var(--surface2);font-size:.85rem" title="导入数据">📥</button><input type="file" id="importFile" accept=".json" style="display:none" onchange="importData(event)"><button class="theme-btn" onclick="toggleTheme()" style="width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:var(--surface2);font-size:.9rem">🌓</button></div></header>
+<header class="app-header"><h1>🐰 OP TT 生活台</h1><div class="hdr-right"><span class="hdr-date" id="dateDisplay"></span><button onclick="showStorageInfo()" style="width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:var(--surface2);font-size:.8rem" title="存储信息">💾</button><button onclick="exportData()" style="width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:var(--surface2);font-size:.85rem" title="导出数据">📤</button><button onclick="document.getElementById('importFile').click()" style="width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:var(--surface2);font-size:.85rem" title="导入数据">📥</button><input type="file" id="importFile" accept=".json" style="display:none" onchange="importData(event)"><button class="theme-btn" onclick="toggleTheme()" style="width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:var(--surface2);font-size:.9rem">🌓</button></div></header>
 
 <div class="pages-container" id="pagesContainer">
 
@@ -197,7 +197,7 @@ button{cursor:pointer;font-family:inherit;font-size:inherit;border:none;backgrou
 
   <!-- Daily vocab traffic light -->
   <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:var(--surface2);border-radius:var(--radius-sm);margin-top:10px">
-    <span style="font-size:.82rem;font-weight:500">📝 今日背单词</span>
+    <span style="font-size:.82rem;font-weight:500">📝 今日背单词</span><button onclick="showHistory('vocab','背单词记录')" style="font-size:.65rem;color:var(--text3);padding:2px 6px">📅</button>
     <button id="vocabBtn" class="tl gray" onclick="toggleVocab()">🔘 未打卡</button>
   </div>
 </div></div>
@@ -219,7 +219,7 @@ button{cursor:pointer;font-family:inherit;font-size:inherit;border:none;backgrou
 <div class="cd-body">
 <!-- 三餐 -->
 <div id="h-meal" class="stab-c active">
-  <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px"><span style="font-weight:500;font-size:.82rem">🥗 健康菜谱</span><button onclick="showModal('recipe')" style="margin-left:auto;font-size:.7rem;color:var(--primary)">+ 添加菜谱</button></div>
+  <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px"><span style="font-weight:500;font-size:.82rem">🥗 健康菜谱</span><button onclick="showHistory('meals','三餐记录')" style="font-size:.65rem;color:var(--text3);padding:2px 6px">📅</button><button onclick="showModal('recipe')" style="margin-left:auto;font-size:.7rem;color:var(--primary)">+ 添加菜谱</button></div>
   <div class="stabs" style="margin-bottom:6px">
     <button class="stab active" onclick="switchRecipeTab(this,'r-try')">⏳ 待制作</button>
     <button class="stab" onclick="switchRecipeTab(this,'r-done')">✅ 已做过</button>
@@ -237,7 +237,7 @@ button{cursor:pointer;font-family:inherit;font-size:inherit;border:none;backgrou
     <div class="sr-item" onclick="toggleCheckin('walk')" style="cursor:pointer"><div class="sr-num" id="walkStatus">🔴</div><div class="sr-lbl">🚶 快走45min</div></div>
     <div class="sr-item" onclick="toggleCheckin('aerobic')" style="cursor:pointer"><div class="sr-num" id="aerobicStatus">🔴</div><div class="sr-lbl">🏋️ 有氧周目标</div></div>
   </div>
-  <div style="font-size:.72rem;color:var(--text2);margin-bottom:6px">本周有氧运动: <span id="aerobicCount">0</span>/5 次</div>
+  <div style="font-size:.72rem;color:var(--text2);margin-bottom:6px">本周有氧运动: <span id="aerobicCount">0</span>/5 次 <button onclick="showHistory('exercise','运动记录')" style="font-size:.65rem;color:var(--text3);padding:2px 6px">📅 历史</button></div>
   <div style="display:flex;align-items:center;gap:6px;margin:8px 0 4px"><span style="font-weight:500;font-size:.82rem">📺 跟练视频</span><button onclick="showModal('workout')" style="margin-left:auto;font-size:.7rem;color:var(--primary)">+ 添加</button></div>
   <div id="workoutList"></div>
   <div style="margin-top:8px">
@@ -260,6 +260,7 @@ button{cursor:pointer;font-family:inherit;font-size:inherit;border:none;backgrou
     <button class="tl gray" id="skinHydra" onclick="toggleSkin('hydra')" style="justify-content:center">💦 补水面膜</button>
     <button class="tl gray" id="skinIso" onclick="toggleSkin('iso')" style="justify-content:center">💊 异维A酸</button>
   </div>
+  <div style="text-align:right;margin-bottom:4px"><button onclick="showHistory('skin','皮肤记录')" style="font-size:.65rem;color:var(--text3);padding:2px 6px">📅 查看皮肤历史记录</button></div>
   <div style="display:flex;align-items:center;gap:6px;margin:10px 0 4px"><span style="font-weight:500;font-size:.82rem">🏥 皮肤科看诊</span><button onclick="addDoctorVisit()" style="margin-left:auto;font-size:.7rem;color:var(--primary)">+ 记录</button></div>
   <div id="doctorVisits"></div>
 </div>
@@ -267,7 +268,7 @@ button{cursor:pointer;font-family:inherit;font-size:inherit;border:none;backgrou
 <div id="h-water" class="stab-c">
   <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:var(--surface2);border-radius:var(--radius-sm);margin-bottom:8px">
     <span style="font-size:.82rem;font-weight:500">💧 今日 1.5L 目标</span>
-    <button id="waterBtn" class="tl gray" onclick="toggleWater()">🔘 未完成</button>
+    <span style="display:flex;gap:6px;align-items:center"><button onclick="showHistory('water','喝水记录')" style="font-size:.65rem;color:var(--text3);padding:2px 6px">📅</button><button id="waterBtn" class="tl gray" onclick="toggleWater()">🔘 未完成</button></span>
   </div>
   <div style="font-weight:500;font-size:.82rem;margin-bottom:6px">📅 本月喝水打卡</div>
   <div id="waterCalendar"></div>
@@ -493,6 +494,9 @@ button{cursor:pointer;font-family:inherit;font-size:inherit;border:none;backgrou
 <div class="mo" id="mo-movie"><div class="mo-in"><h3>🎬 添加电影</h3><div class="fg"><label>电影名 *</label><input type="text" id="mvName" placeholder="电影名"></div><div class="fg"><label>状态</label><select id="mvStatus"><option value="watched">✅ 看过</option><option value="towatch">📋 待看</option></select></div><div class="ma"><button class="btn btn-o" onclick="closeModal('movie')">取消</button><button class="btn btn-p" onclick="saveMovie()">保存</button></div></div></div>
 
 <div class="mo" id="mo-variety"><div class="mo-in"><h3>🎭 添加综艺</h3><div class="fg"><label>综艺名 *</label><input type="text" id="vrName" placeholder="综艺名"></div><div class="fg"><label>状态</label><select id="vrStatus"><option value="watched">✅ 看过</option><option value="towatch">📋 待看</option></select></div><div class="fg" id="vrProgressGroup"><label>当前看到第几期</label><input type="text" id="vrEpisode" placeholder="如: 第3期"></div><div class="ma"><button class="btn btn-o" onclick="closeModal('variety')">取消</button><button class="btn btn-p" onclick="saveVariety()">保存</button></div></div></div>
+
+<!-- 历史记录查看弹窗 -->
+<div class="mo" id="mo-history"><div class="mo-in" style="max-height:90vh"><h3 id="historyTitle">📅 历史记录</h3><div id="historyContent" style="max-height:65vh;overflow-y:auto;font-size:.82rem"></div><div class="ma"><button class="btn btn-o" onclick="closeModal('history')" style="flex:none;padding:8px 24px">关闭</button></div></div></div>
 
 <script>
 // ===== STATE =====
@@ -743,6 +747,149 @@ function previewImage(input, previewId){
     img.src = e.target.result
   }
   reader.readAsDataURL(file)
+}
+
+/* ===== 通用历史记录查看 ===== */
+function showHistory(type, title){
+  const modal = document.getElementById('mo-history')
+  document.getElementById('historyTitle').textContent = '📅 ' + title
+  const content = document.getElementById('historyContent')
+  const today = new Date()
+  // 生成最近30天的日期列表，按时间倒序
+  const days = []
+  for(let i = 29; i >= 0; i--){
+    const d = new Date(today)
+    d.setDate(d.getDate() - i)
+    days.push(d.toISOString().split('T')[0])
+  }
+
+  switch(type){
+    case 'vocab': {
+      let html = '<div style="margin-bottom:8px;font-weight:500">📝 背单词记录</div><div style="display:flex;flex-wrap:wrap;gap:4px">'
+      days.forEach(d => {
+        const done = S.vocab[d]
+        const isToday = d === today()
+        html += `<div style="width:36px;height:36px;border-radius:6px;display:flex;flex-direction:column;align-items:center;justify-content:center;background:${done?'var(--green-light)':isToday?'var(--surface2)':'var(--surface2)'};border:${isToday?'1.5px solid var(--primary)':'1px solid var(--border)'};font-size:.6rem;color:${done?'var(--green)':'var(--text3)'}"><span>${new Date(d).getDate()}</span><span>${done?'🟢':'⚪'}</span></div>`
+      })
+      html += '</div>'
+      const total = Object.keys(S.vocab).filter(k => S.vocab[k]).length
+      html += `<div style="margin-top:8px;color:var(--text2);font-size:.75rem">✅ 累计打卡 ${total} 天</div>`
+      content.innerHTML = html
+      break
+    }
+    case 'exercise': {
+      let html = '<div style="margin-bottom:8px;font-weight:500">🚴 运动记录 (最近30天)</div>'
+      html += '<table style="width:100%;border-collapse:collapse">'
+      html += '<tr style="font-size:.7rem;color:var(--text3);border-bottom:1px solid var(--border)"><th style="padding:4px;text-align:left">日期</th><th style="padding:4px;text-align:center">🚴 自行车</th><th style="padding:4px;text-align:center">🚶 快走</th></tr>'
+      days.forEach(d => {
+        const bike = S.bike[d], walk = S.walk[d]
+        const isToday = d === today()
+        html += `<tr style="border-bottom:1px solid var(--border);font-size:.78rem;background:${isToday?'var(--primary-light)':'transparent'}"><td style="padding:4px">${d}</td><td style="padding:4px;text-align:center">${bike?'🟢':'🔴'}</td><td style="padding:4px;text-align:center">${walk?'🟢':'🔴'}</td></tr>`
+      })
+      html += '</table>'
+      const bikeCount = Object.keys(S.bike).filter(k=>S.bike[k]).length
+      const walkCount = Object.keys(S.walk).filter(k=>S.walk[k]).length
+      html += `<div style="margin-top:8px;color:var(--text2);font-size:.75rem">🚴 自行车 ${bikeCount}天 · 🚶 快走 ${walkCount}天</div>`
+      content.innerHTML = html
+      break
+    }
+    case 'skin': {
+      let html = '<div style="margin-bottom:8px;font-weight:500">🧴 皮肤记录 (最近30天)</div>'
+      html += '<table style="width:100%;border-collapse:collapse">'
+      html += '<tr style="font-size:.7rem;color:var(--text3);border-bottom:1px solid var(--border)"><th style="padding:4px;text-align:left">日期</th><th style="padding:4px;text-align:center">🧴 药膏</th><th style="padding:4px;text-align:center">🧹 泥膜</th><th style="padding:4px;text-align:center">💦 面膜</th><th style="padding:4px;text-align:center">💊 异维A</th></tr>'
+      days.forEach(d => {
+        const isToday = d === today()
+        html += `<tr style="border-bottom:1px solid var(--border);font-size:.76rem;background:${isToday?'var(--primary-light)':'transparent'}"><td style="padding:3px">${d.slice(5)}</td><td style="padding:3px;text-align:center">${S.skin.cream[d]?'🟢':'🔴'}</td><td style="padding:3px;text-align:center">${S.skin.mask[d]?'🟢':'🔴'}</td><td style="padding:3px;text-align:center">${S.skin.hydra[d]?'🟢':'🔴'}</td><td style="padding:3px;text-align:center">${S.skin.iso[d]?'🟢':'🔴'}</td></tr>`
+      })
+      html += '</table>'
+      content.innerHTML = html
+      break
+    }
+    case 'meals': {
+      // 收集最近7天有记录的日期
+      const dates = Object.keys(S.meals).sort().reverse().slice(0,7)
+      if(!dates.length) { content.innerHTML = '<div class="emp">暂无三餐记录</div>'; break }
+      const emojis = {早餐:'🌅',午餐:'☀️',晚餐:'🌙',加餐:'🍪'}
+      let html = dates.map(d => {
+        const meals = S.meals[d] || {}
+        const mealItems = Object.keys(meals)
+        return `<div style="margin-bottom:8px;border:1px solid var(--border);border-radius:8px;padding:8px"><div style="font-weight:500;font-size:.82rem;margin-bottom:4px">📅 ${d}</div>${
+          mealItems.length ? mealItems.map(m => `<div style="font-size:.78rem;padding:2px 0">${emojis[m]||'🍽️'} ${m}${meals[m].note?' — '+meals[m].note:''} <span style="color:var(--text3);font-size:.7rem">${meals[m].time||''}</span></div>`).join('') : '<div style="color:var(--text3);font-size:.75rem">未记录</div>'
+        }</div>`
+      }).join('')
+      content.innerHTML = html
+      break
+    }
+    case 'water': {
+      let html = '<div style="margin-bottom:8px;font-weight:500">💧 喝水记录 (最近30天)</div><div style="display:flex;flex-wrap:wrap;gap:4px">'
+      days.forEach(d => {
+        const done = S.water[d]
+        const isToday = d === today()
+        html += `<div style="width:36px;height:36px;border-radius:6px;display:flex;flex-direction:column;align-items:center;justify-content:center;background:${done?'var(--green-light)':'var(--surface2)'};border:${isToday?'1.5px solid var(--primary)':'1px solid var(--border)'};font-size:.6rem;color:${done?'var(--green)':'var(--text3)'}"><span>${new Date(d).getDate()}</span><span>${done?'💧':'⚪'}</span></div>`
+      })
+      html += '</div>'
+      const total = Object.keys(S.water).filter(k=>S.water[k]).length
+      html += `<div style="margin-top:8px;color:var(--text2);font-size:.75rem">✅ 达标 ${total} 天 / 30天</div>`
+      content.innerHTML = html
+      break
+    }
+  }
+  modal.classList.add('show')
+}
+
+/* ===== 存储空间查看 ===== */
+function showStorageInfo(){
+  // 计算所有 ot2_ 开头的 localStorage 数据总大小
+  let totalSize = 0
+  const details = []
+  for(let i = 0; i < localStorage.length; i++){
+    const key = localStorage.key(i)
+    if(key && key.startsWith('ot2_')){
+      const val = localStorage.getItem(key)
+      const bytes = new Blob([val]).size
+      totalSize += bytes
+      const name = key.replace('ot2_', '')
+      if(bytes > 100) details.push({name, bytes})
+    }
+  }
+  // 计算图片数量
+  let imgCount = 0
+  ;['perlerC','perlerP','pastProj','recipes'].forEach(k => {
+    const data = S[k] || []
+    data.forEach(item => { if(item.img && item.img.startsWith('data:image')) imgCount++ })
+  })
+  // 格式化显示
+  const fmt = (b) => b < 1024 ? b + ' B' : b < 1048576 ? (b/1024).toFixed(1) + ' KB' : (b/1048576).toFixed(1) + ' MB'
+  const estimate = totalSize < 102400 ? '✅ 很小，远低于浏览器限制' : totalSize < 1048576 ? '⚠️ 适中' : '🔴 较大，建议导出备份后清理'
+  const limit = 5 * 1024 * 1024 // 5MB typical localStorage limit
+  const percent = Math.round(totalSize / limit * 100)
+
+  let html = `<div style="font-size:.85rem">
+    <div style="text-align:center;padding:12px 0">
+      <div style="font-size:2rem;margin-bottom:4px">💾</div>
+      <div style="font-weight:700;font-size:1.3rem;color:var(--primary)">${fmt(totalSize)}</div>
+      <div style="font-size:.7rem;color:var(--text3)">已用空间 (浏览器上限约 5MB)</div>
+      <div style="margin:8px auto;width:80%;height:8px;background:var(--border);border-radius:4px;overflow:hidden">
+        <div style="height:100%;width:${Math.min(percent,100)}%;background:${percent>80?'var(--accent)':percent>50?'var(--orange)':'var(--green)'};border-radius:4px;transition:width .3s"></div>
+      </div>
+      <div style="font-size:.7rem;color:var(--text2)">${estimate}</div>
+    </div>
+    <div style="font-size:.7rem;color:var(--text3);margin-bottom:6px">📸 上传图片: ${imgCount} 张 (压缩后约 ${fmt(imgCount * 15000)} )</div>
+    <div style="font-size:.7rem;color:var(--text3)">📄 页面本身: 约 99 KB (从网络加载，不占本地空间)</div>
+    <hr style="border:none;border-top:1px solid var(--border);margin:10px 0">
+    <div style="font-size:.72rem;color:var(--text2);line-height:1.6">
+      💡 <strong>空间建议</strong><br>
+      • 图片会自动压缩到 400px 大小，节省空间<br>
+      • 如果空间不够用，可以用 📤 导出备份<br>
+      • 导出的 .json 文件很小，可存到手机相册或云盘<br>
+      • 数据在手机里，删浏览器缓存会丢失，记得定期备份
+    </div>
+  </div>`
+
+  const modal = document.getElementById('mo-history')
+  document.getElementById('historyTitle').textContent = '💾 存储空间'
+  document.getElementById('historyContent').innerHTML = html
+  modal.classList.add('show')
 }
 
 Html=String.raw
