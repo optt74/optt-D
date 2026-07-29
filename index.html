@@ -452,6 +452,68 @@ button{cursor:pointer;font-family:inherit;font-size:inherit;border:none;backgrou
 </div></div>
 </section>
 
+<!-- ===== PAGE 8: ME ===== -->
+<section class="page" data-page="me">
+<div class="page-hdr">🙋 ME · 自我探索 <span class="page-badge" id="meLockBadge">🔒</span></div>
+<div id="meLockScreen" class="cd" style="text-align:center;padding:40px 20px">
+  <div style="font-size:3rem;margin-bottom:12px">🔒</div>
+  <div style="font-size:1.1rem;font-weight:600;margin-bottom:4px">ME · 我的秘密花园</div>
+  <div style="font-size:.78rem;color:var(--text3);margin-bottom:20px">输入密码进入，记录情绪，了解自己</div>
+  <input type="password" id="mePassword" placeholder="请输入密码" style="max-width:220px;margin:0 auto;text-align:center;font-size:1.1rem;letter-spacing:4px;padding:12px" maxlength="6" inputmode="numeric" onkeydown="if(event.key==='Enter')unlockMe()">
+  <button onclick="unlockMe()" style="margin-top:12px;padding:10px 32px;border-radius:var(--radius-sm);background:var(--primary);color:#fff;font-weight:500;font-size:.9rem">🔓 解锁</button>
+  <div id="meLockError" style="color:var(--accent);font-size:.78rem;margin-top:8px;display:none">密码错误，请重试</div>
+</div>
+
+<div id="meContent" style="display:none">
+  <div class="cd">
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 14px;border-bottom:1px solid var(--border)">
+      <span style="font-weight:600;font-size:.9rem">😊 情绪记录</span>
+      <button onclick="lockMe()" style="font-size:.7rem;color:var(--text3);padding:4px 10px;border-radius:6px;border:1px solid var(--border)">🔒 锁定</button>
+    </div>
+    <div class="cd-body">
+      <div class="g2" style="gap:8px;margin-bottom:10px">
+        <div class="sr-item" onclick="showMeModal('happy')" style="cursor:pointer;border:1.5px solid transparent;transition:var(--transition)"><div class="sr-num">😊</div><div class="sr-lbl">开心 <span id="meHappyCount">0</span></div></div>
+        <div class="sr-item" onclick="showMeModal('sad')" style="cursor:pointer;border:1.5px solid transparent;transition:var(--transition)"><div class="sr-num">😢</div><div class="sr-lbl">难过 <span id="meSadCount">0</span></div></div>
+        <div class="sr-item" onclick="showMeModal('anxious')" style="cursor:pointer;border:1.5px solid transparent;transition:var(--transition)"><div class="sr-num">😰</div><div class="sr-lbl">焦虑 <span id="meAnxiousCount">0</span></div></div>
+        <div class="sr-item" onclick="showMeModal('angry')" style="cursor:pointer;border:1.5px solid transparent;transition:var(--transition)"><div class="sr-num">😤</div><div class="sr-lbl">生气 <span id="meAngryCount">0</span></div></div>
+      </div>
+      <div id="meEmotionRecent" style="max-height:180px;overflow-y:auto"></div>
+    </div>
+  </div>
+  <div class="cd">
+    <div class="cd-hdr">🧬 我的性格特征</div>
+    <div class="cd-body">
+      <textarea id="meTraits" placeholder="描述你目前的性格特征…&#10;比如：我是一个比较内向的人，不善于表达…" rows="3" style="font-size:.82rem;margin-bottom:6px"></textarea>
+      <button class="btn btn-primary" onclick="saveMeProfile()" style="padding:8px 16px;font-size:.78rem">💾 保存</button>
+    </div>
+  </div>
+  <div class="cd">
+    <div class="cd-hdr">⭐ 我想成为的样子</div>
+    <div class="cd-body">
+      <textarea id="meIdeal" placeholder="描述你希望成为的样子…&#10;比如：我希望自己能更自信、更从容地表达自己…" rows="3" style="font-size:.82rem;margin-bottom:6px"></textarea>
+      <button class="btn btn-primary" onclick="saveMeProfile()" style="padding:8px 16px;font-size:.78rem">💾 保存</button>
+    </div>
+  </div>
+  <div class="cd">
+    <div class="cd-hdr">💰 积蓄小账本</div>
+    <div class="cd-body">
+      <div style="display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap">
+        <select id="meSaveMonth" style="flex:1;min-width:80px;font-size:.82rem"></select>
+        <input type="number" id="meSaveAmount" placeholder="金额" style="flex:1;min-width:80px;font-size:.82rem">
+        <button onclick="addMeSaving()" style="padding:9px 16px;border-radius:6px;background:var(--green);color:#fff;font-weight:500;font-size:.8rem">✓ 记录</button>
+      </div>
+      <div style="height:180px;margin:4px 0 8px"><canvas id="meSaveChart"></canvas></div>
+      <div id="meSaveSummary" style="font-size:.78rem;color:var(--text2);line-height:1.7"></div>
+      <div id="meSaveList" style="max-height:150px;overflow-y:auto;margin-top:6px"></div>
+    </div>
+  </div>
+  <div class="cd">
+    <div class="cd-hdr">📈 成长时光轴</div>
+    <div class="cd-body" id="meTimeline"></div>
+  </div>
+</div>
+</section>
+
 </div><!-- pages-container -->
 
 <!-- Bottom Nav -->
@@ -463,11 +525,17 @@ button{cursor:pointer;font-family:inherit;font-size:inherit;border:none;backgrou
   <button class="nav-i" data-page="craft" onclick="switchPage('craft')"><span class="ni">🎨</span><span>手工</span></button>
   <button class="nav-i" data-page="binge" onclick="switchPage('binge')"><span class="ni">📺</span><span>追剧</span></button>
   <button class="nav-i" data-page="trend" onclick="switchPage('trend')"><span class="ni">🔥</span><span>热点</span></button>
+  <button class="nav-i" data-page="me" onclick="switchPage('me')"><span class="ni">🙋</span><span>ME</span></button>
 </nav>
 </div><!-- /app -->
 
 <!-- ===== MODALS ===== -->
-<div class="mo" id="mo-kuake"><div class="mo-in"><h3>📎 添加夸克学习链接</h3><div class="fg"><label>链接标题</label><input type="text" id="kuakeTitle" placeholder="如: 英语语法精讲"></div><div class="fg"><label>夸克链接 URL</label><input type="url" id="kuakeUrl" placeholder="https://夸克链接"></div><div class="ma"><button class="btn btn-o" onclick="closeModal('kuake')">取消</button><button class="btn btn-p" onclick="saveKuake()">保存</button></div></div></div>
+<div class="mo" id="mo-kuake"><div class="mo-in"><h3>📎 添加夸克学习链接</h3><div class="fg"><label>链接标题</label><input type="text" id="kuakeTitle" placeholder="如: 英语语法精讲"></div><div class="fg"><label>夸克链接 URL</label><input type="url" id="kuakeUrl" placeholder="粘贴夸克分享链接"></div><div style="background:var(--primary-light);border-radius:var(--radius-sm);padding:8px 10px;font-size:.72rem;color:var(--text2);line-height:1.5;margin-bottom:10px">
+💡 <strong>夸克App跳转说明</strong><br>
+• 粘贴夸克分享的 <strong>https://quark.sm.cn/...</strong> 链接<br>
+• 手机安装夸克App后，点击「夸克App」按钮自动跳转<br>
+• 也可以在夸克里复制链接 → 粘贴到这里保存
+</div><div class="ma"><button class="btn btn-o" onclick="closeModal('kuake')">取消</button><button class="btn btn-p" onclick="saveKuake()">保存</button></div></div></div>
 
 <div class="mo" id="mo-recipe"><div class="mo-in"><h3>🥗 添加菜谱</h3><div class="fg"><label>菜名 *</label><input type="text" id="rcName" placeholder="菜名"></div><div class="fg"><label>卡路里 (kcal)</label><input type="number" id="rcCal" placeholder="约多少大卡"></div><div class="fg"><label>所需食材 (逗号分隔)</label><input type="text" id="rcIng" placeholder="鸡蛋, 番茄, 洋葱"></div><div class="fg"><label>状态</label><select id="rcStatus"><option value="pending">⏳ 待制作</option><option value="done">✅ 已做过</option></select></div><div class="fg"><label>图片</label><div style="display:flex;gap:8px;align-items:center"><input type="file" id="rcImg" accept="image/*" style="flex:1" onchange="previewImage(this,'rcImgPreview')"><button class="btn btn-o btn-sm" onclick="document.getElementById('rcImg').value='';document.getElementById('rcImgPreview').innerHTML=''" style="font-size:.7rem;padding:4px 10px">✕</button></div><div id="rcImgPreview" style="margin-top:4px"></div></div><div class="ma"><button class="btn btn-o" onclick="closeModal('recipe')">取消</button><button class="btn btn-p" onclick="saveRecipe()">保存</button></div></div></div>
 
@@ -498,6 +566,15 @@ button{cursor:pointer;font-family:inherit;font-size:inherit;border:none;backgrou
 <!-- 历史记录查看弹窗 -->
 <div class="mo" id="mo-history"><div class="mo-in" style="max-height:90vh"><h3 id="historyTitle">📅 历史记录</h3><div id="historyContent" style="max-height:65vh;overflow-y:auto;font-size:.82rem"></div><div class="ma"><button class="btn btn-o" onclick="closeModal('history')" style="flex:none;padding:8px 24px">关闭</button></div></div></div>
 
+<!-- 情绪记录弹窗 -->
+<div class="mo" id="mo-meEmotion"><div class="mo-in"><h3 id="meModalTitle">😊 记录开心</h3>
+  <div class="fg"><label>今天发生了什么？</label><textarea id="meEmotionText" placeholder="记录下此刻的心情和感受…" rows="4" style="font-size:.85rem"></textarea></div>
+  <div style="display:flex;gap:8px;margin-top:4px;flex-wrap:wrap">
+    <button class="btn btn-p" onclick="saveMeEmotion()" style="flex:1;padding:10px;border-radius:var(--radius-sm);background:var(--primary);color:#fff;font-weight:500">💾 保存</button>
+    <button class="btn btn-o" onclick="closeModal('meEmotion')" style="flex:1;padding:10px;border-radius:var(--radius-sm);background:var(--surface2);font-weight:500">取消</button>
+  </div>
+</div></div>
+
 <script>
 // ===== STATE =====
 const LS=k=>{try{return JSON.parse(localStorage.getItem('ot2_'+k))}catch{return null}}
@@ -526,6 +603,7 @@ const S={
   variety:{watched:LS('vrW')||[],towatch:LS('vrTW')||[]},
   trend:{weibo:[],douyin:[]},
   ideas:LS('ideas')||[],
+  me:{locked:true,emotions:{happy:[],sad:[],anxious:[],angry:[]},traits:'',ideal:'',password:'117283',savings:[]},
 }
 
 /* ---- 本地存储 (即时) ---- */
@@ -535,7 +613,7 @@ function saveLocal(){
   LSS('shop',S.shop);LSS('tvW',S.tv.watched);LSS('tvTW',S.tv.towatch);LSS('mvW',S.movie.watched);LSS('mvTW',S.movie.towatch)
   LSS('vrW',S.variety.watched);LSS('vrTW',S.variety.towatch);LSS('rWantFood',S.restWant.food);LSS('rWantFun',S.restWant.fun)
   LSS('fjDone',S.fjian.done);LSS('fjLeft',S.fjian.left);LSS('ideas',S.ideas);LSS('workouts',S.workouts)
-  LSS('wCheckins',S.workoutCheckins);LSS('bike',S.bike);LSS('walk',S.walk);LSS('aerobic',S.aerobic);LSS('theme',S.theme)
+  LSS('wCheckins',S.workoutCheckins);LSS('bike',S.bike);LSS('walk',S.walk);LSS('aerobic',S.aerobic);LSS('theme',S.theme);LSS('me',S.me)
 }
 
 /* ---- 服务器存储 (持久化) ---- */
@@ -695,8 +773,10 @@ function fullRender(){
   renderRestReg();renderRestWant();renderFjian();renderTravel()
   renderCraftWish();renderPerler();renderPastProj()
   renderBinge('tv');renderBinge('movie');renderBinge('variety')
-  renderIdeas()
+  renderIdeas();renderMe()
 }
+
+function fullRender(){
 
 // ===== THEME =====
 function toggleTheme(){S.theme=S.theme==='light'?'dark':'light';document.documentElement.setAttribute('data-theme',S.theme);sv()}
@@ -705,7 +785,7 @@ document.getElementById('dateDisplay').textContent=(()=>{const d=new Date(),w=['
 
 // ===== UTILS =====
 function toast(m,t='success'){const e=document.createElement('div');e.className='ts '+t;e.textContent=m;document.body.appendChild(e);setTimeout(()=>e.remove(),2000)}
-function switchPage(p){document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));document.querySelectorAll('.nav-i').forEach(x=>x.classList.remove('active'));document.querySelector(`.page[data-page="${p}"]`).classList.add('active');document.querySelector(`.nav-i[data-page="${p}"]`).classList.add('active');document.querySelector(`.page[data-page="${p}"]`).scrollTop=0}
+function switchPage(p){document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));document.querySelectorAll('.nav-i').forEach(x=>x.classList.remove('active'));document.querySelector(`.page[data-page="${p}"]`).classList.add('active');document.querySelector(`.nav-i[data-page="${p}"]`).classList.add('active');document.querySelector(`.page[data-page="${p}"]`).scrollTop=0;if(p==='me')renderMe()}
 function showModal(id){document.getElementById('mo-'+id).classList.add('show')}
 function closeModal(id){document.getElementById('mo-'+id).classList.remove('show')}
 document.querySelectorAll('.mo').forEach(el=>{el.addEventListener('click',e=>{if(e.target===el)el.classList.remove('show')})})
@@ -927,7 +1007,41 @@ function delKuake(i){S.kuakeLinks.splice(i,1);sv();renderKuake()}
 function renderKuake(){
   const c=document.getElementById('kuakeList')
   if(!S.kuakeLinks.length)return c.innerHTML='<div class="emp"><span class="big-e">📎</span>暂无夸克学习链接</div>'
-  c.innerHTML=S.kuakeLinks.map((k,i)=>`<div class="tri"><div class="lbl-dot ${k.done?'g':'r'}"></div><div class="tr-info"><div class="tr-name" onclick="window.open('${k.url}','_blank')" style="color:var(--primary);cursor:pointer">${k.title}</div><div class="tr-meta">${k.date}</div></div><div style="display:flex;gap:3px;flex-shrink:0"><button onclick="toggleKuake(${i})" style="font-size:.65rem;padding:4px 8px;border-radius:4px;background:${k.done?'var(--green-light)':'var(--surface2)'};color:${k.done?'var(--green)':'var(--text3)'}">${k.done?'✅':'🔘'}</button><button onclick="delKuake(${i})" style="font-size:.65rem;padding:4px 8px;color:var(--accent);border-radius:4px">✕</button></div></div>`).join('')
+  c.innerHTML=S.kuakeLinks.map((k,i)=>{
+    const isQuark = k.url.includes('quark') || k.url.includes('sm.cn')
+    return `<div class="tri"><div class="lbl-dot ${k.done?'g':'r'}"></div><div class="tr-info"><div class="tr-name" style="color:var(--primary);cursor:pointer">${k.title}</div>
+    <div class="tr-meta" style="font-size:.65rem">${k.date} · ${isQuark?'📱 夸克链接':'🔗 网页链接'}</div>
+    <div style="display:flex;gap:4px;margin-top:3px;flex-wrap:wrap">
+      <button onclick="openKuakeLink('${i}','browser')" style="font-size:.6rem;padding:2px 8px;border-radius:8px;background:var(--primary-light);color:var(--primary)">🌐 浏览器</button>
+      <button onclick="openKuakeLink('${i}','app')" style="font-size:.6rem;padding:2px 8px;border-radius:8px;background:${isQuark?'var(--green-light)':'var(--surface2)'};color:${isQuark?'var(--green)':'var(--text3)'}">📱 ${isQuark?'夸克App':'复制链接'}</button>
+    </div></div><div style="display:flex;gap:3px;flex-shrink:0"><button onclick="toggleKuake(${i})" style="font-size:.65rem;padding:4px 8px;border-radius:4px;background:${k.done?'var(--green-light)':'var(--surface2)'};color:${k.done?'var(--green)':'var(--text3)'}">${k.done?'✅':'🔘'}</button><button onclick="delKuake(${i})" style="font-size:.65rem;padding:4px 8px;color:var(--accent);border-radius:4px">✕</button></div></div>`
+  }).join('')
+}
+function openKuakeLink(i, mode){
+  const link = S.kuakeLinks[i]
+  if(mode === 'app'){
+    // 尝试在夸克App中打开
+    if(link.url.includes('quark') || link.url.includes('sm.cn')){
+      // 先尝试用 window.location 直接跳转（触发 Universal Link / App Link）
+      window.location.href = link.url
+    } else {
+      // 不是夸克链接 → 复制到剪贴板
+      if(navigator.clipboard && navigator.clipboard.writeText){
+        navigator.clipboard.writeText(link.url)
+        toast('📋 链接已复制，可以粘贴到夸克中打开')
+      } else {
+        // 降级方案
+        const ta = document.createElement('textarea')
+        ta.value = link.url; ta.style.position='fixed'; ta.style.opacity='0'
+        document.body.appendChild(ta); ta.select()
+        document.execCommand('copy'); document.body.removeChild(ta)
+        toast('📋 链接已复制')
+      }
+    }
+  } else {
+    // 在浏览器中打开
+    window.open(link.url, '_blank')
+  }
 }
 function toggleVocab(){const t=today();S.vocab[t]=!S.vocab[t];sv();renderVocab()}
 function renderVocab(){const t=today(),d=S.vocab[t];const btn=document.getElementById('vocabBtn');btn.className='tl '+(d?'green':'red');btn.textContent=d?'✅ 已打卡':'🔴 未打卡';btn.innerHTML=d?'🟢 已打卡':'🔴 未打卡'}
@@ -1440,6 +1554,333 @@ function renderIdeas(){
   c.innerHTML=S.ideas.map((idea,i)=>`<div class="ic" style="background:${idea.done?'var(--green-light)':'var(--orange-light)'}"><button onclick="toggleIdea(${i})" style="font-size:.85rem;flex-shrink:0">${idea.done?'🟢':'🔴'}</button><span class="ict" style="text-decoration:${idea.done?'line-through':'none'};color:${idea.done?'var(--green)':'var(--orange)'}">${idea.text}</span><span style="font-size:.6rem;color:var(--text3);flex-shrink:0">${idea.date}</span><button onclick="delIdea(${i})" style="font-size:.65rem;color:var(--text3);flex-shrink:0;margin-left:4px">✕</button></div>`).join('')
 }
 
+/* ===== 8. ME · 自我探索 ===== */
+const ME_PWD = '117283'
+
+function unlockMe(){
+  const pwd = document.getElementById('mePassword').value.trim()
+  if(pwd === ME_PWD){
+    S.me.locked = false
+    document.getElementById('meLockScreen').style.display = 'none'
+    document.getElementById('meContent').style.display = 'block'
+    document.getElementById('meLockBadge').textContent = '🔓'
+    document.getElementById('meLockError').style.display = 'none'
+    document.getElementById('mePassword').value = ''
+    renderMe()
+    sv()
+  } else {
+    document.getElementById('meLockError').style.display = 'block'
+    document.getElementById('mePassword').value = ''
+  }
+}
+
+function lockMe(){
+  S.me.locked = true
+  document.getElementById('meLockScreen').style.display = 'block'
+  document.getElementById('meContent').style.display = 'none'
+  document.getElementById('meLockBadge').textContent = '🔒'
+  sv()
+}
+
+function renderMe(){
+  if(S.me.locked){
+    document.getElementById('meLockScreen').style.display = 'block'
+    document.getElementById('meContent').style.display = 'none'
+    document.getElementById('meLockBadge').textContent = '🔒'
+    return
+  }
+  document.getElementById('meLockScreen').style.display = 'none'
+  document.getElementById('meContent').style.display = 'block'
+  document.getElementById('meLockBadge').textContent = '🔓'
+
+  // 恢复性格特征和理想
+  document.getElementById('meTraits').value = S.me.traits || ''
+  document.getElementById('meIdeal').value = S.me.ideal || ''
+
+  // 更新各情绪计数
+  const emojis = {happy:'😊',sad:'😢',anxious:'😰',angry:'😤'}
+  const labels = {happy:'开心',sad:'难过',anxious:'焦虑',angry:'生气'}
+  Object.keys(emojis).forEach(key => {
+    document.getElementById('me'+key.charAt(0).toUpperCase()+key.slice(1)+'Count').textContent = S.me.emotions[key].length
+  })
+
+  // 最近情绪动态
+  renderMeRecent()
+  // 积蓄
+  renderMeSavings()
+  // 成长时光轴
+  renderMeTimeline()
+}
+
+function renderMeRecent(){
+  const c = document.getElementById('meEmotionRecent')
+  const all = []
+  const emojis = {happy:'😊',sad:'😢',anxious:'😰',angry:'😤'}
+  const labels = {happy:'开心',sad:'难过',anxious:'焦虑',angry:'生气'}
+  Object.keys(emojis).forEach(key => {
+    S.me.emotions[key].forEach(item => {
+      all.push({type:key,emoji:emojis[key],label:labels[key],...item})
+    })
+  })
+  all.sort((a,b) => new Date(b.date) - new Date(a.date))
+  if(!all.length){
+    c.innerHTML = '<div class="emp" style="padding:10px"><span class="big-e">📝</span>还没有情绪记录，点上面的卡片开始记录吧</div>'
+    return
+  }
+  c.innerHTML = all.slice(0,10).map(item =>
+    `<div class="tri" style="margin-bottom:2px"><div class="tr-info"><div class="tr-name">${item.emoji} ${item.label}</div><div class="tr-meta">${item.content.length > 30 ? item.content.slice(0,30)+'…' : item.content} · ${item.date}</div></div></div>`
+  ).join('')
+}
+
+function renderMeTimeline(){
+  const c = document.getElementById('meTimeline')
+  const all = []
+  const emojis = {happy:'😊',sad:'😢',anxious:'😰',angry:'😤'}
+  const labels = {happy:'开心',sad:'难过',anxious:'焦虑',angry:'生气'}
+  Object.keys(emojis).forEach(key => {
+    S.me.emotions[key].forEach(item => {
+      all.push({type:key,emoji:emojis[key],label:labels[key],...item})
+    })
+  })
+  all.sort((a,b) => new Date(b.date) - new Date(a.date))
+  if(!all.length){
+    c.innerHTML = '<div class="emp" style="padding:10px">记录情绪后，这里会显示你的成长轨迹 📈</div>'
+    return
+  }
+  // 按月份分组
+  const groups = {}
+  all.forEach(item => {
+    const month = item.date.slice(0,7)
+    if(!groups[month]) groups[month] = []
+    groups[month].push(item)
+  })
+  let html = ''
+  Object.keys(groups).sort().reverse().forEach(month => {
+    const items = groups[month]
+    html += `<div style="margin-bottom:10px"><div style="font-weight:600;font-size:.8rem;color:var(--text2);margin-bottom:4px">📅 ${month}</div>`
+    items.forEach(item => {
+      html += `<div class="tri" style="margin-bottom:2px;background:var(--surface2);padding:6px 10px;border-radius:6px"><div class="tr-info"><div class="tr-name">${item.emoji} ${item.label}</div><div class="tr-meta">${item.content} · ${item.date}</div></div></div>`
+    })
+    html += '</div>'
+  })
+  c.innerHTML = html
+
+  // 统计
+  const counts = {}
+  Object.keys(emojis).forEach(key => { counts[key] = S.me.emotions[key].length })
+  const total = all.length
+  const topEmotion = Object.keys(counts).sort((a,b) => counts[b]-counts[a])[0]
+  html += `<div style="margin-top:8px;padding:10px 12px;background:var(--surface2);border-radius:var(--radius-sm);font-size:.75rem;color:var(--text2);line-height:1.6">
+    📊 <strong>情绪小统计</strong><br>
+    共记录 <strong>${total}</strong> 条情绪 · 最常出现: ${emojis[topEmotion]} ${labels[topEmotion]} (${counts[topEmotion]}次)<br>
+    😊 开心${counts.happy} · 😢 难过${counts.sad} · 😰 焦虑${counts.anxious} · 😤 生气${counts.angry}
+  </div>`
+}
+
+const ME_EMOJI_NAMES = {happy:'😊 开心',sad:'😢 难过',anxious:'😰 焦虑',angry:'😤 生气'}
+function showMeModal(type){
+  document.getElementById('meModalTitle').textContent = ME_EMOJI_NAMES[type]
+  document.getElementById('meEmotionText').value = ''
+  document.getElementById('meModalTitle').dataset.type = type
+  document.getElementById('mo-meEmotion').classList.add('show')
+}
+
+function saveMeEmotion(){
+  const type = document.getElementById('meModalTitle').dataset.type
+  const content = document.getElementById('meEmotionText').value.trim()
+  if(!content) return toast('请写下你的感受','error')
+  S.me.emotions[type].push({content, date: today(), time: now()})
+  sv(); renderMe(); closeModal('meEmotion')
+  toast('已记录 ' + ME_EMOJI_NAMES[type])
+}
+
+function saveMeProfile(){
+  S.me.traits = document.getElementById('meTraits').value.trim()
+  S.me.ideal = document.getElementById('meIdeal').value.trim()
+  sv()
+  toast('💾 已保存')
+}
+
+/* ===== 积蓄小账本 ===== */
+function initMeSaveDropdown(){
+  const sel = document.getElementById('meSaveMonth')
+  if(!sel) return
+  const now = new Date()
+  sel.innerHTML = ''
+  for(let i = 11; i >= 0; i--){
+    const d = new Date(now.getFullYear(), now.getMonth() - i, 1)
+    const val = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0')
+    const lbl = d.getFullYear() + '年' + (d.getMonth()+1) + '月'
+    const opt = document.createElement('option')
+    opt.value = val; opt.textContent = lbl
+    if(i === 0) opt.selected = true
+    sel.appendChild(opt)
+  }
+}
+
+function addMeSaving(){
+  const month = document.getElementById('meSaveMonth').value
+  const amount = parseFloat(document.getElementById('meSaveAmount').value)
+  if(isNaN(amount) || amount <= 0) return toast('请输入有效金额','error')
+  // 检查是否已有该月记录
+  const existing = S.me.savings.findIndex(s => s.month === month)
+  if(existing >= 0){
+    S.me.savings[existing].amount = amount
+    toast('已更新 ' + month + ' 的积蓄')
+  } else {
+    S.me.savings.push({month, amount})
+    toast('已记录 ' + month + ' 积蓄')
+  }
+  sv(); renderMeSavings()
+  document.getElementById('meSaveAmount').value = ''
+}
+
+function renderMeSavings(){
+  const data = S.me.savings.sort((a,b) => a.month.localeCompare(b.month))
+  // 月列表
+  const listEl = document.getElementById('meSaveList')
+  if(!data.length){
+    listEl.innerHTML = '<div class="emp" style="padding:8px">还没有积蓄记录，选择月份添加吧 💰</div>'
+    document.getElementById('meSaveSummary').innerHTML = ''
+    drawMeSaveChart()
+    return
+  }
+  // 列表
+  listEl.innerHTML = data.map((s,i) =>
+    `<div class="tri"><div class="tr-info"><div class="tr-name">💰 ${s.month}</div><div class="tr-meta">¥${s.amount.toLocaleString()}</div></div><div class="record-actions"><button onclick="deleteMeSaving(${i})" style="font-size:.65rem;color:var(--accent)">✕</button></div></div>`
+  ).join('')
+
+  // 季度总结
+  const quarters = {}
+  data.forEach(s => {
+    const q = s.month.slice(0,4) + ' Q' + Math.ceil(parseInt(s.month.slice(5))/3)
+    if(!quarters[q]) quarters[q] = []
+    quarters[q].push(s.amount)
+  })
+  let qhtml = Object.keys(quarters).sort().map(q => {
+    const arr = quarters[q]
+    const total = arr.reduce((a,b)=>a+b,0)
+    const avg = Math.round(total / arr.length)
+    return `<span>${q}: 共¥${total.toLocaleString()} (月均¥${avg.toLocaleString()})</span>`
+  }).join('<br>')
+
+  // 年度总结
+  const years = {}
+  data.forEach(s => {
+    const y = s.month.slice(0,4)
+    if(!years[y]) years[y] = []
+    years[y].push(s.amount)
+  })
+  let yhtml = Object.keys(years).sort().map(y => {
+    const arr = years[y]
+    const total = arr.reduce((a,b)=>a+b,0)
+    const avg = Math.round(total / arr.length)
+    const max = Math.max(...arr)
+    const min = Math.min(...arr)
+    return `<span style="font-weight:600">📊 ${y}年度总结</span><br>年度积蓄: ¥${total.toLocaleString()} · 月均: ¥${avg.toLocaleString()}<br>最高月: ¥${max.toLocaleString()} · 最低月: ¥${min.toLocaleString()}`
+  }).join('<br><br>')
+
+  document.getElementById('meSaveSummary').innerHTML =
+    '<div style="margin-bottom:2px">📅 季度小结</div>' + qhtml +
+    '<hr style="border:none;border-top:1px solid var(--border);margin:6px 0">' +
+    yhtml
+
+  drawMeSaveChart()
+}
+
+function deleteMeSaving(i){
+  S.me.savings.splice(i,1)
+  sv(); renderMeSavings()
+}
+
+function drawMeSaveChart(){
+  const canvas = document.getElementById('meSaveChart')
+  if(!canvas) return
+  const ctx = canvas.getContext('2d')
+  const data = S.me.savings.sort((a,b) => a.month.localeCompare(b.month))
+  const dpr = window.devicePixelRatio || 1
+  const rect = canvas.parentElement.getBoundingClientRect()
+  canvas.width = rect.width * dpr; canvas.height = 180 * dpr
+  canvas.style.width = rect.width + 'px'; canvas.style.height = '180px'
+  ctx.scale(dpr, dpr)
+  const w = rect.width, h = 180
+  ctx.clearRect(0, 0, w, h)
+
+  if(data.length < 1){
+    ctx.fillStyle = 'var(--text3)'
+    ctx.font = '13px sans-serif'
+    ctx.textAlign = 'center'
+    ctx.fillText('记录积蓄后显示趋势图', w/2, h/2)
+    return
+  }
+
+  const vals = data.map(d => d.amount)
+  const min = Math.max(0, Math.min(...vals) * 0.8)
+  const max = Math.max(...vals) * 1.2
+  const pt = 16, pb = 28, pl = 6, pr = 6
+  const cw = w - pl - pr, ch = h - pt - pb
+
+  // Grid
+  ctx.strokeStyle = 'var(--border)'; ctx.lineWidth = 0.5
+  for(let i = 0; i <= 4; i++){
+    const y = pt + (ch/4) * i
+    ctx.beginPath(); ctx.moveTo(pl, y); ctx.lineTo(w-pr, y); ctx.stroke()
+    ctx.fillStyle = 'var(--text3)'; ctx.font = '9px sans-serif'
+    ctx.textAlign = 'right'
+    const val = max - (max-min) * i/4
+    ctx.fillText('¥' + Math.round(val).toLocaleString(), pl + cw + 2, y + 3)
+  }
+
+  if(data.length === 1){
+    const x = pl + cw/2, y = pt + (1 - (vals[0]-min)/(max-min)) * ch
+    ctx.beginPath(); ctx.arc(x, y, 5, 0, Math.PI*2)
+    ctx.fillStyle = 'var(--primary)'; ctx.fill()
+    ctx.fillStyle = 'var(--text)'; ctx.font = '10px sans-serif'; ctx.textAlign = 'center'
+    ctx.fillText(data[0].month + ' ¥' + vals[0].toLocaleString(), x, y - 10)
+    return
+  }
+
+  // Labels on X axis
+  const step = Math.max(1, Math.floor(data.length / 6))
+  data.forEach((d, i) => {
+    if(i % step === 0 || i === data.length-1){
+      const x = pl + (i / (data.length-1)) * cw
+      ctx.fillStyle = 'var(--text3)'; ctx.font = '8px sans-serif'; ctx.textAlign = 'center'
+      ctx.fillText(d.month.slice(5) + '月', x, h - 5)
+    }
+  })
+
+  // Line
+  ctx.beginPath(); ctx.strokeStyle = 'var(--green)'; ctx.lineWidth = 2.5; ctx.lineJoin = 'round'
+  data.forEach((d, i) => {
+    const x = pl + (i / (data.length-1)) * cw
+    const y = pt + (1 - (d.amount - min) / (max - min)) * ch
+    i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y)
+  })
+  ctx.stroke()
+
+  // Fill area under line
+  const lastX = pl + ((data.length-1) / (data.length-1)) * cw
+  ctx.lineTo(lastX, pt + ch)
+  ctx.lineTo(pl, pt + ch)
+  ctx.closePath()
+  ctx.fillStyle = 'rgba(46,204,113,0.08)'
+  ctx.fill()
+
+  // Dots with values
+  data.forEach((d, i) => {
+    const x = pl + (i / (data.length-1)) * cw
+    const y = pt + (1 - (d.amount - min) / (max - min)) * ch
+    ctx.beginPath(); ctx.arc(x, y, 4, 0, Math.PI*2)
+    ctx.fillStyle = 'var(--green)'; ctx.fill()
+    // Value on hover would be nice but for small screens show every Nth
+    if(data.length <= 6 || i === data.length-1 || i === 0){
+      ctx.fillStyle = 'var(--text2)'; ctx.font = '8px sans-serif'; ctx.textAlign = 'center'
+      ctx.fillText('¥' + d.amount.toLocaleString(), x, y - 8)
+    }
+  })
+}
+
 // ===== INIT =====
 function init(){
   // 先渲染本地数据（秒开）
@@ -1449,7 +1890,7 @@ function init(){
   renderRestReg();renderRestWant();renderFjian();renderTravel()
   renderCraftWish();renderPerler();renderPastProj()
   renderBinge('tv');renderBinge('movie');renderBinge('variety')
-  renderIdeas()
+  renderIdeas();initMeSaveDropdown();renderMe()
   // 搜索和热点
   setTimeout(()=>searchBili('英语学习'),500)
   setTimeout(()=>refreshTrend(),800)
