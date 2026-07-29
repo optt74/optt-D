@@ -2,7 +2,7 @@
   "name": "OP TT 生活台",
   "short_name": "🐰生活台",
   "description": "个人生活管理仪表板 · 学习 · 健康 · 购物 · 出门 · 手工 · 追剧 · 热点",
-  "start_url": "/",
+  "start_url": ".",
   "display": "standalone",
   "background_color": "#fff5f7",
   "theme_color": "#ff8aae",
