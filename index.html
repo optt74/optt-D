@@ -168,7 +168,7 @@ button{cursor:pointer;font-family:inherit;font-size:inherit;border:none;backgrou
 </head>
 <body>
 <div id="app">
-<header class="app-header"><h1>🐰 OP TT 生活台</h1><div class="hdr-right"><span class="hdr-date" id="dateDisplay"></span><button class="theme-btn" onclick="toggleTheme()" style="width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:var(--surface2);font-size:.9rem">🌓</button></div></header>
+<header class="app-header"><h1>🐰 OP TT 生活台</h1><div class="hdr-right"><span class="hdr-date" id="dateDisplay"></span><button onclick="exportData()" style="width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:var(--surface2);font-size:.85rem" title="导出数据">📤</button><button onclick="document.getElementById('importFile').click()" style="width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:var(--surface2);font-size:.85rem" title="导入数据">📥</button><input type="file" id="importFile" accept=".json" style="display:none" onchange="importData(event)"><button class="theme-btn" onclick="toggleTheme()" style="width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:var(--surface2);font-size:.9rem">🌓</button></div></header>
 
 <div class="pages-container" id="pagesContainer">
 
@@ -468,7 +468,7 @@ button{cursor:pointer;font-family:inherit;font-size:inherit;border:none;backgrou
 <!-- ===== MODALS ===== -->
 <div class="mo" id="mo-kuake"><div class="mo-in"><h3>📎 添加夸克学习链接</h3><div class="fg"><label>链接标题</label><input type="text" id="kuakeTitle" placeholder="如: 英语语法精讲"></div><div class="fg"><label>夸克链接 URL</label><input type="url" id="kuakeUrl" placeholder="https://夸克链接"></div><div class="ma"><button class="btn btn-o" onclick="closeModal('kuake')">取消</button><button class="btn btn-p" onclick="saveKuake()">保存</button></div></div></div>
 
-<div class="mo" id="mo-recipe"><div class="mo-in"><h3>🥗 添加菜谱</h3><div class="fg"><label>菜名 *</label><input type="text" id="rcName" placeholder="菜名"></div><div class="fg"><label>卡路里 (kcal)</label><input type="number" id="rcCal" placeholder="约多少大卡"></div><div class="fg"><label>所需食材 (逗号分隔)</label><input type="text" id="rcIng" placeholder="鸡蛋, 番茄, 洋葱"></div><div class="fg"><label>状态</label><select id="rcStatus"><option value="pending">⏳ 待制作</option><option value="done">✅ 已做过</option></select></div><div class="fg"><label>图片链接 (选填)</label><input type="url" id="rcImg" placeholder="https://..."></div><div class="ma"><button class="btn btn-o" onclick="closeModal('recipe')">取消</button><button class="btn btn-p" onclick="saveRecipe()">保存</button></div></div></div>
+<div class="mo" id="mo-recipe"><div class="mo-in"><h3>🥗 添加菜谱</h3><div class="fg"><label>菜名 *</label><input type="text" id="rcName" placeholder="菜名"></div><div class="fg"><label>卡路里 (kcal)</label><input type="number" id="rcCal" placeholder="约多少大卡"></div><div class="fg"><label>所需食材 (逗号分隔)</label><input type="text" id="rcIng" placeholder="鸡蛋, 番茄, 洋葱"></div><div class="fg"><label>状态</label><select id="rcStatus"><option value="pending">⏳ 待制作</option><option value="done">✅ 已做过</option></select></div><div class="fg"><label>图片</label><div style="display:flex;gap:8px;align-items:center"><input type="file" id="rcImg" accept="image/*" style="flex:1" onchange="previewImage(this,'rcImgPreview')"><button class="btn btn-o btn-sm" onclick="document.getElementById('rcImg').value='';document.getElementById('rcImgPreview').innerHTML=''" style="font-size:.7rem;padding:4px 10px">✕</button></div><div id="rcImgPreview" style="margin-top:4px"></div></div><div class="ma"><button class="btn btn-o" onclick="closeModal('recipe')">取消</button><button class="btn btn-p" onclick="saveRecipe()">保存</button></div></div></div>
 
 <div class="mo" id="mo-workout"><div class="mo-in"><h3>📺 添加跟练视频</h3><div class="fg"><label>视频标题</label><input type="text" id="woTitle" placeholder="帕梅拉 20分钟有氧"></div><div class="fg"><label>B站链接或视频ID</label><input type="text" id="woUrl" placeholder="BV1... 或完整URL"></div><div class="fg"><label>分类</label><select id="woType"><option value="all">通用</option><option value="pamela">帕梅拉</option><option value="oyxc">欧阳春晓</option></select></div><div class="ma"><button class="btn btn-o" onclick="closeModal('workout')">取消</button><button class="btn btn-p" onclick="saveWorkout()">保存</button></div></div></div>
 
@@ -482,11 +482,11 @@ button{cursor:pointer;font-family:inherit;font-size:inherit;border:none;backgrou
 
 <div class="mo" id="mo-craftWish"><div class="mo-in"><h3>💡 想尝试的手工</h3><div class="fg"><label>手工类型 *</label><input type="text" id="cwType" placeholder="如: 羊毛毡、滴胶"></div><div class="fg"><label>所需工具 (逗号分隔)</label><input type="text" id="cwTools" placeholder="工具清单"></div><div class="fg"><label>学习博主/账号</label><input type="text" id="cwAccount" placeholder="小红书博主名或链接"></div><div class="ma"><button class="btn btn-o" onclick="closeModal('craftWish')">取消</button><button class="btn btn-p" onclick="saveCraftWish()">保存</button></div></div></div>
 
-<div class="mo" id="mo-perlerC"><div class="mo-in"><h3>✅ 添加完成的拼豆</h3><div class="fg"><label>图纸名称 *</label><input type="text" id="perlerCName" placeholder="图纸名称"></div><div class="fg"><label>图片链接 (选填)</label><input type="url" id="perlerCImg" placeholder="成品照片URL"></div><div class="ma"><button class="btn btn-o" onclick="closeModal('perlerC')">取消</button><button class="btn btn-p" onclick="savePerlerC()">保存</button></div></div></div>
+<div class="mo" id="mo-perlerC"><div class="mo-in"><h3>✅ 添加完成的拼豆</h3><div class="fg"><label>图纸名称 *</label><input type="text" id="perlerCName" placeholder="图纸名称"></div><div class="fg"><label>图片</label><input type="file" id="perlerCImg" accept="image/*" onchange="previewImage(this,'perlerCImgPreview')"><div id="perlerCImgPreview" style="margin-top:4px"></div></div><div class="ma"><button class="btn btn-o" onclick="closeModal('perlerC')">取消</button><button class="btn btn-p" onclick="savePerlerC()">保存</button></div></div></div>
 
-<div class="mo" id="mo-perlerP"><div class="mo-in"><h3>⏳ 添加待拼图纸</h3><div class="fg"><label>图纸名称 *</label><input type="text" id="perlerPName" placeholder="图纸名称"></div><div class="fg"><label>图片链接 (选填)</label><input type="url" id="perlerPImg" placeholder="图纸照片URL"></div><div class="ma"><button class="btn btn-o" onclick="closeModal('perlerP')">取消</button><button class="btn btn-p" onclick="savePerlerP()">保存</button></div></div></div>
+<div class="mo" id="mo-perlerP"><div class="mo-in"><h3>⏳ 添加待拼图纸</h3><div class="fg"><label>图纸名称 *</label><input type="text" id="perlerPName" placeholder="图纸名称"></div><div class="fg"><label>图片</label><input type="file" id="perlerPImg" accept="image/*" onchange="previewImage(this,'perlerPImgPreview')"><div id="perlerPImgPreview" style="margin-top:4px"></div></div><div class="ma"><button class="btn btn-o" onclick="closeModal('perlerP')">取消</button><button class="btn btn-p" onclick="savePerlerP()">保存</button></div></div></div>
 
-<div class="mo" id="mo-pastProject"><div class="mo-in"><h3>📦 添加曾经的作品</h3><div class="fg"><label>作品名称 *</label><input type="text" id="ppName" placeholder="作品名"></div><div class="fg"><label>图片链接 (选填)</label><input type="url" id="ppImg" placeholder="作品照片URL"></div><div class="fg"><label>使用工具</label><input type="text" id="ppTools" placeholder="工具清单"></div><div class="fg"><label>制作流程</label><textarea id="ppProcess" placeholder="大致制作步骤…" rows="3"></textarea></div><div class="ma"><button class="btn btn-o" onclick="closeModal('pastProject')">取消</button><button class="btn btn-p" onclick="savePastProject()">保存</button></div></div></div>
+<div class="mo" id="mo-pastProject"><div class="mo-in"><h3>📦 添加曾经的作品</h3><div class="fg"><label>作品名称 *</label><input type="text" id="ppName" placeholder="作品名"></div><div class="fg"><label>图片</label><input type="file" id="ppImg" accept="image/*" onchange="previewImage(this,'ppImgPreview')"><div id="ppImgPreview" style="margin-top:4px"></div></div><div class="fg"><label>使用工具</label><input type="text" id="ppTools" placeholder="工具清单"></div><div class="fg"><label>制作流程</label><textarea id="ppProcess" placeholder="大致制作步骤…" rows="3"></textarea></div><div class="ma"><button class="btn btn-o" onclick="closeModal('pastProject')">取消</button><button class="btn btn-p" onclick="savePastProject()">保存</button></div></div></div>
 
 <div class="mo" id="mo-tvShow"><div class="mo-in"><h3>📺 添加电视剧</h3><div class="fg"><label>剧名 *</label><input type="text" id="tvName" placeholder="剧名"></div><div class="fg"><label>状态</label><select id="tvStatus"><option value="watched">✅ 看过</option><option value="towatch">📋 待看</option></select></div><div class="fg" id="tvProgressGroup"><label>当前看到第几集</label><input type="text" id="tvEpisode" placeholder="如: 第15集"></div><div class="ma"><button class="btn btn-o" onclick="closeModal('tvShow')">取消</button><button class="btn btn-p" onclick="saveTvShow()">保存</button></div></div></div>
 
@@ -592,6 +592,98 @@ async function loadServerData(){
   }
 }
 
+/* ===== 数据导入 / 导出 ===== */
+function exportData(){
+  // 先确保本地存储已更新
+  saveLocal()
+  // 收集所有数据
+  const data = {}
+  // S 对象中有嵌套结构的特殊处理
+  const keys = Object.keys(S)
+  keys.forEach(k => {
+    if(k === 'trend') return // 热点实时数据不导出
+    if(k === 'skin' || k === 'shop' || k === 'restWant' || k === 'fjian' || k === 'tv' || k === 'movie' || k === 'variety'){
+      data[k] = JSON.parse(JSON.stringify(S[k]))
+      return
+    }
+    data[k] = S[k]
+  })
+  // 添加导出时间和版本
+  data._export = { time: new Date().toISOString(), version: '2.0' }
+  // 生成并下载文件
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' })
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = url
+  a.download = `optt-backup-${new Date().toISOString().split('T')[0]}.json`
+  document.body.appendChild(a)
+  a.click()
+  document.body.removeChild(a)
+  URL.revokeObjectURL(url)
+  toast('📤 数据已导出！请妥善保存这个文件')
+}
+
+function importData(event){
+  const file = event.target.files[0]
+  if(!file) return
+  const reader = new FileReader()
+  reader.onload = function(e){
+    try {
+      const data = JSON.parse(e.target.result)
+      // 基本校验
+      if(!data || typeof data !== 'object'){
+        toast('❌ 无效的数据文件', 'error')
+        return
+      }
+      // 逐个导入到状态
+      const importKeys = ['kuakeLinks','vocab','recipes','bike','walk','aerobic','workouts','workoutCheckins',
+        'water','weights','periods','restReg','travel','craftWish','perlerC','perlerP','pastProj',
+        'ideas','theme']
+      importKeys.forEach(k => {
+        if(data[k] !== undefined) S[k] = data[k]
+      })
+      // 嵌套对象
+      if(data.skin) {
+        if(data.skin.cream) S.skin.cream = data.skin.cream
+        if(data.skin.mask) S.skin.mask = data.skin.mask
+        if(data.skin.hydra) S.skin.hydra = data.skin.hydra
+        if(data.skin.iso) S.skin.iso = data.skin.iso
+        if(data.skin.doctor) S.skin.doctor = data.skin.doctor
+      }
+      if(data.shop) S.shop = data.shop
+      if(data.restWant) {
+        if(data.restWant.food) S.restWant.food = data.restWant.food
+        if(data.restWant.fun) S.restWant.fun = data.restWant.fun
+      }
+      if(data.fjian) {
+        if(data.fjian.done) S.fjian.done = data.fjian.done
+        if(data.fjian.left) S.fjian.left = data.fjian.left
+      }
+      if(data.tv) {
+        if(data.tv.watched) S.tv.watched = data.tv.watched
+        if(data.tv.towatch) S.tv.towatch = data.tv.towatch
+      }
+      if(data.movie) {
+        if(data.movie.watched) S.movie.watched = data.movie.watched
+        if(data.movie.towatch) S.movie.towatch = data.movie.towatch
+      }
+      if(data.variety) {
+        if(data.variety.watched) S.variety.watched = data.variety.watched
+        if(data.variety.towatch) S.variety.towatch = data.variety.towatch
+      }
+      // 保存到本地并刷新
+      sv()
+      fullRender()
+      toast('✅ 数据导入成功！已刷新页面')
+    } catch(err) {
+      toast('❌ 导入失败：文件格式不正确', 'error')
+    }
+  }
+  reader.readAsText(file)
+  // 重置 input 以便重复导入同一个文件
+  event.target.value = ''
+}
+
 function fullRender(){
   renderKuake();renderVocab();renderRecipes();renderExercise();renderWorkouts()
   renderSkin();renderWater();renderWeight();renderPeriod()
@@ -613,6 +705,46 @@ function switchPage(p){document.querySelectorAll('.page').forEach(x=>x.classList
 function showModal(id){document.getElementById('mo-'+id).classList.add('show')}
 function closeModal(id){document.getElementById('mo-'+id).classList.remove('show')}
 document.querySelectorAll('.mo').forEach(el=>{el.addEventListener('click',e=>{if(e.target===el)el.classList.remove('show')})})
+
+/* ===== 相册图片上传 & 压缩 ===== */
+function previewImage(input, previewId){
+  const preview = document.getElementById(previewId)
+  const file = input.files[0]
+  if(!file){
+    preview.innerHTML = ''
+    input.dataset.base64 = ''
+    return
+  }
+  // 检查文件大小（限制 5MB）
+  if(file.size > 5 * 1024 * 1024){
+    toast('图片太大，请选择 5MB 以内的图片', 'error')
+    input.value = ''
+    input.dataset.base64 = ''
+    preview.innerHTML = ''
+    return
+  }
+  const reader = new FileReader()
+  reader.onload = function(e){
+    const img = new Image()
+    img.onload = function(){
+      // 压缩到最大 400px，质量 0.6，保持小体积
+      const maxW = 400, maxH = 400
+      let w = img.width, h = img.height
+      if(w > maxW){ h = h * maxW / w; w = maxW }
+      if(h > maxH){ w = w * maxH / h; h = maxH }
+      const canvas = document.createElement('canvas')
+      canvas.width = w; canvas.height = h
+      const ctx = canvas.getContext('2d')
+      ctx.drawImage(img, 0, 0, w, h)
+      const base64 = canvas.toDataURL('image/jpeg', 0.6)
+      input.dataset.base64 = base64
+      preview.innerHTML = `<img src="${base64}" style="max-width:100%;height:80px;object-fit:cover;border-radius:6px;box-shadow:0 1px 4px rgba(0,0,0,.1)">`
+    }
+    img.src = e.target.result
+  }
+  reader.readAsDataURL(file)
+}
+
 Html=String.raw
 
 // ===== 1. STUDY =====
@@ -685,11 +817,13 @@ function switchRecipeTab(el,id){
   el.classList.add('active');document.getElementById(id).classList.add('active')
 }
 function saveRecipe(){
-  const n=document.getElementById('rcName').value.trim(),c=document.getElementById('rcCal').value,i=document.getElementById('rcIng').value.trim(),s=document.getElementById('rcStatus').value,img=document.getElementById('rcImg').value.trim()
+  const n=document.getElementById('rcName').value.trim(),c=document.getElementById('rcCal').value,i=document.getElementById('rcIng').value.trim(),s=document.getElementById('rcStatus').value
+  const imgInput=document.getElementById('rcImg'),img=imgInput.dataset.base64||''
   if(!n)return toast('请输入菜名','error')
   S.recipes.unshift({name:n,cal:c,ingredients:i?i.split(',').map(x=>x.trim()).filter(Boolean):[],status:s,img,date:today()})
   sv();renderRecipes();closeModal('recipe')
-  document.getElementById('rcName').value='';document.getElementById('rcCal').value='';document.getElementById('rcIng').value='';document.getElementById('rcImg').value=''
+  document.getElementById('rcName').value='';document.getElementById('rcCal').value='';document.getElementById('rcIng').value=''
+  imgInput.value='';imgInput.dataset.base64='';document.getElementById('rcImgPreview').innerHTML=''
   toast('已添加菜谱')
 }
 function toggleRecipeStatus(i){S.recipes[i].status=S.recipes[i].status==='pending'?'done':'pending';sv();renderRecipes()}
@@ -1035,8 +1169,8 @@ function renderCraftWish(){
   c.innerHTML=S.craftWish.map((w,i)=>`<div class="ri"><div><div class="rname">🎨 ${w.type}</div>${w.tools.length?'<div class="rnote">🔧 '+w.tools.join(', ')+'</div>':''}${w.account?'<div class="rnote">👩‍🏫 '+w.account+'</div>':''}</div><div class="record-actions"><button onclick="delCraftWish(${i})" style="font-size:.65rem;color:var(--accent)">✕</button></div></div>`).join('')
 }
 // Perler
-function savePerlerC(){const n=document.getElementById('perlerCName').value.trim(),img=document.getElementById('perlerCImg').value.trim();if(!n)return toast('请输入名称','error');S.perlerC.unshift({name:n,img,date:today()});sv();renderPerler();closeModal('perlerC');document.getElementById('perlerCName').value='';document.getElementById('perlerCImg').value='';toast('已添加')}
-function savePerlerP(){const n=document.getElementById('perlerPName').value.trim(),img=document.getElementById('perlerPImg').value.trim();if(!n)return toast('请输入名称','error');S.perlerP.unshift({name:n,img,date:today()});sv();renderPerler();closeModal('perlerP');document.getElementById('perlerPName').value='';document.getElementById('perlerPImg').value='';toast('已添加')}
+function savePerlerC(){const n=document.getElementById('perlerCName').value.trim(),imgInput=document.getElementById('perlerCImg'),img=imgInput.dataset.base64||'';if(!n)return toast('请输入名称','error');S.perlerC.unshift({name:n,img,date:today()});sv();renderPerler();closeModal('perlerC');document.getElementById('perlerCName').value='';imgInput.value='';imgInput.dataset.base64='';document.getElementById('perlerCImgPreview').innerHTML='';toast('已添加')}
+function savePerlerP(){const n=document.getElementById('perlerPName').value.trim(),imgInput=document.getElementById('perlerPImg'),img=imgInput.dataset.base64||'';if(!n)return toast('请输入名称','error');S.perlerP.unshift({name:n,img,date:today()});sv();renderPerler();closeModal('perlerP');document.getElementById('perlerPName').value='';imgInput.value='';imgInput.dataset.base64='';document.getElementById('perlerPImgPreview').innerHTML='';toast('已添加')}
 function movePerlerToP(i){const item=S.perlerC.splice(i,1)[0];S.perlerP.unshift(item);sv();renderPerler()}
 function movePerlerToC(i){const item=S.perlerP.splice(i,1)[0];S.perlerC.unshift(item);sv();renderPerler()}
 function delPerler(t,i){S[t].splice(i,1);sv();renderPerler()}
@@ -1050,7 +1184,7 @@ function renderPerler(){
   r(S.perlerP,'perlerCPend',true,'movePerlerToC','✅ 完成')
 }
 // Past projects
-function savePastProject(){const n=document.getElementById('ppName').value.trim(),img=document.getElementById('ppImg').value.trim(),tools=document.getElementById('ppTools').value.trim(),process=document.getElementById('ppProcess').value.trim();if(!n)return toast('请输入名称','error');S.pastProj.unshift({name:n,img,tools:tools,process,date:today()});sv();renderPastProj();closeModal('pastProject');document.getElementById('ppName').value='';document.getElementById('ppImg').value='';document.getElementById('ppTools').value='';document.getElementById('ppProcess').value='';toast('已添加')}
+function savePastProject(){const n=document.getElementById('ppName').value.trim(),imgInput=document.getElementById('ppImg'),img=imgInput.dataset.base64||'',tools=document.getElementById('ppTools').value.trim(),process=document.getElementById('ppProcess').value.trim();if(!n)return toast('请输入名称','error');S.pastProj.unshift({name:n,img,tools:tools,process,date:today()});sv();renderPastProj();closeModal('pastProject');document.getElementById('ppName').value='';imgInput.value='';imgInput.dataset.base64='';document.getElementById('ppImgPreview').innerHTML='';document.getElementById('ppTools').value='';document.getElementById('ppProcess').value='';toast('已添加')}
 function delPastProj(i){S.pastProj.splice(i,1);sv();renderPastProj()}
 function renderPastProj(){
   const c=document.getElementById('pastProjectList')
