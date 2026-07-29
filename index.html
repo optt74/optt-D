@@ -1,0 +1,1188 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="OPTT生活台V2">
+<meta name="theme-color" content="#ff8aae">
+<link rel="manifest" href="manifest.json">
+<title>OP TT 生活台 V2</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{--bg:#f0f2f5;--surface:#fff;--surface2:#f5f6f8;--border:#e8eaed;--text:#1a1a2e;--text2:#5a5a7a;--text3:#9a9ab0;--primary:#5b7fff;--primary-light:#e8edff;--accent:#ff6b6b;--accent-light:#ffe8e8;--green:#2ecc71;--green-light:#e8f8f0;--orange:#f39c12;--orange-light:#fef5e7;--purple:#9b59b6;--purple-light:#f0e6ff;--bili:#fb7299;--weibo:#ff8200;--shadow:0 2px 12px rgba(0,0,0,.07);--shadow-lg:0 8px 30px rgba(0,0,0,.12);--radius:12px;--radius-sm:8px;--radius-lg:16px;--nav-h:58px;--header-h:52px;--safe-b:env(safe-area-inset-bottom,0px);--font:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;--transition:.25s cubic-bezier(.4,0,.2,1)}
+[data-theme=dark]{--bg:#0f0f1e;--surface:#18182e;--surface2:#1e1e3a;--border:#2a2a45;--text:#e0e0f0;--text2:#9090b0;--text3:#505070;--shadow:0 2px 12px rgba(0,0,0,.4);--shadow-lg:0 8px 30px rgba(0,0,0,.5);--primary-light:#1a1a3e;--accent-light:#3a1a1a;--green-light:#1a2e1a;--orange-light:#2e2a1a;--purple-light:#2a1a3e}
+html,body{height:100%;overflow:hidden}
+body{font-family:var(--font);background:var(--bg);color:var(--text);font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased;transition:background var(--transition),color var(--transition)}
+input,textarea,select{font-family:inherit;font-size:16px!important;color:inherit;background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:9px 12px;outline:0;width:100%;-webkit-appearance:none;transition:border var(--transition)}
+input:focus,textarea:focus,select:focus{border-color:var(--primary)}
+button{cursor:pointer;font-family:inherit;font-size:inherit;border:none;background:0;color:inherit}
+::-webkit-scrollbar{width:3px;height:3px}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+/* App Shell */
+#app{display:flex;flex-direction:column;height:100%;height:100dvh;overflow:hidden;max-width:100%}
+.app-header{height:var(--header-h);flex-shrink:0;display:flex;align-items:center;justify-content:space-between;padding:0 14px;padding-top:env(safe-area-inset-top,0);background:var(--surface);border-bottom:1px solid var(--border);z-index:10}
+.app-header h1{font-size:1.05rem;font-weight:700;background:linear-gradient(135deg,#ff8aae,#ff6b9d);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;white-space:nowrap}
+.hdr-right{display:flex;align-items:center;gap:8px}
+.hdr-date{font-size:.65rem;color:var(--text3);white-space:nowrap}
+.pages-container{flex:1;overflow:hidden;position:relative;background:var(--bg)}
+/* Pages */
+.page{display:none;height:100%;overflow-y:auto;overflow-x:hidden;padding:10px 12px;padding-bottom:calc(var(--nav-h) + var(--safe-b) + 10px);-webkit-overflow-scrolling:touch}
+.page.active{display:block}
+.page-hdr{font-size:1rem;font-weight:600;margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.page-hdr .page-badge{font-size:.6rem;padding:2px 10px;border-radius:20px;background:var(--primary-light);color:var(--primary);font-weight:500;margin-left:auto;-webkit-text-fill-color:var(--primary)}
+/* Bottom Nav */
+.bottom-nav{height:calc(var(--nav-h) + var(--safe-b));flex-shrink:0;display:flex;align-items:flex-start;justify-content:space-around;padding-top:4px;padding-bottom:var(--safe-b);background:var(--surface);border-top:1px solid var(--border);z-index:10}
+.nav-i{display:flex;flex-direction:column;align-items:center;gap:1px;padding:2px 4px;border-radius:6px;font-size:.55rem;color:var(--text3);transition:var(--transition);min-width:44px;position:relative}
+.nav-i .ni{font-size:1.2rem;line-height:1}
+.nav-i.active{color:var(--primary)}
+.nav-i.active::after{content:'';position:absolute;top:-1px;left:50%;transform:translateX(-50%);width:18px;height:2.5px;background:var(--primary);border-radius:0 0 3px 3px}
+/* Card */
+.cd{background:var(--surface);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;margin-bottom:12px}
+.cd-hdr{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-bottom:1px solid var(--border);font-weight:600;font-size:.9rem}
+.cd-body{padding:12px 14px}
+/* Sub tabs */
+.stabs{display:flex;gap:5px;margin-bottom:10px;overflow-x:auto;flex-wrap:nowrap;padding-bottom:3px}
+.stab{padding:6px 14px;border-radius:18px;font-size:.76rem;transition:var(--transition);font-weight:500;white-space:nowrap;background:var(--surface2);color:var(--text2);flex-shrink:0}
+.stab.active{background:var(--primary);color:#fff}
+.stab-c{display:none}
+.stab-c.active{display:block}
+/* Traffic Light Button */
+.tl{display:inline-flex;align-items:center;gap:4px;padding:7px 14px;border-radius:20px;font-size:.78rem;font-weight:500;transition:var(--transition)}
+.tl:active{transform:scale(.94)}
+.tl.green{background:var(--green-light);color:var(--green);border:1.5px solid var(--green)}
+.tl.red{background:var(--accent-light);color:var(--accent);border:1.5px solid var(--accent)}
+.tl.gray{background:var(--surface2);color:var(--text3);border:1.5px solid var(--border)}
+/* Stats row */
+.sr{display:flex;gap:10px;flex-wrap:wrap;margin:6px 0}
+.sr-item{flex:1;min-width:80px;text-align:center;padding:10px 8px;border-radius:var(--radius-sm);background:var(--surface2)}
+.sr-item .sr-num{font-size:1.3rem;font-weight:700;color:var(--primary)}
+.sr-item .sr-lbl{font-size:.68rem;color:var(--text3);margin-top:2px}
+/* Grid helpers */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+/* Video item */
+.vi{display:flex;gap:10px;padding:10px;background:var(--surface2);border-radius:var(--radius-sm);margin-bottom:8px;transition:var(--transition);cursor:pointer}
+.vi:active{background:var(--primary-light);transform:scale(.98)}
+.vi .vthumb{width:100px;height:62px;border-radius:5px;object-fit:cover;flex-shrink:0;background:var(--border)}
+.vi .vinfo{flex:1;min-width:0}
+.vi .vtitle{font-size:.82rem;font-weight:500;line-height:1.35;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;margin-bottom:3px}
+.vi .vmeta{font-size:.7rem;color:var(--text3);display:flex;gap:8px;align-items:center}
+.vi .vact{display:flex;gap:4px;margin-top:4px;flex-wrap:wrap}
+/* Shopping */
+.sh-item{display:flex;justify-content:space-between;align-items:center;padding:7px 10px;margin:3px 0;border-radius:6px;background:var(--surface2);font-size:.82rem}
+.sh-item.done{opacity:.55}
+.sh-item.done .sh-name{text-decoration:line-through}
+.sh-item .sh-name{display:flex;align-items:center;gap:6px}
+.sh-item .sh-price{color:var(--accent);font-size:.76rem;font-weight:500}
+.sh-acts{display:flex;gap:3px}
+.sh-acts button{width:28px;height:28px;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:.72rem;transition:var(--transition)}
+.sh-acts button:active{background:var(--border)}
+/* Recipe card */
+.rc{background:var(--surface2);border-radius:var(--radius-sm);padding:10px;margin-bottom:8px;display:flex;gap:10px}
+.rc .rc-img{width:70px;height:70px;border-radius:6px;background:var(--border);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:2rem}
+.rc .rc-body{flex:1;min-width:0}
+.rc .rc-name{font-weight:500;font-size:.82rem}
+.rc .rc-meta{font-size:.7rem;color:var(--text3);margin-top:2px}
+.rc .rc-acts{margin-top:4px;display:flex;gap:4px}
+/* Empty state */
+.emp{text-align:center;padding:20px 12px;color:var(--text3);font-size:.82rem}
+.emp .big-e{font-size:2.2rem;display:block;margin-bottom:6px}
+/* Modal */
+.mo{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:1000;display:none;align-items:flex-end;justify-content:center;backdrop-filter:blur(4px)}
+.mo.show{display:flex}
+.mo-in{background:var(--surface);border-radius:var(--radius-lg) var(--radius-lg) 0 0;padding:20px 20px calc(20px + var(--safe-b));width:100%;max-width:500px;max-height:80vh;overflow-y:auto;animation:slideUp .3s ease}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.mo-in h3{margin-bottom:14px;font-size:1rem}
+.fg{margin-bottom:12px}
+.fg label{display:block;font-size:.78rem;margin-bottom:3px;color:var(--text2)}
+.ma{display:flex;gap:10px;margin-top:16px}
+.ma .btn{flex:1;text-align:center;padding:10px;border-radius:var(--radius-sm);font-weight:500;transition:var(--transition)}
+.ma .btn:active{transform:scale(.96)}
+.ma .btn-p{background:var(--primary);color:#fff}
+.ma .btn-o{background:var(--surface2);color:var(--text2);border:1px solid var(--border)}
+/* Toast */
+.ts{position:fixed;top:14px;left:50%;transform:translateX(-50%);z-index:2000;background:var(--surface);border-radius:var(--radius-sm);padding:10px 20px;box-shadow:var(--shadow-lg);font-size:.82rem;border-left:4px solid var(--primary);animation:ti .3s ease;pointer-events:none}
+@keyframes ti{from{opacity:0;transform:translateX(-50%) translateY(-16px)}}
+/* Checkbox style for lists */
+.lbl-row{display:flex;align-items:center;gap:8px;padding:6px 8px;border-radius:6px;font-size:.82rem;cursor:pointer}
+.lbl-row:active{background:var(--surface2)}
+.lbl-row .lbl-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.lbl-row .lbl-dot.g{background:var(--green)}
+.lbl-row .lbl-dot.r{background:var(--accent)}
+.lbl-row .lbl-dot.y{background:var(--orange)}
+/* Water calendar */
+.wcal{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-top:6px}
+.wcal .wday{padding:6px 4px;text-align:center;border-radius:5px;font-size:.68rem;background:var(--surface2);color:var(--text3)}
+.wcal .wday.done{background:var(--green-light);color:var(--green);font-weight:600}
+.wcal .wday.today{border:1.5px solid var(--primary)}
+.wcal .wday .wdn{display:block;font-weight:600;font-size:.75rem}
+/* Perler */
+.pg{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.pc{border-radius:var(--radius-sm);background:var(--surface2);text-align:center;padding:10px;transition:var(--transition)}
+.pc:active{transform:scale(.96)}
+.pc .pp{height:80px;border-radius:5px;background:var(--border);margin-bottom:6px;display:flex;align-items:center;justify-content:center;font-size:1.8rem}
+.pc .pn{font-size:.78rem;font-weight:500}
+.pc .pm{font-size:.66rem;color:var(--text3)}
+/* Rest item */
+.ri{display:flex;justify-content:space-between;align-items:flex-start;padding:8px 10px;border-radius:var(--radius-sm);border-bottom:1px solid var(--border);font-size:.82rem}
+.ri:active{background:var(--surface2)}
+.ri .rname{font-weight:500}
+.ri .rnote{font-size:.7rem;color:var(--text3);margin-top:1px}
+.ri .rtags{display:flex;gap:3px;flex-wrap:wrap;margin-top:3px}
+.ri .rtag{font-size:.6rem;padding:1px 7px;border-radius:8px;background:var(--primary-light);color:var(--primary)}
+/* Track item */
+.tri{display:flex;align-items:center;gap:8px;padding:8px;border-radius:6px;margin-bottom:4px;background:var(--surface2);font-size:.8rem}
+.tri .tr-info{flex:1}
+.tri .tr-name{font-weight:500}
+.tri .tr-meta{font-size:.68rem;color:var(--text3)}
+/* Trend */
+.trend-item{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:var(--radius-sm);border-bottom:1px solid var(--border);cursor:pointer}
+.trend-item:active{background:var(--surface2)}
+.trend-item .tr{width:22px;text-align:center;font-weight:700;font-size:.8rem;flex-shrink:0}
+.trend-item .tr.t1{color:#ff4757}.trend-item .tr.t2{color:#ff6b81}.trend-item .tr.t3{color:#ffa502}
+.trend-item .tt{flex:1;font-size:.8rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.trend-item .tn{font-size:.66rem;color:var(--text3);flex-shrink:0}
+.tb{font-size:.55rem;padding:1px 6px;border-radius:8px;font-weight:500;flex-shrink:0}
+.tb.hot{background:var(--accent-light);color:var(--accent)}
+.tb.new{background:var(--primary-light);color:var(--primary)}
+.tb.boom{background:var(--orange-light);color:var(--orange)}
+/* Inspiration card */
+.ic{background:var(--orange-light);border-radius:var(--radius-sm);padding:10px 12px;margin-bottom:6px;display:flex;align-items:center;gap:8px}
+.ic .ict{flex:1;font-size:.8rem;color:var(--orange)}
+/* Desktop */
+@media(min-width:769px){
+  .bottom-nav{display:none}
+  .pages-container{overflow-y:auto;padding:20px;display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:start}
+  .page{display:block!important;height:auto;overflow:visible;padding:0;margin:0}
+  .page-hdr{display:none}
+  .app-header{padding:0 24px}
+  .app-header h1{font-size:1.3rem}
+  .mo{align-items:center}
+  .mo-in{border-radius:var(--radius-lg);max-width:480px}
+  .cd-body{max-height:500px;overflow-y:auto}
+}
+@media(min-width:1100px){.pages-container{grid-template-columns:1fr 1fr 1fr}}
+</style>
+</head>
+<body>
+<div id="app">
+<header class="app-header"><h1>🐰 OP TT 生活台</h1><div class="hdr-right"><span class="hdr-date" id="dateDisplay"></span><button class="theme-btn" onclick="toggleTheme()" style="width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:var(--surface2);font-size:.9rem">🌓</button></div></header>
+
+<div class="pages-container" id="pagesContainer">
+
+<!-- ===== PAGE 1: 学习 ===== -->
+<section class="page active" data-page="study">
+<div class="page-hdr">📚 学习 <span class="page-badge">英语</span></div>
+<div class="cd"><div class="cd-body">
+  <!-- Title -->
+  <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;"><span style="font-weight:600;font-size:.9rem">📖 英语学习</span></div>
+  <!-- Bilibili search -->
+  <div class="search-bar" style="display:flex;gap:6px;margin-bottom:8px">
+    <input type="text" id="biliSearch" placeholder="搜英语学习视频…" value="英语学习" onkeydown="if(event.key==='Enter')searchBili()" style="flex:1;font-size:.82rem">
+    <button onclick="searchBili()" id="biliBtn" style="padding:9px 14px;border-radius:var(--radius-sm);background:var(--primary);color:#fff;font-weight:500;font-size:.8rem;white-space:nowrap">🔍 搜索</button>
+  </div>
+  <div class="stabs" id="biliTabs">
+    <button class="stab active" onclick="switchBili(this,'all')">全部</button>
+    <button class="stab" onclick="switchBili(this,'oral')">口语</button>
+    <button class="stab" onclick="switchBili(this,'grammar')">语法</button>
+    <button class="stab" onclick="switchBili(this,'listening')">听力</button>
+  </div>
+  <div id="biliRes" class="vi-list" style="margin-bottom:10px"><div class="emp"><span class="big-e">🔍</span>点击搜索推荐视频</div></div>
+
+  <!-- Kuake Links -->
+  <div style="display:flex;align-items:center;gap:6px;margin:10px 0 6px"><span style="font-weight:600;font-size:.82rem">📎 夸克学习链接</span><button onclick="showModal('kuake')" style="margin-left:auto;font-size:.7rem;color:var(--primary)">+ 添加</button></div>
+  <div id="kuakeList"></div>
+
+  <!-- Daily vocab traffic light -->
+  <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:var(--surface2);border-radius:var(--radius-sm);margin-top:10px">
+    <span style="font-size:.82rem;font-weight:500">📝 今日背单词</span>
+    <button id="vocabBtn" class="tl gray" onclick="toggleVocab()">🔘 未打卡</button>
+  </div>
+</div></div>
+</section>
+
+<!-- ===== PAGE 2: 健康 ===== -->
+<section class="page" data-page="health">
+<div class="page-hdr">❤️ 健康管理 <span class="page-badge" id="healthBadge">今天</span></div>
+
+<div class="cd">
+<div class="stabs" id="healthTabs" style="padding:10px 12px 0">
+  <button class="stab active" onclick="switchH(this,'h-meal')">🥗 三餐</button>
+  <button class="stab" onclick="switchH(this,'h-exer')">🏃 运动</button>
+  <button class="stab" onclick="switchH(this,'h-skin')">🧴 皮肤</button>
+  <button class="stab" onclick="switchH(this,'h-water')">💧 喝水</button>
+  <button class="stab" onclick="switchH(this,'h-wt')">⚖️ 体重</button>
+  <button class="stab" onclick="switchH(this,'h-period')">🌸 生理期</button>
+</div>
+<div class="cd-body">
+<!-- 三餐 -->
+<div id="h-meal" class="stab-c active">
+  <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px"><span style="font-weight:500;font-size:.82rem">🥗 健康菜谱</span><button onclick="showModal('recipe')" style="margin-left:auto;font-size:.7rem;color:var(--primary)">+ 添加菜谱</button></div>
+  <div class="stabs" style="margin-bottom:6px">
+    <button class="stab active" onclick="switchRecipeTab(this,'r-try')">⏳ 待制作</button>
+    <button class="stab" onclick="switchRecipeTab(this,'r-done')">✅ 已做过</button>
+  </div>
+  <div id="r-try" class="stab-c active"></div>
+  <div id="r-done" class="stab-c"></div>
+  <div style="margin-top:8px;padding:8px 10px;background:var(--primary-light);border-radius:var(--radius-sm);font-size:.72rem;color:var(--text2);line-height:1.5">
+    💡 <strong>每日健康饮食知识</strong><br><span id="dietTip">加载中…</span>
+  </div>
+</div>
+<!-- 运动 -->
+<div id="h-exer" class="stab-c">
+  <div class="sr">
+    <div class="sr-item" onclick="toggleCheckin('bike')" style="cursor:pointer"><div class="sr-num" id="bikeStatus">🔴</div><div class="sr-lbl">🚴 自行车20min</div></div>
+    <div class="sr-item" onclick="toggleCheckin('walk')" style="cursor:pointer"><div class="sr-num" id="walkStatus">🔴</div><div class="sr-lbl">🚶 快走45min</div></div>
+    <div class="sr-item" onclick="toggleCheckin('aerobic')" style="cursor:pointer"><div class="sr-num" id="aerobicStatus">🔴</div><div class="sr-lbl">🏋️ 有氧周目标</div></div>
+  </div>
+  <div style="font-size:.72rem;color:var(--text2);margin-bottom:6px">本周有氧运动: <span id="aerobicCount">0</span>/5 次</div>
+  <div style="display:flex;align-items:center;gap:6px;margin:8px 0 4px"><span style="font-weight:500;font-size:.82rem">📺 跟练视频</span><button onclick="showModal('workout')" style="margin-left:auto;font-size:.7rem;color:var(--primary)">+ 添加</button></div>
+  <div id="workoutList"></div>
+  <div style="margin-top:8px">
+    <div class="stabs">
+      <button class="stab active" onclick="switchWv(this,'wv-all')">推荐</button>
+      <button class="stab" onclick="switchWv(this,'wv-pamela')">帕梅拉</button>
+      <button class="stab" onclick="switchWv(this,'wv-oyxc')">欧阳春晓</button>
+    </div>
+    <div id="wv-all" class="stab-c active"></div>
+    <div id="wv-pamela" class="stab-c"></div>
+    <div id="wv-oyxc" class="stab-c"></div>
+    <div style="text-align:center;margin-top:4px"><button class="stab" onclick="searchWorkoutVideos()" style="background:var(--primary-light);color:var(--primary)">🔄 搜索B站运动视频</button></div>
+  </div>
+</div>
+<!-- 皮肤 -->
+<div id="h-skin" class="stab-c">
+  <div class="g2">
+    <button class="tl gray" id="skinCream" onclick="toggleSkin('cream')" style="justify-content:center">🧴 药膏</button>
+    <button class="tl gray" id="skinMask" onclick="toggleSkin('mask')" style="justify-content:center">🧹 清洁泥膜</button>
+    <button class="tl gray" id="skinHydra" onclick="toggleSkin('hydra')" style="justify-content:center">💦 补水面膜</button>
+    <button class="tl gray" id="skinIso" onclick="toggleSkin('iso')" style="justify-content:center">💊 异维A酸</button>
+  </div>
+  <div style="display:flex;align-items:center;gap:6px;margin:10px 0 4px"><span style="font-weight:500;font-size:.82rem">🏥 皮肤科看诊</span><button onclick="addDoctorVisit()" style="margin-left:auto;font-size:.7rem;color:var(--primary)">+ 记录</button></div>
+  <div id="doctorVisits"></div>
+</div>
+<!-- 喝水 -->
+<div id="h-water" class="stab-c">
+  <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:var(--surface2);border-radius:var(--radius-sm);margin-bottom:8px">
+    <span style="font-size:.82rem;font-weight:500">💧 今日 1.5L 目标</span>
+    <button id="waterBtn" class="tl gray" onclick="toggleWater()">🔘 未完成</button>
+  </div>
+  <div style="font-weight:500;font-size:.82rem;margin-bottom:6px">📅 本月喝水打卡</div>
+  <div id="waterCalendar"></div>
+</div>
+<!-- 体重 -->
+<div id="h-wt" class="stab-c">
+  <div class="form-row" style="display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap">
+    <input type="number" id="wtInput" placeholder="体重 (kg)" step="0.1" style="flex:1;min-width:80px;font-size:.82rem">
+    <button class="btn" onclick="addWeight()" style="padding:9px 16px;border-radius:var(--radius-sm);background:var(--green);color:#fff;font-weight:500;font-size:.8rem">✓ 记录</button>
+  </div>
+  <div class="sr">
+    <div class="sr-item"><div class="sr-num" id="bmiDisplay">--</div><div class="sr-lbl">BMI</div></div>
+    <div class="sr-item"><div class="sr-num" id="bmiAdvice">--</div><div class="sr-lbl">建议</div></div>
+  </div>
+  <div class="weight-chart-box" style="height:130px;margin:4px 0"><canvas id="weightChart"></canvas></div>
+  <div id="wtRecords"></div>
+</div>
+<!-- 生理期 -->
+<div id="h-period" class="stab-c">
+  <div style="display:flex;gap:8px;margin-bottom:8px;flex-wrap:wrap">
+    <button class="tl btn" onclick="markPeriod()" style="background:var(--accent-light);color:var(--accent);border:1.5px solid var(--accent)">📅 标记今天</button>
+    <button class="tl btn" onclick="clearPeriod()" style="background:var(--surface2);border:1.5px solid var(--border)">清除</button>
+  </div>
+  <div id="periodPrediction" style="font-size:.78rem;color:var(--text2);margin-bottom:6px"></div>
+  <div id="periodCal"></div>
+</div>
+</div></div>
+</section>
+
+<!-- ===== PAGE 3: 购物 ===== -->
+<section class="page" data-page="shopping">
+<div class="page-hdr">🛒 购物清单 <span class="page-badge" id="shopBadge">0</span></div>
+<div class="cd"><div class="cd-body">
+  <div class="stabs" id="shopTabs">
+    <button class="stab active" onclick="switchShopT(this,'s-pp')">🛍️ 朴朴</button>
+    <button class="stab" onclick="switchShopT(this,'s-sm')">🏪 山姆</button>
+    <button class="stab" onclick="switchShopT(this,'s-ol')">📦 网购</button>
+    <button class="stab" onclick="switchShopT(this,'s-cam')">📷 相机</button>
+  </div>
+  <div id="s-pp" class="stab-c active"></div>
+  <div id="s-sm" class="stab-c"></div>
+  <div id="s-ol" class="stab-c"></div>
+  <div id="s-cam" class="stab-c"></div>
+</div></div>
+</section>
+
+<!-- ===== PAGE 4: 出门 ===== -->
+<section class="page" data-page="out">
+<div class="page-hdr">🚶 出门 <span class="page-badge">探索</span></div>
+<div class="cd"><div class="cd-body">
+  <div class="stabs" id="outTabs">
+    <button class="stab active" onclick="switchOutT(this,'o-regular')">❤️ 常去</button>
+    <button class="stab" onclick="switchOutT(this,'o-want')">⭐ 想去</button>
+    <button class="stab" onclick="switchOutT(this,'o-fjian')">🌿 福建清新</button>
+    <button class="stab" onclick="switchOutT(this,'o-travel')">✈️ 旅游</button>
+  </div>
+  <!-- 常去 -->
+  <div id="o-regular" class="stab-c active">
+    <button onclick="showModal('restReg')" style="float:right;font-size:.7rem;color:var(--primary);padding:4px 0">+ 添加</button>
+    <div style="font-weight:500;font-size:.82rem;margin-bottom:6px">❤️ 常去的店</div>
+    <div id="restRegList"></div>
+  </div>
+  <!-- 想去 -->
+  <div id="o-want" class="stab-c">
+    <button onclick="showModal('restWant')" style="float:right;font-size:.7rem;color:var(--primary);padding:4px 0">+ 添加</button>
+    <div class="stabs" style="margin-bottom:6px">
+      <button class="stab active" onclick="switchWantT(this,'w-food')">🍜 美食</button>
+      <button class="stab" onclick="switchWantT(this,'w-fun')">🎮 好玩</button>
+    </div>
+    <div id="w-food" class="stab-c active"></div>
+    <div id="w-fun" class="stab-c"></div>
+  </div>
+  <!-- 福建清新卡 -->
+  <div id="o-fjian" class="stab-c">
+    <button onclick="showModal('fjian')" style="float:right;font-size:.7rem;color:var(--primary);padding:4px 0">+ 添加</button>
+    <div class="stabs" style="margin-bottom:6px">
+      <button class="stab active" onclick="switchFjianT(this,'fj-done')">✅ 去过</button>
+      <button class="stab" onclick="switchFjianT(this,'fj-left')">📋 剩余</button>
+    </div>
+    <div id="fj-done" class="stab-c active"></div>
+    <div id="fj-left" class="stab-c"></div>
+  </div>
+  <!-- 旅游 -->
+  <div id="o-travel" class="stab-c">
+    <button onclick="showModal('travel')" style="float:right;font-size:.7rem;color:var(--primary);padding:4px 0">+ 添加</button>
+    <div style="font-weight:500;font-size:.82rem;margin-bottom:6px">✈️ 想去的地方</div>
+    <div id="travelList"></div>
+  </div>
+</div></div>
+</section>
+
+<!-- ===== PAGE 5: 手工 ===== -->
+<section class="page" data-page="craft">
+<div class="page-hdr">🎨 创意手工 <span class="page-badge">灵感</span></div>
+<div class="cd"><div class="cd-body">
+  <div class="stabs" id="craftTabs">
+    <button class="stab active" onclick="switchCraftT(this,'c-wish')">💡 收藏</button>
+    <button class="stab" onclick="switchCraftT(this,'c-perler')">🧩 拼豆</button>
+    <button class="stab" onclick="switchCraftT(this,'c-past')">📦 作品</button>
+  </div>
+  <!-- 收藏 -->
+  <div id="c-wish" class="stab-c active">
+    <button onclick="showModal('craftWish')" style="float:right;font-size:.7rem;color:var(--primary);padding:4px 0">+ 添加</button>
+    <div style="font-weight:500;font-size:.82rem;margin-bottom:6px">💡 想尝试的手工</div>
+    <div id="craftWishList"></div>
+  </div>
+  <!-- 拼豆 -->
+  <div id="c-perler" class="stab-c">
+    <div style="font-weight:500;font-size:.82rem;display:flex;align-items:center;gap:6px;margin-bottom:4px">✅ 已完成<button onclick="showModal('perlerC')" style="margin-left:auto;font-size:.7rem;color:var(--primary)">+</button></div>
+    <div id="perlerCDone" class="pg" style="margin-bottom:10px"></div>
+    <div style="font-weight:500;font-size:.82rem;display:flex;align-items:center;gap:6px;margin-bottom:4px">⏳ 待完成<button onclick="showModal('perlerP')" style="margin-left:auto;font-size:.7rem;color:var(--primary)">+</button></div>
+    <div id="perlerCPend" class="pg"></div>
+  </div>
+  <!-- 作品 -->
+  <div id="c-past" class="stab-c">
+    <button onclick="showModal('pastProject')" style="float:right;font-size:.7rem;color:var(--primary);padding:4px 0">+ 添加</button>
+    <div style="font-weight:500;font-size:.82rem;margin-bottom:6px">📦 曾经的作品</div>
+    <div id="pastProjectList"></div>
+  </div>
+</div></div>
+</section>
+
+<!-- ===== PAGE 6: 追剧 ===== -->
+<section class="page" data-page="binge">
+<div class="page-hdr">📺 居家追剧 <span class="page-badge">娱乐</span></div>
+<div class="cd"><div class="cd-body">
+  <div class="stabs" id="bingeTabs">
+    <button class="stab active" onclick="switchBingeT(this,'bg-tv')">📺 电视剧</button>
+    <button class="stab" onclick="switchBingeT(this,'bg-movie')">🎬 电影</button>
+    <button class="stab" onclick="switchBingeT(this,'bg-variety')">🎭 综艺</button>
+  </div>
+  <!-- TV -->
+  <div id="bg-tv" class="stab-c active">
+    <button onclick="showModal('tvShow')" style="float:right;font-size:.7rem;color:var(--primary);padding:4px 0">+ 添加</button>
+    <div class="stabs" style="margin-bottom:4px">
+      <button class="stab active" onclick="switchMediaTab(this,'tv-watched')">✅ 看过</button>
+      <button class="stab" onclick="switchMediaTab(this,'tv-towatch')">📋 待看</button>
+    </div>
+    <div id="tv-watched" class="stab-c active"></div>
+    <div id="tv-towatch" class="stab-c"></div>
+  </div>
+  <!-- Movies -->
+  <div id="bg-movie" class="stab-c">
+    <button onclick="showModal('movie')" style="float:right;font-size:.7rem;color:var(--primary);padding:4px 0">+ 添加</button>
+    <div class="stabs" style="margin-bottom:4px">
+      <button class="stab active" onclick="switchMediaTab(this,'mv-watched')">✅ 看过</button>
+      <button class="stab" onclick="switchMediaTab(this,'mv-towatch')">📋 待看</button>
+    </div>
+    <div id="mv-watched" class="stab-c active"></div>
+    <div id="mv-towatch" class="stab-c"></div>
+  </div>
+  <!-- Variety -->
+  <div id="bg-variety" class="stab-c">
+    <button onclick="showModal('variety')" style="float:right;font-size:.7rem;color:var(--primary);padding:4px 0">+ 添加</button>
+    <div class="stabs" style="margin-bottom:4px">
+      <button class="stab active" onclick="switchMediaTab(this,'vr-watched')">✅ 看过</button>
+      <button class="stab" onclick="switchMediaTab(this,'vr-towatch')">📋 待看</button>
+    </div>
+    <div id="vr-watched" class="stab-c active"></div>
+    <div id="vr-towatch" class="stab-c"></div>
+  </div>
+</div></div>
+</section>
+
+<!-- ===== PAGE 7: 热点 ===== -->
+<section class="page" data-page="trend">
+<div class="page-hdr">🔥 热点 & 灵感 <span class="page-badge">实时</span></div>
+<div class="cd"><div class="cd-body">
+  <div class="stabs" id="trendTabs">
+    <button class="stab active" onclick="switchTrendT(this,'t-wb')">🐾 微博热搜</button>
+    <button class="stab" onclick="switchTrendT(this,'t-dy')">🎵 抖音热点</button>
+    <button class="stab" onclick="switchTrendT(this,'t-idea')">💡 灵感</button>
+  </div>
+  <div id="t-wb" class="stab-c active"></div>
+  <div id="t-dy" class="stab-c"></div>
+  <div id="t-idea" class="stab-c">
+    <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px"><span style="font-weight:500;font-size:.82rem">💡 每日创意灵感</span><button onclick="generateIdea()" style="margin-left:auto;font-size:.7rem;color:var(--primary)">✨ 生成灵感</button></div>
+    <div id="ideaList"></div>
+  </div>
+  <div style="text-align:center;margin-top:8px"><button class="stab" onclick="refreshTrend()" style="background:var(--primary-light);color:var(--primary)">🔄 刷新热点</button></div>
+</div></div>
+</section>
+
+</div><!-- pages-container -->
+
+<!-- Bottom Nav -->
+<nav class="bottom-nav">
+  <button class="nav-i active" data-page="study" onclick="switchPage('study')"><span class="ni">📚</span><span>学习</span></button>
+  <button class="nav-i" data-page="health" onclick="switchPage('health')"><span class="ni">❤️</span><span>健康</span></button>
+  <button class="nav-i" data-page="shopping" onclick="switchPage('shopping')"><span class="ni">🛒</span><span>购物</span></button>
+  <button class="nav-i" data-page="out" onclick="switchPage('out')"><span class="ni">🚶</span><span>出门</span></button>
+  <button class="nav-i" data-page="craft" onclick="switchPage('craft')"><span class="ni">🎨</span><span>手工</span></button>
+  <button class="nav-i" data-page="binge" onclick="switchPage('binge')"><span class="ni">📺</span><span>追剧</span></button>
+  <button class="nav-i" data-page="trend" onclick="switchPage('trend')"><span class="ni">🔥</span><span>热点</span></button>
+</nav>
+</div><!-- /app -->
+
+<!-- ===== MODALS ===== -->
+<div class="mo" id="mo-kuake"><div class="mo-in"><h3>📎 添加夸克学习链接</h3><div class="fg"><label>链接标题</label><input type="text" id="kuakeTitle" placeholder="如: 英语语法精讲"></div><div class="fg"><label>夸克链接 URL</label><input type="url" id="kuakeUrl" placeholder="https://夸克链接"></div><div class="ma"><button class="btn btn-o" onclick="closeModal('kuake')">取消</button><button class="btn btn-p" onclick="saveKuake()">保存</button></div></div></div>
+
+<div class="mo" id="mo-recipe"><div class="mo-in"><h3>🥗 添加菜谱</h3><div class="fg"><label>菜名 *</label><input type="text" id="rcName" placeholder="菜名"></div><div class="fg"><label>卡路里 (kcal)</label><input type="number" id="rcCal" placeholder="约多少大卡"></div><div class="fg"><label>所需食材 (逗号分隔)</label><input type="text" id="rcIng" placeholder="鸡蛋, 番茄, 洋葱"></div><div class="fg"><label>状态</label><select id="rcStatus"><option value="pending">⏳ 待制作</option><option value="done">✅ 已做过</option></select></div><div class="fg"><label>图片链接 (选填)</label><input type="url" id="rcImg" placeholder="https://..."></div><div class="ma"><button class="btn btn-o" onclick="closeModal('recipe')">取消</button><button class="btn btn-p" onclick="saveRecipe()">保存</button></div></div></div>
+
+<div class="mo" id="mo-workout"><div class="mo-in"><h3>📺 添加跟练视频</h3><div class="fg"><label>视频标题</label><input type="text" id="woTitle" placeholder="帕梅拉 20分钟有氧"></div><div class="fg"><label>B站链接或视频ID</label><input type="text" id="woUrl" placeholder="BV1... 或完整URL"></div><div class="fg"><label>分类</label><select id="woType"><option value="all">通用</option><option value="pamela">帕梅拉</option><option value="oyxc">欧阳春晓</option></select></div><div class="ma"><button class="btn btn-o" onclick="closeModal('workout')">取消</button><button class="btn btn-p" onclick="saveWorkout()">保存</button></div></div></div>
+
+<div class="mo" id="mo-restReg"><div class="mo-in"><h3>❤️ 添加常去的店</h3><div class="fg"><label>店名 *</label><input type="text" id="regName" placeholder="店名"></div><div class="fg"><label>最吸引你的食物</label><input type="text" id="regDish" placeholder="招牌菜/最爱"></div><div class="fg"><label>备注</label><textarea id="regNote" placeholder="其他想说的…" rows="2"></textarea></div><div class="ma"><button class="btn btn-o" onclick="closeModal('restReg')">取消</button><button class="btn btn-p" onclick="saveRestReg()">保存</button></div></div></div>
+
+<div class="mo" id="mo-restWant"><div class="mo-in"><h3>⭐ 添加想去的店</h3><div class="fg"><label>店名 *</label><input type="text" id="wantName" placeholder="店名"></div><div class="fg"><label>分类</label><select id="wantType"><option value="food">🍜 美食</option><option value="fun">🎮 好玩</option></select></div><div class="fg"><label>人均价格</label><input type="text" id="wantPrice" placeholder="约 ¥100/人"></div><div class="fg"><label>地址</label><input type="text" id="wantAddr" placeholder="地址或区域"></div><div class="fg"><label>交通工具</label><input type="text" id="wantTrans" placeholder="地铁/公交/开车"></div><div class="ma"><button class="btn btn-o" onclick="closeModal('restWant')">取消</button><button class="btn btn-p" onclick="saveRestWant()">保存</button></div></div></div>
+
+<div class="mo" id="mo-fjian"><div class="mo-in"><h3>🌿 福建清新卡</h3><div class="fg"><label>景点/演出名称 *</label><input type="text" id="fjName" placeholder="名称"></div><div class="fg"><label>类型</label><select id="fjType"><option value="visited">✅ 去过/看过</option><option value="remaining">📋 剩余未去</option></select></div><div class="fg" id="fjRemainingGroup"><label>剩余可去次数</label><input type="number" id="fjRemaining" placeholder="如: 3次" value="1"></div><div class="ma"><button class="btn btn-o" onclick="closeModal('fjian')">取消</button><button class="btn btn-p" onclick="saveFjian()">保存</button></div></div></div>
+
+<div class="mo" id="mo-travel"><div class="mo-in"><h3>✈️ 想去旅游的地方</h3><div class="fg"><label>目的地 *</label><input type="text" id="trDest" placeholder="如: 云南大理"></div><div class="fg"><label>备注</label><textarea id="trNote" placeholder="想去的理由/季节…" rows="2"></textarea></div><div class="ma"><button class="btn btn-o" onclick="closeModal('travel')">取消</button><button class="btn btn-p" onclick="saveTravel()">保存</button></div></div></div>
+
+<div class="mo" id="mo-craftWish"><div class="mo-in"><h3>💡 想尝试的手工</h3><div class="fg"><label>手工类型 *</label><input type="text" id="cwType" placeholder="如: 羊毛毡、滴胶"></div><div class="fg"><label>所需工具 (逗号分隔)</label><input type="text" id="cwTools" placeholder="工具清单"></div><div class="fg"><label>学习博主/账号</label><input type="text" id="cwAccount" placeholder="小红书博主名或链接"></div><div class="ma"><button class="btn btn-o" onclick="closeModal('craftWish')">取消</button><button class="btn btn-p" onclick="saveCraftWish()">保存</button></div></div></div>
+
+<div class="mo" id="mo-perlerC"><div class="mo-in"><h3>✅ 添加完成的拼豆</h3><div class="fg"><label>图纸名称 *</label><input type="text" id="perlerCName" placeholder="图纸名称"></div><div class="fg"><label>图片链接 (选填)</label><input type="url" id="perlerCImg" placeholder="成品照片URL"></div><div class="ma"><button class="btn btn-o" onclick="closeModal('perlerC')">取消</button><button class="btn btn-p" onclick="savePerlerC()">保存</button></div></div></div>
+
+<div class="mo" id="mo-perlerP"><div class="mo-in"><h3>⏳ 添加待拼图纸</h3><div class="fg"><label>图纸名称 *</label><input type="text" id="perlerPName" placeholder="图纸名称"></div><div class="fg"><label>图片链接 (选填)</label><input type="url" id="perlerPImg" placeholder="图纸照片URL"></div><div class="ma"><button class="btn btn-o" onclick="closeModal('perlerP')">取消</button><button class="btn btn-p" onclick="savePerlerP()">保存</button></div></div></div>
+
+<div class="mo" id="mo-pastProject"><div class="mo-in"><h3>📦 添加曾经的作品</h3><div class="fg"><label>作品名称 *</label><input type="text" id="ppName" placeholder="作品名"></div><div class="fg"><label>图片链接 (选填)</label><input type="url" id="ppImg" placeholder="作品照片URL"></div><div class="fg"><label>使用工具</label><input type="text" id="ppTools" placeholder="工具清单"></div><div class="fg"><label>制作流程</label><textarea id="ppProcess" placeholder="大致制作步骤…" rows="3"></textarea></div><div class="ma"><button class="btn btn-o" onclick="closeModal('pastProject')">取消</button><button class="btn btn-p" onclick="savePastProject()">保存</button></div></div></div>
+
+<div class="mo" id="mo-tvShow"><div class="mo-in"><h3>📺 添加电视剧</h3><div class="fg"><label>剧名 *</label><input type="text" id="tvName" placeholder="剧名"></div><div class="fg"><label>状态</label><select id="tvStatus"><option value="watched">✅ 看过</option><option value="towatch">📋 待看</option></select></div><div class="fg" id="tvProgressGroup"><label>当前看到第几集</label><input type="text" id="tvEpisode" placeholder="如: 第15集"></div><div class="ma"><button class="btn btn-o" onclick="closeModal('tvShow')">取消</button><button class="btn btn-p" onclick="saveTvShow()">保存</button></div></div></div>
+
+<div class="mo" id="mo-movie"><div class="mo-in"><h3>🎬 添加电影</h3><div class="fg"><label>电影名 *</label><input type="text" id="mvName" placeholder="电影名"></div><div class="fg"><label>状态</label><select id="mvStatus"><option value="watched">✅ 看过</option><option value="towatch">📋 待看</option></select></div><div class="ma"><button class="btn btn-o" onclick="closeModal('movie')">取消</button><button class="btn btn-p" onclick="saveMovie()">保存</button></div></div></div>
+
+<div class="mo" id="mo-variety"><div class="mo-in"><h3>🎭 添加综艺</h3><div class="fg"><label>综艺名 *</label><input type="text" id="vrName" placeholder="综艺名"></div><div class="fg"><label>状态</label><select id="vrStatus"><option value="watched">✅ 看过</option><option value="towatch">📋 待看</option></select></div><div class="fg" id="vrProgressGroup"><label>当前看到第几期</label><input type="text" id="vrEpisode" placeholder="如: 第3期"></div><div class="ma"><button class="btn btn-o" onclick="closeModal('variety')">取消</button><button class="btn btn-p" onclick="saveVariety()">保存</button></div></div></div>
+
+<script>
+// ===== STATE =====
+const LS=k=>{try{return JSON.parse(localStorage.getItem('ot2_'+k))}catch{return null}}
+const LSS=(k,v)=>localStorage.setItem('ot2_'+k,JSON.stringify(v))
+const today=()=>new Date().toISOString().split('T')[0]
+const now=()=>new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'})
+let _serverReady=false // 标记服务器数据是否已加载
+
+const S={
+  theme:LS('theme')||'light',
+  kuakeLinks:LS('kuake')||[],vocab:LS('vocab')||{},
+  recipes:LS('recipes')||[],
+  bike:LS('bike')||{},walk:LS('walk')||{},aerobic:LS('aerobic')||{},
+  workouts:LS('workouts')||[],workoutCheckins:LS('wCheckins')||{},
+  skin:{cream:LS('sCream')||{},mask:LS('sMask')||{},hydra:LS('sHydra')||{},iso:LS('sIso')||{},doctor:LS('sDoctor')||[]},
+  water:LS('water')||{},
+  weights:LS('weights')||[],
+  periods:LS('periods')||[],
+  shop:LS('shop')||{pp:{p:[],q:[]},sm:{p:[],q:[]},ol:{p:[],q:[]},cam:{p:[],q:[]}},
+  restReg:LS('restReg')||[],restWant:{food:LS('rWantFood')||[],fun:LS('rWantFun')||[]},
+  fjian:{done:LS('fjDone')||[],left:LS('fjLeft')||[]},
+  travel:LS('travel')||[],
+  craftWish:LS('craftW')||[],perlerC:LS('perlerC')||[],perlerP:LS('perlerP')||[],pastProj:LS('pastProj')||[],
+  tv:{watched:LS('tvW')||[],towatch:LS('tvTW')||[]},
+  movie:{watched:LS('mvW')||[],towatch:LS('mvTW')||[]},
+  variety:{watched:LS('vrW')||[],towatch:LS('vrTW')||[]},
+  trend:{weibo:[],douyin:[]},
+  ideas:LS('ideas')||[],
+}
+
+/* ---- 本地存储 (即时) ---- */
+function saveLocal(){
+  Object.keys(S).forEach(k=>{if(k==='skin'||k==='shop'||k==='restWant'||k==='fjian'||k==='tv'||k==='movie'||k==='variety'||k==='trend')return;LSS(k,S[k])})
+  LSS('sCream',S.skin.cream);LSS('sMask',S.skin.mask);LSS('sHydra',S.skin.hydra);LSS('sIso',S.skin.iso);LSS('sDoctor',S.skin.doctor)
+  LSS('shop',S.shop);LSS('tvW',S.tv.watched);LSS('tvTW',S.tv.towatch);LSS('mvW',S.movie.watched);LSS('mvTW',S.movie.towatch)
+  LSS('vrW',S.variety.watched);LSS('vrTW',S.variety.towatch);LSS('rWantFood',S.restWant.food);LSS('rWantFun',S.restWant.fun)
+  LSS('fjDone',S.fjian.done);LSS('fjLeft',S.fjian.left);LSS('ideas',S.ideas);LSS('workouts',S.workouts)
+  LSS('wCheckins',S.workoutCheckins);LSS('bike',S.bike);LSS('walk',S.walk);LSS('aerobic',S.aerobic);LSS('theme',S.theme)
+}
+
+/* ---- 服务器存储 (持久化) ---- */
+let _saveTimer=null
+async function saveServer(){
+  try {
+    // 只发送可序列化的数据，去掉 trend（实时数据不用存）
+    const payload = {...S}; delete payload.trend
+    await fetch('/api/data', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify(payload)
+    })
+  } catch(e) { /* 静默失败，下次再试 */ }
+}
+
+/** 统一的保存函数：本地即时 + 服务器防抖 */
+function sv(){
+  saveLocal()
+  clearTimeout(_saveTimer)
+  _saveTimer = setTimeout(() => saveServer(), 800)
+}
+
+/** 启动时从服务器加载数据，合并到本地状态 */
+async function loadServerData(){
+  try {
+    const res = await fetch('/api/data')
+    if(!res.ok) throw new Error('HTTP '+res.status)
+    const serverData = await res.json()
+    if(!serverData || Object.keys(serverData).length === 0) return // 服务器无数据
+    let merged = false
+    // 递归合并（服务器覆盖本地）
+    function merge(target, source){
+      for(const key of Object.keys(source)){
+        if(source[key] && typeof source[key]==='object' && !Array.isArray(source[key])){
+          if(!target[key]) target[key]={}
+          merge(target[key], source[key])
+        } else {
+          // 服务器有值且不是空数组/空对象，或本地没有，则覆盖
+          if(JSON.stringify(target[key]) !== JSON.stringify(source[key])){
+            target[key] = source[key]
+            merged = true
+          }
+        }
+      }
+    }
+    merge(S, serverData)
+    if(merged){
+      saveLocal() // 同步到本地
+      // 重新渲染所有模块
+      fullRender()
+    }
+    _serverReady = true
+    console.log('✓ 服务器数据已加载')
+  } catch(e) {
+    console.log('使用本地存储模式 (服务器不可达)')
+    _serverReady = false
+  }
+}
+
+function fullRender(){
+  renderKuake();renderVocab();renderRecipes();renderExercise();renderWorkouts()
+  renderSkin();renderWater();renderWeight();renderPeriod()
+  renderShop('pp');renderShop('sm');renderShop('ol');renderShop('cam')
+  renderRestReg();renderRestWant();renderFjian();renderTravel()
+  renderCraftWish();renderPerler();renderPastProj()
+  renderBinge('tv');renderBinge('movie');renderBinge('variety')
+  renderIdeas()
+}
+
+// ===== THEME =====
+function toggleTheme(){S.theme=S.theme==='light'?'dark':'light';document.documentElement.setAttribute('data-theme',S.theme);sv()}
+document.documentElement.setAttribute('data-theme',S.theme);
+document.getElementById('dateDisplay').textContent=(()=>{const d=new Date(),w=['日','一','二','三','四','五','六'];return `${d.getMonth()+1}/${d.getDate()} 周${w[d.getDay()]}`})()
+
+// ===== UTILS =====
+function toast(m,t='success'){const e=document.createElement('div');e.className='ts '+t;e.textContent=m;document.body.appendChild(e);setTimeout(()=>e.remove(),2000)}
+function switchPage(p){document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));document.querySelectorAll('.nav-i').forEach(x=>x.classList.remove('active'));document.querySelector(`.page[data-page="${p}"]`).classList.add('active');document.querySelector(`.nav-i[data-page="${p}"]`).classList.add('active');document.querySelector(`.page[data-page="${p}"]`).scrollTop=0}
+function showModal(id){document.getElementById('mo-'+id).classList.add('show')}
+function closeModal(id){document.getElementById('mo-'+id).classList.remove('show')}
+document.querySelectorAll('.mo').forEach(el=>{el.addEventListener('click',e=>{if(e.target===el)el.classList.remove('show')})})
+Html=String.raw
+
+// ===== 1. STUDY =====
+async function searchBili(q){
+  q=q||document.getElementById('biliSearch').value.trim()||'英语学习'
+  const c=document.getElementById('biliRes');c.innerHTML='<div class="loading" style="text-align:center;padding:20px"><div style="width:28px;height:28px;border:3px solid var(--border);border-top-color:var(--primary);border-radius:50%;animation:spin .7s linear infinite;margin:0 auto"></div></div>'
+  document.getElementById('biliBtn').disabled=true
+  const tab=document.querySelector('#biliTabs .stab.active'),tk=tab?tab.textContent.trim():'全部'
+  const sf={全部:'',口语:' 英语口语',语法:' 英语语法',听力:' 英语听力'}
+  const kw=q+(sf[tk]||'')
+  try{
+    const r=await fetch(`https://api.bilibili.com/x/web-interface/search/type?search_type=video&keyword=${encodeURIComponent(kw)}`,{headers:{Accept:'application/json'}})
+    if(!r.ok)throw Error('http')
+    const d=await r.json();const v=d?.data?.result||[]
+    if(!v.length)throw Error('empty')
+    renderVideos(c,v.slice(0,18))
+  }catch(e){renderVideos(c,fallbackVideos(kw))}
+  document.getElementById('biliBtn').disabled=false
+}
+function renderVideos(c,v){c.innerHTML=v.map(v=>{
+  const pic=(v.pic||'').startsWith('//')?'https:'+v.pic:v.pic||''
+  const url=v.bvid?`https://www.bilibili.com/video/${v.bvid}`:`https://search.bilibili.com/all?keyword=${encodeURIComponent(v.title||'')}`
+  return `<div class="vi" onclick="window.open('${url}','_blank')"><div class="vthumb" style="background:var(--border);display:flex;align-items:center;justify-content:center;font-size:1.6rem">📺</div><div class="vinfo"><div class="vtitle">${v.title||'视频'}</div><div class="vmeta"><span>👁️ ${fmt(v.play)}</span><span>👍 ${fmt(v.like)}</span></div></div></div>`
+}).join('')}
+function fmt(n){n=Number(n);if(isNaN(n))return'-';return n>=10000?(n/10000).toFixed(1)+'万':n.toLocaleString()}
+function fallbackVideos(kw){return[1,2,3,4,5,6].map(i=>({title:`${i}. 【推荐】${kw} 精选课程`,play:Math.floor(Math.random()*200+50)+'万',like:Math.floor(Math.random()*5+1)+'万',bvid:''}))}
+function switchBili(el,t){document.querySelectorAll('#biliTabs .stab').forEach(x=>x.classList.remove('active'));el.classList.add('active');searchBili()}
+
+// Kuake
+function saveKuake(){const t=document.getElementById('kuakeTitle').value.trim(),u=document.getElementById('kuakeUrl').value.trim();if(!t||!u)return toast('请填写完整','error');S.kuakeLinks.unshift({title:t,url:u,date:today(),done:false});sv();renderKuake();closeModal('kuake');document.getElementById('kuakeTitle').value='';document.getElementById('kuakeUrl').value='';toast('已添加夸克链接')}
+function toggleKuake(i){S.kuakeLinks[i].done=!S.kuakeLinks[i].done;sv();renderKuake()}
+function delKuake(i){S.kuakeLinks.splice(i,1);sv();renderKuake()}
+function renderKuake(){
+  const c=document.getElementById('kuakeList')
+  if(!S.kuakeLinks.length)return c.innerHTML='<div class="emp"><span class="big-e">📎</span>暂无夸克学习链接</div>'
+  c.innerHTML=S.kuakeLinks.map((k,i)=>`<div class="tri"><div class="lbl-dot ${k.done?'g':'r'}"></div><div class="tr-info"><div class="tr-name" onclick="window.open('${k.url}','_blank')" style="color:var(--primary);cursor:pointer">${k.title}</div><div class="tr-meta">${k.date}</div></div><div style="display:flex;gap:3px;flex-shrink:0"><button onclick="toggleKuake(${i})" style="font-size:.65rem;padding:4px 8px;border-radius:4px;background:${k.done?'var(--green-light)':'var(--surface2)'};color:${k.done?'var(--green)':'var(--text3)'}">${k.done?'✅':'🔘'}</button><button onclick="delKuake(${i})" style="font-size:.65rem;padding:4px 8px;color:var(--accent);border-radius:4px">✕</button></div></div>`).join('')
+}
+function toggleVocab(){const t=today();S.vocab[t]=!S.vocab[t];sv();renderVocab()}
+function renderVocab(){const t=today(),d=S.vocab[t];const btn=document.getElementById('vocabBtn');btn.className='tl '+(d?'green':'red');btn.textContent=d?'✅ 已打卡':'🔴 未打卡';btn.innerHTML=d?'🟢 已打卡':'🔴 未打卡'}
+
+// ===== 2. HEALTH =====
+function switchH(el,id){
+  document.querySelectorAll('#healthTabs .stab').forEach(x=>x.classList.remove('active'))
+  document.querySelectorAll('.stab-c[id^="h-"]').forEach(x=>x.classList.remove('active'))
+  el.classList.add('active');document.getElementById(id).classList.add('active')
+}
+
+// -- Meals --
+const DIET_TIPS=[
+  "🥗 早餐推荐：全麦面包+鸡蛋+牛奶，蛋白质和碳水均衡搭配",
+  "🍳 午餐搭配：主食+优质蛋白+蔬菜，比例建议 1:1:2",
+  "🥑 晚餐宜清淡：选择鱼肉/豆腐+绿叶蔬菜，少油少盐",
+  "🥤 每日饮水1.5L，饭前喝一杯水有助控制食量",
+  "🏃 饭后散步15分钟，有助消化和血糖稳定",
+  "🍚 主食选择：糙米>白米，全麦>精面，升糖指数更低",
+  "🥩 优质蛋白来源：鸡胸肉、鱼虾、豆腐、鸡蛋、牛奶",
+  "🥦 深色蔬菜营养更高：菠菜、西兰花、紫甘蓝",
+  "🍎 水果建议上午吃，晚餐后吃水果易堆积糖分",
+  "🧂 每日盐摄入<5g，高盐饮食增加水肿和高血压风险",
+  "🥜 坚果每日一小把(约30g)，补充优质脂肪酸",
+  "☕ 咖啡建议上午喝，下午喝影响睡眠质量",
+]
+let dietIdx=0
+function getDietTip(){const d=document.getElementById('dietTip');if(d)d.textContent=DIET_TIPS[dietIdx%DIET_TIPS.length];dietIdx++}
+setInterval(getDietTip,8000)
+
+function switchRecipeTab(el,id){
+  document.querySelectorAll('#h-meal .stabs .stab').forEach(x=>x.classList.remove('active'))
+  document.querySelectorAll('#h-meal .stab-c').forEach(x=>x.classList.remove('active'))
+  el.classList.add('active');document.getElementById(id).classList.add('active')
+}
+function saveRecipe(){
+  const n=document.getElementById('rcName').value.trim(),c=document.getElementById('rcCal').value,i=document.getElementById('rcIng').value.trim(),s=document.getElementById('rcStatus').value,img=document.getElementById('rcImg').value.trim()
+  if(!n)return toast('请输入菜名','error')
+  S.recipes.unshift({name:n,cal:c,ingredients:i?i.split(',').map(x=>x.trim()).filter(Boolean):[],status:s,img,date:today()})
+  sv();renderRecipes();closeModal('recipe')
+  document.getElementById('rcName').value='';document.getElementById('rcCal').value='';document.getElementById('rcIng').value='';document.getElementById('rcImg').value=''
+  toast('已添加菜谱')
+}
+function toggleRecipeStatus(i){S.recipes[i].status=S.recipes[i].status==='pending'?'done':'pending';sv();renderRecipes()}
+function delRecipe(i){S.recipes.splice(i,1);sv();renderRecipes()}
+function renderRecipes(){
+  const pending=S.recipes.filter(r=>r.status==='pending'),done=S.recipes.filter(r=>r.status==='done')
+  const render=(items,containerId,showToggle)=>{
+    const c=document.getElementById(containerId)
+    if(!items.length)return c.innerHTML='<div class="emp"><span class="big-e">🍳</span>暂无菜谱</div>'
+    c.innerHTML=items.map((r,i)=>{
+      const idx=S.recipes.indexOf(r)
+      return `<div class="rc"><div class="rc-img">${r.img?`<img src="${r.img}" style="width:70px;height:70px;border-radius:6px;object-fit:cover">`:'🍽️'}</div><div class="rc-body"><div class="rc-name">${r.name}</div><div class="rc-meta">${r.cal?'🔥 '+r.cal+'kcal':''} ${r.ingredients.length?'· '+r.ingredients.join(', '):''}</div><div class="rc-acts">${showToggle?`<button onclick="toggleRecipeStatus(${idx})" style="font-size:.65rem;padding:3px 8px;border-radius:4px;background:var(--green-light);color:var(--green)">${r.status==='pending'?'✅ 已做':'↩️ 待做'}</button>`:''}<button onclick="delRecipe(${idx})" style="font-size:.65rem;padding:3px 8px;color:var(--accent);border-radius:4px">✕</button></div></div></div>`
+    }).join('')
+  }
+  render(pending,'r-try',true)
+  render(done,'r-done',false)
+}
+
+// -- Exercise --
+function toggleCheckin(type){
+  const t=today()
+  if(type==='bike'){S.bike[t]=!S.bike[t]}
+  else if(type==='walk'){S.walk[t]=!S.walk[t]}
+  else if(type==='aerobic'){S.aerobic[t]=!S.aerobic[t]}
+  sv();renderExercise()
+}
+function renderExercise(){
+  const t=today()
+  // Bike
+  const bikeBtn=document.getElementById('bikeStatus')
+  bikeBtn.textContent=S.bike[t]?'🟢':'🔴'
+  bikeBtn.style.color=S.bike[t]?'var(--green)':'var(--accent)'
+  // Walk
+  const walkBtn=document.getElementById('walkStatus')
+  walkBtn.textContent=S.walk[t]?'🟢':'🔴'
+  walkBtn.style.color=S.walk[t]?'var(--green)':'var(--accent)'
+  // Aerobic weekly
+  const weekKey=getWeekKey()
+  const aerobicDone=S.aerobic[weekKey]||false
+  const aerobicBtn=document.getElementById('aerobicStatus')
+  aerobicBtn.textContent=aerobicDone?'🟢':'🔴'
+  aerobicBtn.style.color=aerobicDone?'var(--green)':'var(--accent)'
+  // Count this week's aerobic sessions
+  const thisWeek=getWeekDates()
+  let count=0
+  thisWeek.forEach(d=>{if(S.bike[d]||S.walk[d])count++})
+  document.getElementById('aerobicCount').textContent=count
+}
+function getWeekKey(){const d=new Date();const y=d.getFullYear();const jan1=new Date(y,0,1);const days=Math.floor((d-jan1)/86400000);return `${y}-W${String(Math.ceil((days+jan1.getDay()+1)/7)).padStart(2,'0')}`}
+function getWeekDates(){const d=new Date(),day=d.getDay(),diff=d.getDate()-day+(day===0?-6:1);const mon=new Date(d.setDate(diff));return Array.from({length:7},(_,i)=>{const dt=new Date(mon);dt.setDate(mon.getDate()+i);return dt.toISOString().split('T')[0]})}
+function switchWv(el,id){
+  document.querySelectorAll('#h-exer .stabs .stab').forEach(x=>x.classList.remove('active'))
+  document.querySelectorAll('.stab-c[id^="wv-"]').forEach(x=>x.classList.remove('active'))
+  el.classList.add('active');document.getElementById(id).classList.add('active')
+}
+
+const WORKOUT_VIDEOS=[
+  {title:'帕梅拉 20分钟全身有氧燃脂',type:'pamela',url:'https://www.bilibili.com/video/BV1Qa411c7QM',checkins:[],count:0},
+  {title:'帕梅拉 15分钟瘦腰腹',type:'pamela',url:'https://www.bilibili.com/video/BV1t44y1q7KJ',checkins:[],count:0},
+  {title:'欧阳春晓 改善驼背圆肩',type:'oyxc',url:'https://www.bilibili.com/video/BV1e44y1o7qK',checkins:[],count:0},
+  {title:'欧阳春晓 瘦大腿改善梨形',type:'oyxc',url:'https://www.bilibili.com/video/BV1uY411T7fR',checkins:[],count:0},
+  {title:'帕梅拉 10分钟改善体态',type:'pamela',url:'https://www.bilibili.com/video/BV1N44y1o7Rz',checkins:[],count:0},
+  {title:'30分钟有氧燃脂全程站立',type:'all',url:'https://www.bilibili.com/video/BV1hT4y1j7wY',checkins:[],count:0},
+]
+function saveWorkout(){
+  const t=document.getElementById('woTitle').value.trim(),u=document.getElementById('woUrl').value.trim(),tp=document.getElementById('woType').value
+  if(!t||!u)return toast('请填写完整','error')
+  S.workouts.unshift({title:t,url:u,type:tp,checkins:[],count:0,date:today()})
+  sv();renderWorkouts();closeModal('workout')
+  document.getElementById('woTitle').value='';document.getElementById('woUrl').value=''
+  toast('已添加跟练视频')
+}
+function checkinWorkout(i){const t=today();if(!S.workouts[i].checkins.includes(t)){S.workouts[i].checkins.push(t);S.workouts[i].count++}sv();renderWorkouts()}
+function renderWorkouts(){
+  const videos=[...WORKOUT_VIDEOS,...S.workouts]
+  ;['all','pamela','oyxc'].forEach(type=>{
+    const c=document.getElementById('wv-'+type)
+    const items=videos.filter(v=>v.type===type||type==='all')
+    if(!items.length)return c.innerHTML='<div class="emp"><span class="big-e">📺</span>暂无视频</div>'
+    c.innerHTML=items.map((v,i)=>{
+      const idx=S.workouts.indexOf(v)
+      const realI=idx>=0?idx:i
+      const isCustom=idx>=0
+      return `<div class="vi" style="cursor:default"><div class="vthumb" style="display:flex;align-items:center;justify-content:center;font-size:1.4rem">🏋️</div><div class="vinfo"><div class="vtitle" onclick="window.open('${v.url}','_blank')" style="color:var(--primary);cursor:pointer">${v.title}</div><div class="vmeta"><span>👁️ ${v.checkins.length}次跟练</span></div><div class="vact"><button onclick="checkinWorkout(${realI})" class="tl" style="font-size:.65rem;padding:3px 10px;border-radius:12px;background:var(--green-light);color:var(--green);border:1px solid var(--green)">✅ 跟练</button>${isCustom?`<button onclick="delWorkout(${realI})" style="font-size:.65rem;padding:3px 8px;color:var(--accent)">✕</button>`:''}</div></div></div>`
+    }).join('')
+  })
+}
+function delWorkout(i){S.workouts.splice(i,1);sv();renderWorkouts()}
+async function searchWorkoutVideos(){const terms=['帕梅拉 有氧运动','欧阳春晓 改善驼背','帕梅拉 瘦腿','有氧运动 跟练'];for(const t of terms){try{const r=await fetch(`https://api.bilibili.com/x/web-interface/search/type?search_type=video&keyword=${encodeURIComponent(t)}&page=1`);const d=await r.json();const vs=d?.data?.result||[];if(vs.length){const v=vs[0];S.workouts.unshift({title:v.title,url:v.bvid?`https://www.bilibili.com/video/${v.bvid}`:'',type:t.includes('帕梅拉')?'pamela':t.includes('欧阳')?'oyxc':'all',checkins:[],count:0,date:today()})}}catch(e){}}sv();renderWorkouts();toast('已搜索并添加推荐视频')}
+
+// -- Skin --
+function toggleSkin(type){const t=today();S.skin[type][t]=!S.skin[type][t];sv();renderSkin()}
+function renderSkin(){
+  const t=today()
+  const items={cream:'🧴 药膏',mask:'🧹 清洁泥膜',hydra:'💦 补水面膜',iso:'💊 异维A酸'}
+  Object.keys(items).forEach(k=>{
+    const btn=document.getElementById('skin'+k.charAt(0).toUpperCase()+k.slice(1))
+    const done=S.skin[k][t]
+    btn.className='tl '+(done?'green':'red')
+    btn.innerHTML=(done?'🟢 ':'🔴 ')+items[k]
+  })
+  renderDoctorVisits()
+}
+function addDoctorVisit(){
+  const t=today();S.skin.doctor.push({date:t,note:'皮肤科看诊',time:now()});sv();renderDoctorVisits();toast('已记录看诊')
+}
+function renderDoctorVisits(){
+  const c=document.getElementById('doctorVisits')
+  if(!S.skin.doctor.length)return c.innerHTML='<div class="emp"><span class="big-e">🏥</span>暂无看诊记录</div>'
+  c.innerHTML=S.skin.doctor.map((d,i)=>`<div class="tri"><div class="tr-info"><div class="tr-name">🏥 ${d.note}</div><div class="tr-meta">${d.date} ${d.time||''}</div></div><div class="record-actions"><button onclick="delDoctor(${i})" style="font-size:.65rem;color:var(--accent)">✕</button></div></div>`).join('')
+}
+function delDoctor(i){S.skin.doctor.splice(i,1);sv();renderDoctorVisits()}
+
+// -- Water --
+function toggleWater(){const t=today();S.water[t]=!S.water[t];sv();renderWater()}
+function renderWater(){
+  const t=today()
+  const btn=document.getElementById('waterBtn')
+  const done=S.water[t]||false
+  btn.className='tl '+(done?'green':'red')
+  btn.textContent=done?'🟢 已完成 1.5L':'🔴 未完成'
+  btn.innerHTML=done?'🟢 已完成 1.5L':'🔴 未完成'
+  // Calendar
+  renderWaterCalendar()
+}
+function renderWaterCalendar(){
+  const c=document.getElementById('waterCalendar')
+  const now=new Date(),y=now.getFullYear(),m=now.getMonth()
+  const days=new Date(y,m+1,0).getDate(),fd=new Date(y,m,1).getDay()
+  let html='<div class="wcal">'
+  ;['一','二','三','四','五','六','日'].forEach(d=>{html+=`<div style="text-align:center;font-size:.6rem;color:var(--text3);padding:2px">${d}</div>`})
+  const blank=fd===0?6:fd-1;for(let i=0;i<blank;i++)html+='<div></div>'
+  for(let d=1;d<=days;d++){
+    const ds=`${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`
+    const isToday=ds===today(),done=S.water[ds]
+    html+=`<div class="wday ${done?'done':''} ${isToday?'today':''}"><span class="wdn">${d}</span>${done?'💧':''}</div>`
+  }
+  html+='</div>';c.innerHTML=html
+}
+
+// -- Weight --
+function addWeight(){
+  const v=parseFloat(document.getElementById('wtInput').value)
+  if(!v||v<20||v>300)return toast('请输入有效体重','error')
+  S.weights.push({value:v,date:today(),time:now()})
+  sv();renderWeight();document.getElementById('wtInput').value='';toast('已记录')
+}
+function renderWeight(){
+  const items=S.weights.slice(-15).reverse()
+  const c=document.getElementById('wtRecords')
+  if(!items.length)c.innerHTML='<div class="emp"><span class="big-e">⚖️</span>暂无记录</div>'
+  else c.innerHTML=items.map(w=>`<div class="tri"><div class="tr-info"><div class="tr-name">⚖️ ${w.value} kg</div><div class="tr-meta">${w.date}</div></div><div class="record-actions"><button onclick="delWeight(${S.weights.indexOf(w)})" style="font-size:.65rem;color:var(--accent)">✕</button></div></div>`).join('')
+  drawWeightChart()
+  updateBMI()
+}
+function delWeight(i){S.weights.splice(i,1);sv();renderWeight()}
+
+function drawWeightChart(){
+  const canvas=document.getElementById('weightChart');if(!canvas)return
+  const ctx=canvas.getContext('2d');const data=S.weights.slice(-14)
+  if(data.length<2){ctx.clearRect(0,0,canvas.width,canvas.height);return}
+  const dpr=window.devicePixelRatio||1,rect=canvas.parentElement.getBoundingClientRect()
+  canvas.width=rect.width*dpr;canvas.height=130*dpr
+  canvas.style.width=rect.width+'px';canvas.style.height='130px'
+  ctx.scale(dpr,dpr)
+  const w=rect.width,h=130;ctx.clearRect(0,0,w,h)
+  const vals=data.map(d=>d.value),min=Math.min(...vals)-1,max=Math.max(...vals)+1
+  const pt=10,pb=22,pl=8,pr=8,cw=w-pl-pr,ch=h-pt-pb
+  ctx.strokeStyle='var(--border)';ctx.lineWidth=.5
+  for(let i=0;i<=4;i++){const y=pt+(ch/4)*i;ctx.beginPath();ctx.moveTo(pl,y);ctx.lineTo(w-pr,y);ctx.stroke()}
+  ctx.beginPath();ctx.strokeStyle='var(--primary)';ctx.lineWidth=2.5;ctx.lineJoin='round'
+  data.forEach((d,i)=>{const x=pl+(i/(data.length-1))*cw,y=pt+(1-(d.value-min)/(max-min))*ch;i===0?ctx.moveTo(x,y):ctx.lineTo(x,y)})
+  ctx.stroke()
+  data.forEach((d,i)=>{const x=pl+(i/(data.length-1))*cw,y=pt+(1-(d.value-min)/(max-min))*ch;ctx.beginPath();ctx.arc(x,y,4,0,Math.PI*2);ctx.fillStyle='var(--primary)';ctx.fill()})
+}
+function updateBMI(){
+  const disp=document.getElementById('bmiDisplay'),adv=document.getElementById('bmiAdvice')
+  if(!S.weights.length){disp.textContent='--';adv.textContent='--';return}
+  const last=S.weights[S.weights.length-1].value
+  const h=1.6;const bmi=last/(h*h)
+  disp.textContent=bmi.toFixed(1)
+  let a=''
+  if(bmi<18.5)a='📈 偏瘦，建议适当增重，增加优质蛋白摄入'
+  else if(bmi<24)a='✅ 标准体重！继续保持均衡饮食和运动'
+  else if(bmi<28)a='⚡ 超重，建议控制饮食+每周3-5次有氧运动'
+  else a='🔥 肥胖，建议咨询营养师制定科学减重计划'
+  adv.textContent=a
+}
+
+// -- Period --
+function markPeriod(){const t=today();if(S.periods.includes(t))return toast('今天已标记','error');S.periods.push(t);sv();renderPeriod();toast('已标记 🌸')}
+function clearPeriod(){const t=today();S.periods=S.periods.filter(d=>d!==t);sv();renderPeriod()}
+function renderPeriod(){
+  const now=new Date(),y=now.getFullYear(),m=now.getMonth()
+  const days=new Date(y,m+1,0).getDate()
+  let html=`<div style="font-size:.78rem;margin-bottom:6px;color:var(--text2)">📅 ${y}年${m+1}月</div><div class="period-calendar" style="display:flex;flex-wrap:wrap;gap:4px">`
+  for(let d=1;d<=days;d++){const ds=`${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;html+=`<div class="period-day" style="width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.7rem;background:${S.periods.includes(ds)?'var(--accent)':'var(--surface2)'};color:${S.periods.includes(ds)?'white':'var(--text3)'}">${d}</div>`}
+  html+='</div>'
+  document.getElementById('periodCal').innerHTML=html
+  // Prediction
+  const sorted=[...S.periods].sort()
+  if(sorted.length>=2){
+    const last1=new Date(sorted[sorted.length-1]+'T00:00:00'),last2=new Date(sorted[sorted.length-2]+'T00:00:00')
+    const cycle=Math.round((last1-last2)/86400000)
+    const next=new Date(last1.getTime()+cycle*86400000)
+    const diff=Math.round((now-last1)/86400000)
+    document.getElementById('periodPrediction').textContent=`上次: ${sorted[sorted.length-1]} · 周期约${cycle}天 · 已过${diff}天 · 预计下次: ${next.toLocaleDateString('zh-CN')}`
+  }else if(sorted.length===1){
+    document.getElementById('periodPrediction').textContent=`上次: ${sorted[0]} · 记录满2次开始预测`
+  }else{
+    document.getElementById('periodPrediction').textContent='还没有生理期记录'
+  }
+}
+
+/* ===== 3. SHOPPING ===== */
+function switchShopT(el,id){
+  document.querySelectorAll('#shopTabs .stab').forEach(x=>x.classList.remove('active'))
+  document.querySelectorAll('.stab-c[id^="s-"]').forEach(x=>x.classList.remove('active'))
+  el.classList.add('active');document.getElementById(id).classList.add('active')
+  renderShop(id.replace('s-',''))
+}
+function renderShop(cat){
+  const data=S.shop[cat];if(!data)return
+  const c=document.getElementById('s-'+cat)
+  const names={pp:'🛍️ 朴朴',sm:'🏪 山姆',ol:'📦 网购',cam:'📷 相机'}
+  document.getElementById('shopBadge').textContent=(data.p.length+data.q.length)+'件'
+  let html=`<div class="shop-section"><div style="font-weight:600;font-size:.85rem;margin-bottom:4px">${names[cat]} <span style="font-weight:400;font-size:.7rem;color:var(--text3)">待购${data.q.length} · 已购${data.p.length}</span></div>
+  <div class="form-row" style="display:flex;gap:4px;margin-bottom:6px"><input type="text" id="sInp_${cat}" placeholder="商品名" onkeydown="if(event.key==='Enter')addShopItem('${cat}')" style="flex:1;font-size:.78rem"><input type="text" id="sPrc_${cat}" placeholder="¥" style="width:60px;font-size:.78rem"><button onclick="addShopItem('${cat}')" style="padding:8px 12px;border-radius:6px;background:var(--primary);color:#fff;font-size:.75rem">+</button></div>
+  <div style="font-size:.78rem;font-weight:500;margin:6px 0 3px;color:var(--text2)">⏳ 等待购买</div>`
+  if(!data.q.length)html+='<div class="emp" style="padding:6px">暂无</div>'
+  else data.q.forEach((item,i)=>{html+=`<div class="sh-item"><span class="sh-name">${item.name}${item.price?' <span class="sh-price">¥'+item.price+'</span>':''}</span><div class="sh-acts"><button onclick="buyItem('${cat}',${i})">✅</button><button onclick="delShopItem('${cat}',${i})">✕</button></div></div>`})
+  html+=`<div style="font-size:.78rem;font-weight:500;margin:8px 0 3px;color:var(--text2)">✅ 已经购买</div>`
+  if(!data.p.length)html+='<div class="emp" style="padding:6px">暂无</div>'
+  else data.p.forEach((item,i)=>{html+=`<div class="sh-item done"><span class="sh-name">${item.name}${item.price?' <span class="sh-price">¥'+item.price+'</span>':''}</span><div class="sh-acts"><button onclick="unbuyItem('${cat}',${i})">↩️</button><button onclick="delPurchased('${cat}',${i})">✕</button></div></div>`})
+  c.innerHTML=html
+}
+function addShopItem(cat){const inp=document.getElementById('sInp_'+cat),prc=document.getElementById('sPrc_'+cat),name=inp.value.trim();if(!name)return toast('请输入','error');S.shop[cat].q.push({name,price:prc.value.trim()});sv();renderShop(cat);inp.value='';prc.value=''}
+function buyItem(cat,i){const item=S.shop[cat].q.splice(i,1)[0];S.shop[cat].p.push(item);sv();renderShop(cat)}
+function delShopItem(cat,i){S.shop[cat].q.splice(i,1);sv();renderShop(cat)}
+function unbuyItem(cat,i){const item=S.shop[cat].p.splice(i,1)[0];S.shop[cat].q.push(item);sv();renderShop(cat)}
+function delPurchased(cat,i){S.shop[cat].p.splice(i,1);sv();renderShop(cat)}
+
+/* ===== 4. OUT ===== */
+function switchOutT(el,id){
+  document.querySelectorAll('#outTabs .stab').forEach(x=>x.classList.remove('active'))
+  document.querySelectorAll('.stab-c[id^="o-"]').forEach(x=>x.classList.remove('active'))
+  el.classList.add('active');document.getElementById(id).classList.add('active')
+}
+// Regular restaurants
+function saveRestReg(){
+  const n=document.getElementById('regName').value.trim(),d=document.getElementById('regDish').value.trim(),note=document.getElementById('regNote').value.trim()
+  if(!n)return toast('请输入店名','error')
+  S.restReg.unshift({name:n,dish:d,note,count:1,dates:[today()]})
+  sv();renderRestReg();closeModal('restReg')
+  document.getElementById('regName').value='';document.getElementById('regDish').value='';document.getElementById('regNote').value=''
+  toast('已添加')
+}
+function visitRest(i){S.restReg[i].count++;S.restReg[i].dates.push(today());sv();renderRestReg()}
+function delRestReg(i){S.restReg.splice(i,1);sv();renderRestReg()}
+function renderRestReg(){
+  const c=document.getElementById('restRegList')
+  if(!S.restReg.length)return c.innerHTML='<div class="emp"><span class="big-e">❤️</span>暂无常去的店</div>'
+  c.innerHTML=S.restReg.map((r,i)=>`<div class="ri"><div><div class="rname">${r.name}</div>${r.dish?'<div class="rnote">⭐ '+r.dish+'</div>':''}<div class="rnote">🕐 累计${r.count}次 · 最近: ${r.dates[r.dates.length-1]}</div></div><div class="record-actions" style="display:flex;gap:4px;flex-shrink:0"><button onclick="visitRest(${i})" style="font-size:.65rem;padding:4px 8px;border-radius:4px;background:var(--green-light);color:var(--green)">+1</button><button onclick="delRestReg(${i})" style="font-size:.65rem;padding:4px 8px;color:var(--accent);border-radius:4px">✕</button></div></div>`).join('')
+}
+// Want restaurants
+function switchWantT(el,id){
+  document.querySelectorAll('#o-want .stabs .stab').forEach(x=>x.classList.remove('active'))
+  document.querySelectorAll('.stab-c[id^="w-"]').forEach(x=>x.classList.remove('active'))
+  el.classList.add('active');document.getElementById(id).classList.add('active')
+}
+function saveRestWant(){
+  const n=document.getElementById('wantName').value.trim(),t=document.getElementById('wantType').value,p=document.getElementById('wantPrice').value.trim(),a=document.getElementById('wantAddr').value.trim(),tr=document.getElementById('wantTrans').value.trim()
+  if(!n)return toast('请输入店名','error')
+  S.restWant[t].unshift({name:n,price:p,addr:a,transport:tr,date:today()})
+  sv();renderRestWant();closeModal('restWant')
+  document.getElementById('wantName').value='';document.getElementById('wantPrice').value='';document.getElementById('wantAddr').value='';document.getElementById('wantTrans').value=''
+  toast('已添加')
+}
+function delRestWant(t,i){S.restWant[t].splice(i,1);sv();renderRestWant()}
+function renderRestWant(){
+  ['food','fun'].forEach(t=>{
+    const c=document.getElementById('w-'+t)
+    if(!S.restWant[t].length)return c.innerHTML='<div class="emp"><span class="big-e">${t==="food"?"🍜":"🎮"}</span>暂无</div>'
+    c.innerHTML=S.restWant[t].map((r,i)=>`<div class="ri"><div><div class="rname">${r.name}</div><div class="rnote">${r.price?'💰 '+r.price:''}${r.addr?' · 📍'+r.addr:''}${r.transport?' · 🚗'+r.transport:''}</div></div><div class="record-actions"><button onclick="delRestWant('${t}',${i})" style="font-size:.65rem;color:var(--accent);padding:4px 8px">✕</button></div></div>`).join('')
+  })
+}
+// Fujian
+function switchFjianT(el,id){
+  document.querySelectorAll('#o-fjian .stabs .stab').forEach(x=>x.classList.remove('active'))
+  document.querySelectorAll('.stab-c[id^="fj-"]').forEach(x=>x.classList.remove('active'))
+  el.classList.add('active');document.getElementById(id).classList.add('active')
+}
+function saveFjian(){
+  const n=document.getElementById('fjName').value.trim(),t=document.getElementById('fjType').value,r=parseInt(document.getElementById('fjRemaining').value)||1
+  if(!n)return toast('请输入名称','error')
+  if(t==='visited')S.fjian.done.push({name:n,date:today()})
+  else S.fjian.left.push({name:n,remaining:r})
+  sv();renderFjian();closeModal('fjian')
+  document.getElementById('fjName').value='';document.getElementById('fjRemaining').value='1'
+  toast('已添加')
+}
+function delFjian(t,i){S.fjian[t].splice(i,1);sv();renderFjian()}
+function useFjian(i){if(S.fjian.left[i].remaining>0)S.fjian.left[i].remaining--;sv();renderFjian()}
+function renderFjian(){
+  const cDone=document.getElementById('fj-done'),cLeft=document.getElementById('fj-left')
+  cDone.innerHTML=S.fjian.done.length?S.fjian.done.map((d,i)=>`<div class="tri"><div class="tr-info"><div class="tr-name">✅ ${d.name}</div><div class="tr-meta">${d.date}</div></div><div class="record-actions"><button onclick="delFjian('done',${i})" style="font-size:.65rem;color:var(--accent)">✕</button></div></div>`).join(''):'<div class="emp"><span class="big-e">🌿</span>暂无记录</div>'
+  cLeft.innerHTML=S.fjian.left.length?S.fjian.left.map((d,i)=>`<div class="tri"><div class="tr-info"><div class="tr-name">📋 ${d.name}</div><div class="tr-meta">剩余 ${d.remaining} 次</div></div><div class="record-actions" style="display:flex;gap:4px"><button onclick="useFjian(${i})" style="font-size:.65rem;padding:3px 7px;border-radius:3px;background:var(--green-light);color:var(--green)">-1</button><button onclick="delFjian('left',${i})" style="font-size:.65rem;color:var(--accent);padding:3px 7px">✕</button></div></div>`).join(''):'<div class="emp"><span class="big-e">📋</span>暂无剩余景点</div>'
+}
+// Travel
+function saveTravel(){
+  const d=document.getElementById('trDest').value.trim(),n=document.getElementById('trNote').value.trim()
+  if(!d)return toast('请输入目的地','error')
+  S.travel.unshift({dest:d,note:n,date:today()})
+  sv();renderTravel();closeModal('travel')
+  document.getElementById('trDest').value='';document.getElementById('trNote').value=''
+  toast('已添加')
+}
+function delTravel(i){S.travel.splice(i,1);sv();renderTravel()}
+function renderTravel(){
+  const c=document.getElementById('travelList')
+  if(!S.travel.length)return c.innerHTML='<div class="emp"><span class="big-e">✈️</span>暂无想去的地方</div>'
+  c.innerHTML=S.travel.map((t,i)=>`<div class="ri"><div><div class="rname">✈️ ${t.dest}</div>${t.note?'<div class="rnote">'+t.note+'</div>':''}<div class="rnote">📅 ${t.date}</div></div><div class="record-actions"><button onclick="delTravel(${i})" style="font-size:.65rem;color:var(--accent)">✕</button></div></div>`).join('')
+}
+/* ===== 5. CRAFT ===== */
+function switchCraftT(el,id){
+  document.querySelectorAll('#craftTabs .stab').forEach(x=>x.classList.remove('active'))
+  document.querySelectorAll('.stab-c[id^="c-"]').forEach(x=>x.classList.remove('active'))
+  el.classList.add('active');document.getElementById(id).classList.add('active')
+}
+// Craft wish
+function saveCraftWish(){
+  const t=document.getElementById('cwType').value.trim(),tools=document.getElementById('cwTools').value.trim(),acc=document.getElementById('cwAccount').value.trim()
+  if(!t)return toast('请输入手工类型','error')
+  S.craftWish.unshift({type:t,tools:tools?tools.split(',').map(x=>x.trim()):[],account:acc,date:today()})
+  sv();renderCraftWish();closeModal('craftWish')
+  document.getElementById('cwType').value='';document.getElementById('cwTools').value='';document.getElementById('cwAccount').value=''
+  toast('已添加')
+}
+function delCraftWish(i){S.craftWish.splice(i,1);sv();renderCraftWish()}
+function renderCraftWish(){
+  const c=document.getElementById('craftWishList')
+  if(!S.craftWish.length)return c.innerHTML='<div class="emp"><span class="big-e">💡</span>暂无收藏的手工</div>'
+  c.innerHTML=S.craftWish.map((w,i)=>`<div class="ri"><div><div class="rname">🎨 ${w.type}</div>${w.tools.length?'<div class="rnote">🔧 '+w.tools.join(', ')+'</div>':''}${w.account?'<div class="rnote">👩‍🏫 '+w.account+'</div>':''}</div><div class="record-actions"><button onclick="delCraftWish(${i})" style="font-size:.65rem;color:var(--accent)">✕</button></div></div>`).join('')
+}
+// Perler
+function savePerlerC(){const n=document.getElementById('perlerCName').value.trim(),img=document.getElementById('perlerCImg').value.trim();if(!n)return toast('请输入名称','error');S.perlerC.unshift({name:n,img,date:today()});sv();renderPerler();closeModal('perlerC');document.getElementById('perlerCName').value='';document.getElementById('perlerCImg').value='';toast('已添加')}
+function savePerlerP(){const n=document.getElementById('perlerPName').value.trim(),img=document.getElementById('perlerPImg').value.trim();if(!n)return toast('请输入名称','error');S.perlerP.unshift({name:n,img,date:today()});sv();renderPerler();closeModal('perlerP');document.getElementById('perlerPName').value='';document.getElementById('perlerPImg').value='';toast('已添加')}
+function movePerlerToP(i){const item=S.perlerC.splice(i,1)[0];S.perlerP.unshift(item);sv();renderPerler()}
+function movePerlerToC(i){const item=S.perlerP.splice(i,1)[0];S.perlerC.unshift(item);sv();renderPerler()}
+function delPerler(t,i){S[t].splice(i,1);sv();renderPerler()}
+function renderPerler(){
+  const r=(items,containerId,showMove,moveFn,moveLabel)=>{
+    const c=document.getElementById(containerId)
+    if(!items.length)return c.innerHTML='<div class="emp" style="grid-column:1/-1;padding:10px">暂无</div>'
+    c.innerHTML=items.map((p,i)=>`<div class="pc"><div class="pp">${p.img?`<img src="${p.img}" style="width:100%;height:100%;object-fit:cover;border-radius:5px">`:'🎨'}</div><div class="pn">${p.name}</div><div class="pm">${p.date}</div><div style="display:flex;gap:4px;justify-content:center;margin-top:4px">${showMove?`<button onclick="${moveFn}(${i})" style="font-size:.6rem;padding:2px 7px;border-radius:3px;background:var(--green-light);color:var(--green)">${moveLabel}</button>`:''}<button onclick="delPerler('${containerId==='perlerCDone'?'perlerC':'perlerP'}',${i})" style="font-size:.6rem;padding:2px 7px;color:var(--accent)">✕</button></div></div>`).join('')
+  }
+  r(S.perlerC,'perlerCDone',true,'movePerlerToP','↩️ 待拼')
+  r(S.perlerP,'perlerCPend',true,'movePerlerToC','✅ 完成')
+}
+// Past projects
+function savePastProject(){const n=document.getElementById('ppName').value.trim(),img=document.getElementById('ppImg').value.trim(),tools=document.getElementById('ppTools').value.trim(),process=document.getElementById('ppProcess').value.trim();if(!n)return toast('请输入名称','error');S.pastProj.unshift({name:n,img,tools:tools,process,date:today()});sv();renderPastProj();closeModal('pastProject');document.getElementById('ppName').value='';document.getElementById('ppImg').value='';document.getElementById('ppTools').value='';document.getElementById('ppProcess').value='';toast('已添加')}
+function delPastProj(i){S.pastProj.splice(i,1);sv();renderPastProj()}
+function renderPastProj(){
+  const c=document.getElementById('pastProjectList')
+  if(!S.pastProj.length)return c.innerHTML='<div class="emp"><span class="big-e">📦</span>暂无作品</div>'
+  c.innerHTML=S.pastProj.map((p,i)=>`<div class="cd" style="box-shadow:none;border:1px solid var(--border);margin-bottom:6px"><div class="cd-body" style="padding:10px"><div style="display:flex;gap:10px"><div style="width:60px;height:60px;border-radius:6px;background:var(--border);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:1.6rem">${p.img?`<img src="${p.img}" style="width:60px;height:60px;object-fit:cover;border-radius:6px">`:''}</div><div style="flex:1"><div style="font-weight:500;font-size:.82rem">${p.name}</div>${p.tools?'<div style="font-size:.7rem;color:var(--text3)">🔧 '+p.tools+'</div>':''}${p.process?'<div style="font-size:.7rem;color:var(--text2);margin-top:2px">📝 '+p.process+'</div>':''}</div><button onclick="delPastProj(${i})" style="font-size:.65rem;color:var(--accent);flex-shrink:0">✕</button></div></div></div>`).join('')
+}
+
+/* ===== 6. BINGE ===== */
+function switchBingeT(el,id){
+  document.querySelectorAll('#bingeTabs .stab').forEach(x=>x.classList.remove('active'))
+  document.querySelectorAll('.stab-c[id^="bg-"]').forEach(x=>x.classList.remove('active'))
+  el.classList.add('active');document.getElementById(id).classList.add('active')
+}
+function switchMediaTab(el,id){
+  const p=el.closest('.stab-c')||el.closest('.cd-body')
+  const parent=el.closest('[id^="bg-"]')||el.closest('.stab-c')
+  parent.querySelectorAll('.stabs .stab').forEach(x=>x.classList.remove('active'))
+  parent.querySelectorAll('.stab-c[id^="'+id.split('-')[0]+'"]').forEach(x=>x.classList.remove('active'))
+  el.classList.add('active');document.getElementById(id).classList.add('active')
+}
+function saveGeneric(key,fields){
+  const [stateKey,watchedKey,towatchKey]=[key,S[key].watched,S[key].towatch]
+  const name=document.getElementById(key+'Name').value.trim()
+  if(!name)return toast('请输入名称','error')
+  const status=document.getElementById(key+'Status').value
+  const episode=document.getElementById(key+'Episode')?document.getElementById(key+'Episode').value.trim():''
+  if(status==='watched')S[key].watched.unshift({name,sessions:[{date:today(),episode}],totalCount:1})
+  else S[key].towatch.unshift({name,date:today()})
+  sv();renderBinge(key);closeModal(key)
+  document.getElementById(key+'Name').value='';if(document.getElementById(key+'Episode'))document.getElementById(key+'Episode').value=''
+  toast('已添加')
+}
+function saveTvShow(){saveGeneric('tv')}
+function saveMovie(){saveGeneric('movie')}
+function saveVariety(){saveGeneric('variety')}
+function logSession(key,i){S[key].watched[i].sessions.push({date:today(),episode:''});S[key].watched[i].totalCount++;sv();renderBinge(key)}
+function delBinge(key,t,i){S[key][t].splice(i,1);sv();renderBinge(key)}
+function renderBinge(key){
+  const labels={tv:{name:'📺电视剧',ep:'集'},movie:{name:'🎬电影',ep:''},variety:{name:'🎭综艺',ep:'期'}}
+  const l=labels[key]
+  const r=(items,containerId)=>{
+    const c=document.getElementById(containerId)
+    if(!items.length)return c.innerHTML='<div class="emp"><span class="big-e">📋</span>暂无</div>'
+    c.innerHTML=items.map((item,i)=>{
+      if(containerId.includes('watched')){
+        const last=item.sessions[item.sessions.length-1]
+        return `<div class="ri"><div><div class="rname">${l.name} ${item.name}</div><div class="rnote">🕐 ${item.totalCount}次 · 最近: ${last.date}${last.episode?' · '+last.episode:''}</div></div><div class="record-actions" style="display:flex;gap:4px;flex-shrink:0"><button onclick="logSession('${key}',${i})" style="font-size:.65rem;padding:3px 7px;border-radius:3px;background:var(--green-light);color:var(--green)">+1次</button><button onclick="delBinge('${key}','watched',${i})" style="font-size:.65rem;padding:3px 7px;color:var(--accent)">✕</button></div></div>`
+      }else{
+        return `<div class="ri"><div><div class="rname">📋 ${item.name}</div><div class="rnote">📅 ${item.date}</div></div><div class="record-actions"><button onclick="delBinge('${key}','towatch',${i})" style="font-size:.65rem;padding:3px 7px;color:var(--accent)">✕</button></div></div>`
+      }
+    }).join('')
+  }
+  r(S[key].watched,key+'-watched')
+  r(S[key].towatch,key+'-towatch')
+}
+
+/* ===== 7. TRENDING & IDEAS ===== */
+function switchTrendT(el,id){
+  document.querySelectorAll('#trendTabs .stab').forEach(x=>x.classList.remove('active'))
+  document.querySelectorAll('.stab-c[id^="t-"]').forEach(x=>x.classList.remove('active'))
+  el.classList.add('active');document.getElementById(id).classList.add('active')
+}
+async function refreshTrend(){
+  document.getElementById('t-wb').innerHTML='<div class="loading" style="padding:20px;text-align:center"><div style="width:28px;height:28px;border:3px solid var(--border);border-top-color:var(--primary);border-radius:50%;animation:spin .7s linear infinite;margin:0 auto"></div></div>'
+  document.getElementById('t-dy').innerHTML='<div class="loading" style="padding:20px;text-align:center"><div style="width:28px;height:28px;border:3px solid var(--border);border-top-color:var(--primary);border-radius:50%;animation:spin .7s linear infinite;margin:0 auto"></div></div>'
+  await Promise.all([fetchTrend('weibo'),fetchTrend('douyin')])
+}
+async function fetchTrend(type){
+  const c=document.getElementById(type==='weibo'?'t-wb':'t-dy')
+  try{
+    const r=await fetch(type==='weibo'?'https://tenapi.cn/v2/weibohot':'https://tenapi.cn/v2/douyinhot',{mode:'cors'})
+    if(!r.ok)throw Error('http')
+    const d=await r.json();const list=d?.data||[]
+    if(!list.length)throw Error('empty')
+    c.innerHTML=renderTrendList(list,type)
+  }catch(e){c.innerHTML=renderTrendList(fallbackTrend(type),type)}
+}
+function renderTrendList(list,type){
+  return '<div class="trending-list">'+list.map((item,i)=>{
+    const r=i+1,rc=r===1?'t1':r===2?'t2':r===3?'t3':''
+    const title=item.title||item.name||item.word||'',hot=item.hot||item.num||item.hotnum||''
+    const badge=item.is_hot?'🔥':item.is_new?'🆕':item.is_boom?'💥':'',bc=item.is_hot?'hot':item.is_new?'new':item.is_boom?'boom':''
+    const url=item.url||(type==='weibo'?`https://s.weibo.com/weibo?q=${encodeURIComponent(title)}`:`https://www.douyin.com/search/${encodeURIComponent(title)}`)
+    return `<div class="trend-item" onclick="window.open('${url}','_blank')"><span class="tr ${rc}">${r}</span><span class="tt">${title}</span>${badge?'<span class="tb '+bc+'">'+badge+'</span>':''}<span class="tn">${typeof hot==='number'?fmt(hot):hot||''}</span></div>`
+  }).join('')+'</div>'
+}
+function fallbackTrend(type){return type==='weibo'?[
+  {title:'#2026上半年经济数据发布#',hot:'12.8亿'},{title:'#夏季高温预警#',hot:'8.5亿'},{title:'#暑期档票房破纪录#',hot:'6.2亿',is_hot:true},{title:'#中国队夺金#',hot:'5.7亿'},{title:'#城市更新新进展#',hot:'4.3亿'},{title:'#教育改革新政策#',hot:'3.8亿',is_new:true},{title:'#科技峰会开幕#',hot:'3.1亿'},{title:'#热门综艺新一季#',hot:'2.9亿'},{title:'#健康饮食新趋势#',hot:'2.5亿',is_new:true},{title:'#暑期旅游推荐#',hot:'2.3亿'},
+]:[
+  {title:'挑战连续7天早起',hot:'2863万',is_boom:true},{title:'夏日甜品DIY',hot:'2156万'},{title:'沉浸式整理房间',hot:'1987万',is_hot:true},{title:'一句话证明看过的电影',hot:'1754万'},{title:'街头采访:幸福是什么',hot:'1623万',is_new:true},{title:'宠物沟通师真假',hot:'1489万'},{title:'旅行Vlog小众城市',hot:'1321万'},{title:'职场新人5个技巧',hot:'1187万'},{title:'翻包挑战',hot:'1056万',is_hot:true},{title:'30天健身打卡',hot:'923万',is_new:true},
+]}
+// Ideas
+const IDEA_PROMPTS=[
+  '拍一个沉浸式学习/工作 Vlog 🎬','整理手机相册并做年度回顾 📸','写一篇小红书笔记分享今日生活 ✍️','学做一道新的健康菜 🍳','给房间做一次断舍离 🧹','录一段英语口语练习视频 🎙️','做一份下周的 meal prep 🥗','给好朋友手写一封信 💌','尝试一个新的运动挑战 💪','整理购物清单并做预算 📝','画一幅小插画或涂鸦 🎨','看一部收藏夹里的好电影 🎬','做一次居家 spa 放松 🛁','读 30 分钟书 📖','整理衣柜做换季收纳 👗','学一个 TikTok 舞蹈 💃','给植物换盆浇水 🌱','做一次 deep cleaning 🧼','写一份感恩日记 🙏','整理拼豆图纸归类 🧩',
+]
+function generateIdea(){
+  const text=IDEA_PROMPTS[Math.floor(Math.random()*IDEA_PROMPTS.length)]
+  S.ideas.unshift({text,date:today(),done:false})
+  sv();renderIdeas();toast('✨ 新灵感已生成')
+}
+function toggleIdea(i){S.ideas[i].done=!S.ideas[i].done;sv();renderIdeas()}
+function delIdea(i){S.ideas.splice(i,1);sv();renderIdeas()}
+function renderIdeas(){
+  const c=document.getElementById('ideaList')
+  if(!S.ideas.length)return c.innerHTML='<div class="emp"><span class="big-e">💡</span>暂无灵感，点击上方生成</div>'
+  c.innerHTML=S.ideas.map((idea,i)=>`<div class="ic" style="background:${idea.done?'var(--green-light)':'var(--orange-light)'}"><button onclick="toggleIdea(${i})" style="font-size:.85rem;flex-shrink:0">${idea.done?'🟢':'🔴'}</button><span class="ict" style="text-decoration:${idea.done?'line-through':'none'};color:${idea.done?'var(--green)':'var(--orange)'}">${idea.text}</span><span style="font-size:.6rem;color:var(--text3);flex-shrink:0">${idea.date}</span><button onclick="delIdea(${i})" style="font-size:.65rem;color:var(--text3);flex-shrink:0;margin-left:4px">✕</button></div>`).join('')
+}
+
+// ===== INIT =====
+function init(){
+  // 先渲染本地数据（秒开）
+  renderKuake();renderVocab();getDietTip();renderRecipes();renderExercise();renderWorkouts()
+  renderSkin();renderWater();renderWeight();renderPeriod()
+  renderShop('pp');renderShop('sm');renderShop('ol');renderShop('cam')
+  renderRestReg();renderRestWant();renderFjian();renderTravel()
+  renderCraftWish();renderPerler();renderPastProj()
+  renderBinge('tv');renderBinge('movie');renderBinge('variety')
+  renderIdeas()
+  // 搜索和热点
+  setTimeout(()=>searchBili('英语学习'),500)
+  setTimeout(()=>refreshTrend(),800)
+  // 异步从服务器加载最新数据并合并
+  setTimeout(()=>loadServerData(), 100)
+}
+// Style injection for loading
+const st=document.createElement('style');st.textContent='@keyframes spin{to{transform:rotate(360deg)}}';document.head.appendChild(st)
+// Handle resize for chart
+let rt;window.addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(()=>drawWeightChart(),200)})
+// Show/hide fjian remaining field
+document.getElementById('fjType').addEventListener('change',function(){document.getElementById('fjRemainingGroup').style.display=this.value==='remaining'?'block':'none'})
+document.getElementById('fjRemainingGroup').style.display='none'
+init()
+</script>
+</body>
+</html>

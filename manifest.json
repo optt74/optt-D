@@ -1,0 +1,24 @@
+{
+  "name": "OP TT 生活台",
+  "short_name": "🐰生活台",
+  "description": "个人生活管理仪表板 · 学习 · 健康 · 购物 · 出门 · 手工 · 追剧 · 热点",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#fff5f7",
+  "theme_color": "#ff8aae",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect width='192' height='192' rx='36' fill='%23ff8aae'/%3E%3Ctext x='96' y='136' text-anchor='middle' font-size='110' fill='white'%3E🐰%3C/text%3E%3C/svg%3E",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='72' fill='%23ff8aae'/%3E%3Ctext x='256' y='356' text-anchor='middle' font-size='300' fill='white'%3E🐰%3C/text%3E%3C/svg%3E",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

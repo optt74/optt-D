@@ -1,0 +1,12 @@
+# Render.com 一键部署配置
+# 访问 https://render.com  →  New Web Service → 连接本仓库
+services:
+  - type: web
+    name: optt-dashboard
+    env: node
+    buildCommand: npm install
+    startCommand: node server.js
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_VERSION
+        value: 18
