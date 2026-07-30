@@ -1028,39 +1028,41 @@ function renderKuake(){
   if(!S.kuakeLinks.length)return c.innerHTML='<div class="emp"><span class="big-e">📎</span>暂无夸克学习链接</div>'
   c.innerHTML=S.kuakeLinks.map((k,i)=>{
     const isQuark = k.url.includes('quark') || k.url.includes('sm.cn')
-    return `<div class="tri"><div class="lbl-dot ${k.done?'g':'r'}"></div><div class="tr-info"><div class="tr-name" style="color:var(--primary);cursor:pointer">${k.title}</div>
+    return `<div class="tri"><div class="lbl-dot ${k.done?'g':'r'}"></div><div class="tr-info"><div class="tr-name" onclick="openKuakeLink(${i},'browser')" style="color:var(--primary);cursor:pointer">${k.title}</div>
     <div class="tr-meta" style="font-size:.65rem">${k.date} · ${isQuark?'📱 夸克链接':'🔗 网页链接'}</div>
     <div style="display:flex;gap:4px;margin-top:3px;flex-wrap:wrap">
-      <button onclick="openKuakeLink('${i}','browser')" style="font-size:.6rem;padding:2px 8px;border-radius:8px;background:var(--primary-light);color:var(--primary)">🌐 浏览器</button>
-      <button onclick="openKuakeLink('${i}','app')" style="font-size:.6rem;padding:2px 8px;border-radius:8px;background:${isQuark?'var(--green-light)':'var(--surface2)'};color:${isQuark?'var(--green)':'var(--text3)'}">📱 ${isQuark?'夸克App':'复制链接'}</button>
-    </div></div><div style="display:flex;gap:3px;flex-shrink:0"><button onclick="toggleKuake(${i})" style="font-size:.65rem;padding:4px 8px;border-radius:4px;background:${k.done?'var(--green-light)':'var(--surface2)'};color:${k.done?'var(--green)':'var(--text3)'}">${k.done?'✅':'🔘'}</button><button onclick="delKuake(${i})" style="font-size:.65rem;padding:4px 8px;color:var(--accent);border-radius:4px">✕</button></div></div>`
+      <button onclick="event.stopPropagation();openKuakeLink(${i},'browser')" style="font-size:.6rem;padding:2px 8px;border-radius:8px;background:var(--primary-light);color:var(--primary)">🌐 浏览器</button>
+      <button onclick="event.stopPropagation();openKuakeLink(${i},'app')" style="font-size:.6rem;padding:2px 8px;border-radius:8px;background:${isQuark?'var(--green-light)':'var(--surface2)'};color:${isQuark?'var(--green)':'var(--text3)'}">📱 ${isQuark?'夸克App':'复制链接'}</button>
+    </div></div><div style="display:flex;gap:3px;flex-shrink:0"><button onclick="event.stopPropagation();toggleKuake(${i})" style="font-size:.65rem;padding:4px 8px;border-radius:4px;background:${k.done?'var(--green-light)':'var(--surface2)'};color:${k.done?'var(--green)':'var(--text3)'}">${k.done?'✅':'🔘'}</button><button onclick="event.stopPropagation();delKuake(${i})" style="font-size:.65rem;padding:4px 8px;color:var(--accent);border-radius:4px">✕</button></div></div>`
   }).join('')
 }
 function openKuakeLink(i, mode){
   const link = S.kuakeLinks[i]
+  if(!link || !link.url) return toast('链接无效','error')
   if(mode === 'app'){
-    // 尝试在夸克App中打开
     if(link.url.includes('quark') || link.url.includes('sm.cn')){
-      // 先尝试用 window.location 直接跳转（触发 Universal Link / App Link）
+      // 用当前页面跳转（触发夸克App）
       window.location.href = link.url
     } else {
-      // 不是夸克链接 → 复制到剪贴板
-      if(navigator.clipboard && navigator.clipboard.writeText){
-        navigator.clipboard.writeText(link.url)
-        toast('📋 链接已复制，可以粘贴到夸克中打开')
-      } else {
-        // 降级方案
-        const ta = document.createElement('textarea')
-        ta.value = link.url; ta.style.position='fixed'; ta.style.opacity='0'
-        document.body.appendChild(ta); ta.select()
-        document.execCommand('copy'); document.body.removeChild(ta)
-        toast('📋 链接已复制')
-      }
+      // 复制到剪贴板
+      fallbackCopy(link.url)
     }
   } else {
-    // 在浏览器中打开
+    // 浏览器打开（新标签页）
     window.open(link.url, '_blank')
   }
+}
+function fallbackCopy(text){
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(text).then(()=>toast('📋 已复制链接')).catch(()=>manualCopy(text))
+  } else { manualCopy(text) }
+}
+function manualCopy(text){
+  const ta = document.createElement('textarea')
+  ta.value = text; ta.style.position='fixed'; ta.style.opacity='0'
+  document.body.appendChild(ta); ta.select()
+  document.execCommand('copy'); document.body.removeChild(ta)
+  toast('📋 已复制链接')
 }
 function toggleVocab(){const t=today();S.vocab[t]=!S.vocab[t];sv();renderVocab()}
 function renderVocab(){const t=today(),d=S.vocab[t];const btn=document.getElementById('vocabBtn');btn.className='tl '+(d?'green':'red');btn.textContent=d?'✅ 已打卡':'🔴 未打卡';btn.innerHTML=d?'🟢 已打卡':'🔴 未打卡'}
