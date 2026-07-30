@@ -575,6 +575,16 @@ button{cursor:pointer;font-family:inherit;font-size:inherit;border:none;backgrou
   </div>
 </div></div>
 
+<!-- 购买输入价格弹窗 -->
+<div class="mo" id="mo-buyPrice"><div class="mo-in"><h3>🛒 标记已购买</h3>
+  <div id="buyPriceInfo" style="font-size:.85rem;margin-bottom:8px;color:var(--text2)"></div>
+  <div class="fg"><label>实际购买价格 (选填)</label><input type="text" id="buyPriceInput" placeholder="如: 29.9" inputmode="decimal" style="font-size:1rem"></div>
+  <div style="display:flex;gap:8px;margin-top:4px">
+    <button class="btn btn-p" onclick="confirmBuy()" style="flex:1;padding:10px;border-radius:var(--radius-sm);background:var(--green);color:#fff;font-weight:500">✅ 确认购买</button>
+    <button class="btn btn-o" onclick="closeModal('buyPrice')" style="flex:1;padding:10px;border-radius:var(--radius-sm);background:var(--surface2);font-weight:500">取消</button>
+  </div>
+</div></div>
+
 <script>
 // ===== STATE =====
 const LS=k=>{try{return JSON.parse(localStorage.getItem('ot2_'+k))}catch(e){return null}}
@@ -1344,7 +1354,22 @@ function renderShop(cat){
   c.innerHTML=html
 }
 function addShopItem(cat){const inp=document.getElementById('sInp_'+cat),prc=document.getElementById('sPrc_'+cat),name=inp.value.trim();if(!name)return toast('请输入','error');S.shop[cat].q.push({name,price:prc.value.trim()});sv();renderShop(cat);inp.value='';prc.value=''}
-function buyItem(cat,i){const item=S.shop[cat].q.splice(i,1)[0];S.shop[cat].p.push(item);sv();renderShop(cat)}
+// 购买时弹出价格输入框
+let _buyCat,_buyIdx
+function buyItem(cat,i){
+  _buyCat=cat;_buyIdx=i
+  const item=S.shop[cat].q[i]
+  document.getElementById('buyPriceInfo').textContent='📦 '+item.name+(item.price?' (预估 ¥'+item.price+')':'')
+  document.getElementById('buyPriceInput').value=item.price||''
+  document.getElementById('mo-buyPrice').classList.add('show')
+}
+function confirmBuy(){
+  const cat=_buyCat,i=_buyIdx
+  const item=S.shop[cat].q.splice(i,1)[0]
+  const price=document.getElementById('buyPriceInput').value.trim()
+  item.price=price
+  S.shop[cat].p.push(item)
+  sv();renderShop(cat);closeModal('buyPrice');toast('✅ 已标记购买')}
 function delShopItem(cat,i){S.shop[cat].q.splice(i,1);sv();renderShop(cat)}
 function unbuyItem(cat,i){const item=S.shop[cat].p.splice(i,1)[0];S.shop[cat].q.push(item);sv();renderShop(cat)}
 function delPurchased(cat,i){S.shop[cat].p.splice(i,1);sv();renderShop(cat)}
