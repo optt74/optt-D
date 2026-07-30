@@ -168,7 +168,7 @@ button{cursor:pointer;font-family:inherit;font-size:inherit;border:none;backgrou
 </head>
 <body>
 <div id="app">
-<header class="app-header"><h1>🐰 OP TT 生活台</h1><div class="hdr-right"><span class="hdr-date" id="dateDisplay"></span><button onclick="showStorageInfo()" style="width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:var(--surface2);font-size:.8rem" title="存储信息">💾</button><button onclick="exportData()" style="width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:var(--surface2);font-size:.85rem" title="导出数据">📤</button><button onclick="document.getElementById('importFile').click()" style="width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:var(--surface2);font-size:.85rem" title="导入数据">📥</button><input type="file" id="importFile" accept=".json" style="display:none" onchange="importData(event)"><button class="theme-btn" onclick="toggleTheme()" style="width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:var(--surface2);font-size:.9rem">🌓</button></div></header>
+<header class="app-header"><h1>🐰 OP TT 生活台</h1><div class="hdr-right"><span class="hdr-date" id="dateDisplay"></span><button onclick="showStorageInfo()" style="width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:var(--surface2);font-size:.8rem" title="存储信息">💾</button><button onclick="exportData()" style="width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:var(--surface2);font-size:.85rem" title="导出数据">📤</button><button onclick="document.getElementById('importFile').click()" style="width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:var(--surface2);font-size:.85rem" title="导入数据">📥</button><input type="file" id="importFile" accept=".json" style="display:none" onchange="importData(event)"><button onclick="setupGithub()" style="width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:var(--surface2);font-size:.8rem" title="GitHub云备份">☁️</button><button class="theme-btn" onclick="toggleTheme()" style="width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:var(--surface2);font-size:.9rem">🌓</button></div></header>
 
 <div class="pages-container" id="pagesContainer">
 
@@ -585,6 +585,26 @@ button{cursor:pointer;font-family:inherit;font-size:inherit;border:none;backgrou
   </div>
 </div></div>
 
+<!-- GitHub 云备份设置 -->
+<div class="mo" id="mo-github"><div class="mo-in"><h3>☁️ GitHub 云备份</h3>
+  <div style="background:var(--primary-light);border-radius:var(--radius-sm);padding:8px 10px;font-size:.72rem;color:var(--text2);line-height:1.5;margin-bottom:10px">
+  💡 数据将备份到你的 GitHub 仓库，换手机/删PWA都不丢。<br>
+  需要创建 GitHub Token：<br>
+  ① 打开 <strong>github.com/settings/tokens</strong><br>
+  ② 点 Generate new token → 选 repo 权限<br>
+  ③ 复制 token 粘贴到下方</div>
+  <div class="fg"><label>GitHub 用户名</label><input type="text" id="ghUser" placeholder="your-username"></div>
+  <div class="fg"><label>仓库名</label><input type="text" id="ghRepo" placeholder="optt-dashboard"></div>
+  <div class="fg"><label>Token (只存本地，安全)</label><input type="password" id="ghToken" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx"></div>
+  <div id="ghStatus" style="font-size:.78rem;color:var(--text2);margin-bottom:6px"></div>
+  <div style="display:flex;gap:8px;flex-wrap:wrap">
+    <button class="btn btn-p" onclick="saveGithubConfig()" style="flex:1;padding:10px;border-radius:var(--radius-sm);background:var(--primary);color:#fff;font-weight:500">💾 保存配置</button>
+    <button class="btn btn-p" onclick="backupToGithub()" style="flex:1;padding:10px;border-radius:var(--radius-sm);background:var(--green);color:#fff;font-weight:500">☁️ 立即备份</button>
+    <button class="btn btn-p" onclick="restoreFromGithub()" style="flex:1;padding:10px;border-radius:var(--radius-sm);background:var(--orange);color:#fff;font-weight:500">📥 恢复数据</button>
+  </div>
+  <div class="ma" style="margin-top:10px"><button class="btn btn-o" onclick="closeModal('github')" style="flex:1;padding:10px;border-radius:var(--radius-sm)">关闭</button></div>
+</div></div>
+
 <script>
 // ===== STATE =====
 const LS=k=>{try{return JSON.parse(localStorage.getItem('ot2_'+k))}catch(e){return null}}
@@ -614,6 +634,7 @@ const S={
   trend:{weibo:[],douyin:[]},
   ideas:LS('ideas')||[],
   me:{locked:true,emotions:{happy:[],sad:[],anxious:[],angry:[]},traits:'',ideal:'',password:'117283',savings:[]},
+  github:{user:'',repo:'',token:''},
 }
 
 /* ---- 本地存储 (即时) ---- */
@@ -623,7 +644,7 @@ function saveLocal(){
   LSS('shop',S.shop);LSS('tvW',S.tv.watched);LSS('tvTW',S.tv.towatch);LSS('mvW',S.movie.watched);LSS('mvTW',S.movie.towatch)
   LSS('vrW',S.variety.watched);LSS('vrTW',S.variety.towatch);LSS('rWantFood',S.restWant.food);LSS('rWantFun',S.restWant.fun)
   LSS('fjDone',S.fjian.done);LSS('fjLeft',S.fjian.left);LSS('ideas',S.ideas);LSS('workouts',S.workouts)
-  LSS('wCheckins',S.workoutCheckins);LSS('bike',S.bike);LSS('walk',S.walk);LSS('aerobic',S.aerobic);LSS('theme',S.theme);LSS('me',S.me)
+  LSS('wCheckins',S.workoutCheckins);LSS('bike',S.bike);LSS('walk',S.walk);LSS('aerobic',S.aerobic);LSS('theme',S.theme);LSS('me',S.me);LSS('github',S.github)
 }
 
 /* ---- 服务器存储 (持久化) ---- */
@@ -781,6 +802,102 @@ function importData(event){
   reader.readAsText(file)
   // 重置 input 以便重复导入同一个文件
   event.target.value = ''
+}
+
+/* ===== GitHub 云备份 ===== */
+function setupGithub(){
+  document.getElementById('ghUser').value = S.github.user || ''
+  document.getElementById('ghRepo').value = S.github.repo || ''
+  document.getElementById('ghToken').value = S.github.token || ''
+  document.getElementById('ghStatus').textContent = S.github.user ? '✅ 已配置，可点击"立即备份"' : '请填写 GitHub 信息'
+  document.getElementById('mo-github').classList.add('show')
+}
+function saveGithubConfig(){
+  S.github.user = document.getElementById('ghUser').value.trim()
+  S.github.repo = document.getElementById('ghRepo').value.trim()
+  S.github.token = document.getElementById('ghToken').value.trim()
+  if(!S.github.user || !S.github.repo || !S.github.token) return toast('请填写完整信息','error')
+  sv(); toast('✅ GitHub 配置已保存')
+}
+async function backupToGithub(){
+  if(!S.github.user || !S.github.repo || !S.github.token) return toast('请先配置 GitHub 信息','error')
+  document.getElementById('ghStatus').textContent = '⏳ 正在备份...'
+  try {
+    // 构建备份数据
+    const data = {}
+    const keys = Object.keys(S)
+    keys.forEach(k => {
+      if(k === 'trend' || k === 'github') return
+      data[k] = JSON.parse(JSON.stringify(S[k]))
+    })
+    data._backup = { time: new Date().toISOString(), version: '2.0' }
+    const content = btoa(unescape(encodeURIComponent(JSON.stringify(data, null, 2))))
+
+    // 获取当前文件 SHA（如果存在）
+    let sha = ''
+    try {
+      const check = await fetch(`https://api.github.com/repos/${S.github.user}/${S.github.repo}/contents/backup.json`, {
+        headers: { 'Authorization': 'token ' + S.github.token }
+      })
+      if(check.ok) { const d = await check.json(); sha = d.sha }
+    } catch(e) {}
+
+    // 创建或更新文件
+    const body = { message: '🔄 生活台数据备份 ' + new Date().toISOString().split('T')[0], content }
+    if(sha) body.sha = sha
+    const res = await fetch(`https://api.github.com/repos/${S.github.user}/${S.github.repo}/contents/backup.json`, {
+      method: 'PUT',
+      headers: { 'Authorization': 'token ' + S.github.token, 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    })
+    if(!res.ok) { const e = await res.json(); throw new Error(e.message || 'HTTP '+res.status) }
+    document.getElementById('ghStatus').textContent = '✅ 备份成功！' + new Date().toLocaleTimeString()
+    toast('☁️ 数据已备份到 GitHub')
+  } catch(e) {
+    document.getElementById('ghStatus').textContent = '❌ 备份失败: ' + e.message
+    toast('❌ 备份失败: ' + e.message, 'error')
+  }
+}
+async function restoreFromGithub(){
+  if(!S.github.user || !S.github.repo || !S.github.token) return toast('请先配置 GitHub 信息','error')
+  if(!confirm('确定要从 GitHub 恢复数据？这会覆盖当前所有数据。')) return
+  document.getElementById('ghStatus').textContent = '⏳ 正在恢复...'
+  try {
+    const res = await fetch(`https://api.github.com/repos/${S.github.user}/${S.github.repo}/contents/backup.json`, {
+      headers: { 'Authorization': 'token ' + S.github.token }
+    })
+    if(!res.ok) throw new Error('没有找到备份文件')
+    const d = await res.json()
+    const text = decodeURIComponent(escape(atob(d.content)))
+    const data = JSON.parse(text)
+    // 导入数据
+    const importKeys = ['kuakeLinks','vocab','recipes','bike','walk','aerobic','workouts',
+      'water','weights','periods','restReg','travel','craftWish','perlerC','perlerP','pastProj',
+      'ideas','theme','me']
+    importKeys.forEach(k => { if(data[k] !== undefined) S[k] = data[k] })
+    if(data.skin) { Object.keys(data.skin).forEach(k => { S.skin[k] = data.skin[k] }) }
+    if(data.shop) S.shop = data.shop
+    if(data.restWant) S.restWant = data.restWant
+    if(data.fjian) S.fjian = data.fjian
+    if(data.tv) S.tv = data.tv
+    if(data.movie) S.movie = data.movie
+    if(data.variety) S.variety = data.variety
+    sv(); fullRender()
+    document.getElementById('ghStatus').textContent = '✅ 恢复成功！'
+    toast('✅ 数据已从 GitHub 恢复')
+  } catch(e) {
+    document.getElementById('ghStatus').textContent = '❌ 恢复失败: ' + e.message
+    toast('❌ 恢复失败', 'error')
+  }
+}
+// 首次加载检测：如果没有数据，提示恢复
+function checkFirstLoad(){
+  const hasData = Object.keys(S.vocab).length > 0 || S.recipes.length > 0 || S.weights.length > 0
+  if(!hasData && S.github.user && S.github.token){
+    setTimeout(() => {
+      if(confirm('📥 检测到本地暂无数据，是否从 GitHub 云备份恢复？')) restoreFromGithub()
+    }, 2000)
+  }
 }
 
 let _rendering=0
@@ -1940,6 +2057,8 @@ function init(){
   try{renderCraftWish()}catch(e){};try{renderPerler()}catch(e){};try{renderPastProj()}catch(e){}
   try{renderBinge('tv')}catch(e){};try{renderBinge('movie')}catch(e){};try{renderBinge('variety')}catch(e){}
   try{renderIdeas()}catch(e){};try{initMeSaveDropdown()}catch(e){};try{renderMe()}catch(e){}
+  // 检测首次加载，尝试云恢复
+  try{checkFirstLoad()}catch(e){}
   // 搜索和热点（错开时间，减少并发）
   setTimeout(()=>searchBili('英语学习'),600)
   setTimeout(()=>refreshTrend(),2000)
