@@ -577,7 +577,7 @@ button{cursor:pointer;font-family:inherit;font-size:inherit;border:none;backgrou
 
 <script>
 // ===== STATE =====
-const LS=k=>{try{return JSON.parse(localStorage.getItem('ot2_'+k))}catch{return null}}
+const LS=k=>{try{return JSON.parse(localStorage.getItem('ot2_'+k))}catch(e){return null}}
 const LSS=(k,v)=>localStorage.setItem('ot2_'+k,JSON.stringify(v))
 const today=()=>new Date().toISOString().split('T')[0]
 const now=()=>new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'})
@@ -795,8 +795,6 @@ function fullRender(){
   }catch(e){}
   _rendering=0
 }
-
-function fullRender(){
 
 // ===== THEME =====
 function toggleTheme(){S.theme=S.theme==='light'?'dark':'light';document.documentElement.setAttribute('data-theme',S.theme);sv()}
