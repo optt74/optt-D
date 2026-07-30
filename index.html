@@ -860,7 +860,6 @@ async function backupToGithub(){
 }
 async function restoreFromGithub(){
   if(!S.github.user || !S.github.repo || !S.github.token) return toast('请先配置 GitHub 信息','error')
-  if(!confirm('确定要从 GitHub 恢复数据？这会覆盖当前所有数据。')) return
   document.getElementById('ghStatus').textContent = '⏳ 正在恢复...'
   try {
     const res = await fetch(`https://api.github.com/repos/${S.github.user}/${S.github.repo}/contents/backup.json`, {
@@ -870,24 +869,26 @@ async function restoreFromGithub(){
     const d = await res.json()
     const text = decodeURIComponent(escape(atob(d.content)))
     const data = JSON.parse(text)
-    // 导入数据
+    // 导入所有数据
     const importKeys = ['kuakeLinks','vocab','recipes','bike','walk','aerobic','workouts',
       'water','weights','periods','restReg','travel','craftWish','perlerC','perlerP','pastProj',
       'ideas','theme','me']
-    importKeys.forEach(k => { if(data[k] !== undefined) S[k] = data[k] })
-    if(data.skin) { Object.keys(data.skin).forEach(k => { S.skin[k] = data.skin[k] }) }
-    if(data.shop) S.shop = data.shop
-    if(data.restWant) S.restWant = data.restWant
-    if(data.fjian) S.fjian = data.fjian
-    if(data.tv) S.tv = data.tv
-    if(data.movie) S.movie = data.movie
-    if(data.variety) S.variety = data.variety
-    sv(); fullRender()
-    document.getElementById('ghStatus').textContent = '✅ 恢复成功！'
-    toast('✅ 数据已从 GitHub 恢复')
+    importKeys.forEach(k => { if(data[k] !== undefined) S[k] = JSON.parse(JSON.stringify(data[k])) })
+    if(data.skin) { Object.keys(data.skin).forEach(k => { S.skin[k] = JSON.parse(JSON.stringify(data.skin[k])) }) }
+    if(data.shop) S.shop = JSON.parse(JSON.stringify(data.shop))
+    if(data.restWant) S.restWant = JSON.parse(JSON.stringify(data.restWant))
+    if(data.fjian) S.fjian = JSON.parse(JSON.stringify(data.fjian))
+    if(data.tv) S.tv = JSON.parse(JSON.stringify(data.tv))
+    if(data.movie) S.movie = JSON.parse(JSON.stringify(data.movie))
+    if(data.variety) S.variety = JSON.parse(JSON.stringify(data.variety))
+    // 保存后刷新页面
+    sv()
+    document.getElementById('ghStatus').textContent = '✅ 恢复成功！即将刷新...'
+    toast('✅ 数据已恢复，页面刷新中')
+    setTimeout(() => location.reload(), 1000)
   } catch(e) {
     document.getElementById('ghStatus').textContent = '❌ 恢复失败: ' + e.message
-    toast('❌ 恢复失败', 'error')
+    toast('❌ 恢复失败: ' + e.message, 'error')
   }
 }
 // 首次加载检测：如果没有数据，提示恢复
