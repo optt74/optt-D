@@ -8,7 +8,18 @@
   "bike": {},
   "walk": {},
   "aerobic": {},
-  "workouts": [],
+  "workouts": [
+    {
+      "title": "欧阳春晓练背",
+      "url": "https://b23.tv/2hp1HxP",
+      "type": "oyxc",
+      "checkins": [
+        "2026-07-30"
+      ],
+      "count": 1,
+      "date": "2026-07-30"
+    }
+  ],
   "workoutCheckins": {},
   "skin": {
     "cream": {},
@@ -23,12 +34,7 @@
   "shop": {
     "pp": {
       "p": [],
-      "q": [
-        {
-          "name": "英语单词",
-          "price": ""
-        }
-      ]
+      "q": []
     },
     "sm": {
       "p": [],
@@ -84,7 +90,7 @@
     "savings": []
   },
   "_backup": {
-    "time": "2026-07-30T08:15:44.571Z",
+    "time": "2026-07-30T09:01:23.102Z",
     "version": "2.0"
   }
 }
