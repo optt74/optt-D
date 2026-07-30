@@ -618,16 +618,23 @@ function saveLocal(){
 
 /* ---- 服务器存储 (持久化) ---- */
 let _saveTimer=null
+let _saving=false
 async function saveServer(){
+  if(_saving) return
+  _saving=true
   try {
-    // 只发送可序列化的数据，去掉 trend（实时数据不用存）
     const payload = {...S}; delete payload.trend
+    // 超时 3 秒，防止卡住
+    const ctrl = new AbortController()
+    setTimeout(()=>ctrl.abort(), 3000)
     await fetch('/api/data', {
       method:'POST',
       headers:{'Content-Type':'application/json'},
-      body: JSON.stringify(payload)
+      body: JSON.stringify(payload),
+      signal: ctrl.signal
     })
-  } catch(e) { /* 静默失败，下次再试 */ }
+  } catch(e) { /* 静默失败 */ }
+  _saving=false
 }
 
 /** 统一的保存函数：本地即时 + 服务器防抖 */
@@ -766,14 +773,27 @@ function importData(event){
   event.target.value = ''
 }
 
+let _rendering=0
 function fullRender(){
-  renderKuake();renderVocab();renderRecipes();renderExercise();renderWorkouts()
-  renderSkin();renderWater();renderWeight();renderPeriod()
-  renderShop('pp');renderShop('sm');renderShop('ol');renderShop('cam')
-  renderRestReg();renderRestWant();renderFjian();renderTravel()
-  renderCraftWish();renderPerler();renderPastProj()
-  renderBinge('tv');renderBinge('movie');renderBinge('variety')
-  renderIdeas();renderMe()
+  if(_rendering>2){_rendering++;return}
+  _rendering++
+  try{
+    try{renderKuake()}catch(e){}
+    try{renderVocab()}catch(e){}
+    try{renderRecipes()}catch(e){}
+    try{renderExercise()}catch(e){}
+    try{renderWorkouts()}catch(e){}
+    try{renderSkin()}catch(e){}
+    try{renderWater()}catch(e){}
+    try{renderWeight()}catch(e){}
+    try{renderPeriod()}catch(e){}
+    try{renderShop('pp')}catch(e){};try{renderShop('sm')}catch(e){};try{renderShop('ol')}catch(e){};try{renderShop('cam')}catch(e){}
+    try{renderRestReg()}catch(e){};try{renderRestWant()}catch(e){};try{renderFjian()}catch(e){};try{renderTravel()}catch(e){}
+    try{renderCraftWish()}catch(e){};try{renderPerler()}catch(e){};try{renderPastProj()}catch(e){}
+    try{renderBinge('tv')}catch(e){};try{renderBinge('movie')}catch(e){};try{renderBinge('variety')}catch(e){}
+    try{renderIdeas()}catch(e){};try{renderMe()}catch(e){}
+  }catch(e){}
+  _rendering=0
 }
 
 function fullRender(){
@@ -983,7 +1003,8 @@ async function searchBili(q){
   const sf={全部:'',口语:' 英语口语',语法:' 英语语法',听力:' 英语听力'}
   const kw=q+(sf[tk]||'')
   try{
-    const r=await fetch(`https://api.bilibili.com/x/web-interface/search/type?search_type=video&keyword=${encodeURIComponent(kw)}`,{headers:{Accept:'application/json'}})
+    const ctrl=new AbortController();setTimeout(()=>ctrl.abort(),5000)
+    const r=await fetch(`https://api.bilibili.com/x/web-interface/search/type?search_type=video&keyword=${encodeURIComponent(kw)}`,{headers:{Accept:'application/json'},signal:ctrl.signal})
     if(!r.ok)throw Error('http')
     const d=await r.json();const v=d?.data?.result||[]
     if(!v.length)throw Error('empty')
@@ -1243,10 +1264,11 @@ function renderWeight(){
 function delWeight(i){S.weights.splice(i,1);sv();renderWeight()}
 
 function drawWeightChart(){
-  const canvas=document.getElementById('weightChart');if(!canvas)return
+  const canvas=document.getElementById('weightChart');if(!canvas||canvas.offsetParent===null)return
   const ctx=canvas.getContext('2d');const data=S.weights.slice(-14)
   if(data.length<2){ctx.clearRect(0,0,canvas.width,canvas.height);return}
   const dpr=window.devicePixelRatio||1,rect=canvas.parentElement.getBoundingClientRect()
+  if(rect.width===0||rect.height===0)return
   canvas.width=rect.width*dpr;canvas.height=130*dpr
   canvas.style.width=rect.width+'px';canvas.style.height='130px'
   ctx.scale(dpr,dpr)
@@ -1516,7 +1538,8 @@ async function refreshTrend(){
 async function fetchTrend(type){
   const c=document.getElementById(type==='weibo'?'t-wb':'t-dy')
   try{
-    const r=await fetch(type==='weibo'?'https://tenapi.cn/v2/weibohot':'https://tenapi.cn/v2/douyinhot',{mode:'cors'})
+    const ctrl=new AbortController();setTimeout(()=>ctrl.abort(),5000)
+    const r=await fetch(type==='weibo'?'https://tenapi.cn/v2/weibohot':'https://tenapi.cn/v2/douyinhot',{mode:'cors',signal:ctrl.signal})
     if(!r.ok)throw Error('http')
     const d=await r.json();const list=d?.data||[]
     if(!list.length)throw Error('empty')
@@ -1795,11 +1818,12 @@ function deleteMeSaving(i){
 
 function drawMeSaveChart(){
   const canvas = document.getElementById('meSaveChart')
-  if(!canvas) return
+  if(!canvas||canvas.offsetParent===null) return
   const ctx = canvas.getContext('2d')
   const data = S.me.savings.sort((a,b) => a.month.localeCompare(b.month))
   const dpr = window.devicePixelRatio || 1
   const rect = canvas.parentElement.getBoundingClientRect()
+  if(rect.width===0||rect.height===0) return
   canvas.width = rect.width * dpr; canvas.height = 180 * dpr
   canvas.style.width = rect.width + 'px'; canvas.style.height = '180px'
   ctx.scale(dpr, dpr)
@@ -1884,23 +1908,23 @@ function drawMeSaveChart(){
 // ===== INIT =====
 function init(){
   // 先渲染本地数据（秒开）
-  renderKuake();renderVocab();getDietTip();renderRecipes();renderExercise();renderWorkouts()
-  renderSkin();renderWater();renderWeight();renderPeriod()
-  renderShop('pp');renderShop('sm');renderShop('ol');renderShop('cam')
-  renderRestReg();renderRestWant();renderFjian();renderTravel()
-  renderCraftWish();renderPerler();renderPastProj()
-  renderBinge('tv');renderBinge('movie');renderBinge('variety')
-  renderIdeas();initMeSaveDropdown();renderMe()
-  // 搜索和热点
-  setTimeout(()=>searchBili('英语学习'),500)
-  setTimeout(()=>refreshTrend(),800)
+  try{renderKuake()}catch(e){};try{renderVocab()}catch(e){};try{getDietTip()}catch(e){};try{renderRecipes()}catch(e){};try{renderExercise()}catch(e){};try{renderWorkouts()}catch(e){}
+  try{renderSkin()}catch(e){};try{renderWater()}catch(e){};try{renderWeight()}catch(e){};try{renderPeriod()}catch(e){}
+  try{renderShop('pp')}catch(e){};try{renderShop('sm')}catch(e){};try{renderShop('ol')}catch(e){};try{renderShop('cam')}catch(e){}
+  try{renderRestReg()}catch(e){};try{renderRestWant()}catch(e){};try{renderFjian()}catch(e){};try{renderTravel()}catch(e){}
+  try{renderCraftWish()}catch(e){};try{renderPerler()}catch(e){};try{renderPastProj()}catch(e){}
+  try{renderBinge('tv')}catch(e){};try{renderBinge('movie')}catch(e){};try{renderBinge('variety')}catch(e){}
+  try{renderIdeas()}catch(e){};try{initMeSaveDropdown()}catch(e){};try{renderMe()}catch(e){}
+  // 搜索和热点（错开时间，减少并发）
+  setTimeout(()=>searchBili('英语学习'),600)
+  setTimeout(()=>refreshTrend(),2000)
   // 异步从服务器加载最新数据并合并
-  setTimeout(()=>loadServerData(), 100)
+  setTimeout(()=>loadServerData(), 1500)
 }
 // Style injection for loading
 const st=document.createElement('style');st.textContent='@keyframes spin{to{transform:rotate(360deg)}}';document.head.appendChild(st)
 // Handle resize for chart
-let rt;window.addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(()=>drawWeightChart(),200)})
+let _rt,_rsz;window.addEventListener('resize',()=>{clearTimeout(_rt);_rt=setTimeout(()=>{if(_rsz)return;_rsz=1;drawWeightChart();drawMeSaveChart();setTimeout(()=>_rsz=0,300)},400)})
 // Show/hide fjian remaining field
 document.getElementById('fjType').addEventListener('change',function(){document.getElementById('fjRemainingGroup').style.display=this.value==='remaining'?'block':'none'})
 document.getElementById('fjRemainingGroup').style.display='none'
