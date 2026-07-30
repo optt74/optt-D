@@ -196,7 +196,10 @@ button{cursor:pointer;font-family:inherit;font-size:inherit;border:none;backgrou
     </div>
     <div id="biliRes" class="vi-list" style="max-height:280px;overflow-y:auto"></div>
   </div>
-  <div id="eng-fav" class="stab-c"><div id="engFavList"></div></div>
+  <div id="eng-fav" class="stab-c">
+    <div style="text-align:right;margin-bottom:4px"><button onclick="showModal('addVideo')" style="font-size:.7rem;color:var(--primary);padding:2px 8px;border-radius:6px;border:1px solid var(--border)">+ 手动添加</button></div>
+    <div id="engFavList"></div>
+  </div>
 </div></div>
 
 <!-- 夸克链接 -->
@@ -309,7 +312,10 @@ button{cursor:pointer;font-family:inherit;font-size:inherit;border:none;backgrou
     <div id="wv-oyxc" class="stab-c"></div>
     <div style="text-align:center;margin-top:4px"><button class="stab" onclick="searchWorkoutVideos()" style="background:var(--primary-light);color:var(--primary)">🔄 搜索B站运动视频</button></div>
   </div>
-  <div id="wv-fav" class="stab-c"><div id="workoutFavList"></div></div>
+  <div id="wv-fav" class="stab-c">
+    <div style="text-align:right;margin-bottom:4px"><button onclick="showModal('addVideoWo')" style="font-size:.7rem;color:var(--primary);padding:2px 8px;border-radius:6px;border:1px solid var(--border)">+ 手动添加</button></div>
+    <div id="workoutFavList"></div>
+  </div>
 </div>
   </div>
 </div>
@@ -647,6 +653,19 @@ button{cursor:pointer;font-family:inherit;font-size:inherit;border:none;backgrou
     <button class="btn btn-o" onclick="closeModal('buyPrice')" style="flex:1;padding:10px;border-radius:var(--radius-sm);background:var(--surface2);font-weight:500">取消</button>
   </div>
 </div></div>
+
+<!-- 添加B站视频弹窗 -->
+<div class="mo" id="mo-addVideo"><div class="mo-in"><h3>📺 添加B站视频到收藏</h3>
+  <div class="fg"><label>视频标题</label><input type="text" id="avTitle" placeholder="视频标题"></div>
+  <div class="fg"><label>视频链接或BV号</label><input type="text" id="avUrl" placeholder="BV1xxxxxx 或完整B站链接"></div>
+  <div style="font-size:.72rem;color:var(--text3);margin-bottom:8px">💡 从B站复制视频链接或BV号粘贴即可</div>
+  <div class="ma"><button class="btn btn-o" onclick="closeModal('addVideo')">取消</button><button class="btn btn-p" onclick="saveAddVideo('english')">保存</button></div></div></div>
+
+<div class="mo" id="mo-addVideoWo"><div class="mo-in"><h3>🏋️ 添加跟练视频到收藏</h3>
+  <div class="fg"><label>视频标题</label><input type="text" id="avTitleWo" placeholder="视频标题"></div>
+  <div class="fg"><label>视频链接或BV号</label><input type="text" id="avUrlWo" placeholder="BV1xxxxxx 或完整B站链接"></div>
+  <div style="font-size:.72rem;color:var(--text3);margin-bottom:8px">💡 从B站复制视频链接或BV号粘贴即可</div>
+  <div class="ma"><button class="btn btn-o" onclick="closeModal('addVideoWo')">取消</button><button class="btn btn-p" onclick="saveAddVideo('workout')">保存</button></div></div></div>
 
 <!-- 实践弹窗 -->
 <div class="mo" id="mo-practice"><div class="mo-in"><h3 id="practiceTitle">✅ 实践记录</h3>
@@ -1389,25 +1408,46 @@ function saveToEngFav(title, url) {
   S.videoFav.english.unshift({title:title, url:url, checkins:[], count:0, date:today()});
   sv(); renderEngFav(); toast('⭐ 已收藏');
 }
+function saveAddVideo(type) {
+  var prefix = type==='english'?'':'Wo';
+  var title = document.getElementById('avTitle'+prefix).value.trim();
+  var url = document.getElementById('avUrl'+prefix).value.trim();
+  if(!title||!url) return toast('请填写完整','error');
+  // 如果是BV号，转成链接
+  if(url.match(/^BV[a-zA-Z0-9]+$/)) url = 'https://www.bilibili.com/video/' + url;
+  var target = type==='english' ? S.videoFav.english : S.videoFav.workout;
+  target.unshift({title:title, url:url, checkins:[], count:0, date:today()});
+  sv();
+  if(type==='english') renderEngFav(); else renderWorkoutFav();
+  closeModal('addVideo'+prefix);
+  document.getElementById('avTitle'+prefix).value=''; document.getElementById('avUrl'+prefix).value='';
+  toast('✅ 已添加到收藏');
+}
 function checkinEngFav(i) {
   S.videoFav.english[i].checkins.push({date:today(), note:''});
   S.videoFav.english[i].count++;
   sv(); renderEngFav();
 }
+function checkinWvFav(i) {
+  S.videoFav.workout[i].checkins.push({date:today(), note:''});
+  S.videoFav.workout[i].count++;
+  sv(); renderWorkoutFav();
+}
 function delEngFav(i) { S.videoFav.english.splice(i,1); sv(); renderEngFav(); }
+function delWvFav(i) { S.videoFav.workout.splice(i,1); sv(); renderWorkoutFav(); }
 function renderEngFav() {
   var c = document.getElementById('engFavList');
   var items = S.videoFav.english;
-  if(!items.length) return c.innerHTML = '<div class="emp" style="padding:12px"><span class="big-e">⭐</span>还没有收藏视频，在“热门推荐”中搜索后点⭐收藏</div>';
-  c.innerHTML = items.map(function(v,i){
+  if(!items.length) return c.innerHTML = '<div class="emp" style="padding:12px"><span class="big-e">⭐</span>还没有收藏视频<br>在"热门推荐"中搜索后点⭐收藏，或点右上角"手动添加"</div>';
+  c.innerHTML = items.slice(0,30).map(function(v,i){
     var lastCheck = v.checkins.length > 0 ? v.checkins[v.checkins.length-1].date : '未学习';
-    return '<div class="vi" style="cursor:default">' +
-      '<div class="vthumb" style="display:flex;align-items:center;justify-content:center;font-size:1.4rem">📺</div>' +
-      '<div class="vinfo"><div class="vtitle" onclick="window.open(\'' + v.url + '\',\'_blank\')" style="color:var(--primary);cursor:pointer">' + v.title + '</div>' +
-      '<div class="vmeta" style="font-size:.7rem">📅 最近: ' + lastCheck + ' · 🎵 ' + v.count + '次</div>' +
+    return '<div class="vi" style="cursor:default;padding:8px">' +
+      '<div class="vthumb" style="display:flex;align-items:center;justify-content:center;font-size:1.2rem;width:50px;height:50px">📺</div>' +
+      '<div class="vinfo"><div class="vtitle" style="font-size:.8rem" onclick="window.open(\'' + v.url + '\',\'_blank\')" style="color:var(--primary);cursor:pointer">' + v.title + '</div>' +
+      '<div class="vmeta" style="font-size:.65rem">收藏:' + v.date + ' · 最近学习:' + lastCheck + ' · ' + v.count + '次</div>' +
       '<div class="vact" style="display:flex;gap:4px;margin-top:3px">' +
-      '<button onclick="checkinEngFav(' + i + ')" class="tl" style="font-size:.6rem;padding:3px 10px;border-radius:10px;background:var(--green-light);color:var(--green);border:1px solid var(--green)">🟢 打卡</button>' +
-      '<button onclick="delEngFav(' + i + ')" style="font-size:.6rem;padding:3px 8px;color:var(--accent)">✕</button>' +
+      '<button onclick="checkinEngFav(' + i + ')" class="tl" style="font-size:.55rem;padding:2px 8px;border-radius:8px;background:var(--green-light);color:var(--green);border:1px solid var(--green)">🟢 打卡</button>' +
+      '<button onclick="delEngFav(' + i + ')" style="font-size:.55rem;padding:2px 6px;color:var(--accent);border-radius:4px">✕</button>' +
       '</div></div></div>';
   }).join('');
 }
@@ -1420,20 +1460,18 @@ function renderWorkoutFav() {
   var c = document.getElementById('workoutFavList');
   var items = S.videoFav.workout;
   if(!items.length) return c.innerHTML = '<div class="emp" style="padding:12px"><span class="big-e">⭐</span>还没有收藏跟练视频</div>';
-  c.innerHTML = items.map(function(v,i){
+  c.innerHTML = items.slice(0,30).map(function(v,i){
     var lastCheck = v.checkins.length > 0 ? v.checkins[v.checkins.length-1].date : '未跟练';
-    return '<div class="vi" style="cursor:default">' +
-      '<div class="vthumb" style="display:flex;align-items:center;justify-content:center;font-size:1.4rem">🏋</div>' +
-      '<div class="vinfo"><div class="vtitle" onclick="window.open(\'' + v.url + '\',\'_blank\')" style="color:var(--primary);cursor:pointer">' + v.title + '</div>' +
-      '<div class="vmeta" style="font-size:.7rem">📅 最近: ' + lastCheck + ' · 🎵 ' + v.count + '次</div>' +
+    return '<div class="vi" style="cursor:default;padding:8px">' +
+      '<div class="vthumb" style="display:flex;align-items:center;justify-content:center;font-size:1.2rem;width:50px;height:50px">🏋️</div>' +
+      '<div class="vinfo"><div class="vtitle" style="font-size:.8rem" onclick="window.open(\'' + v.url + '\',\'_blank\')" style="color:var(--primary);cursor:pointer">' + v.title + '</div>' +
+      '<div class="vmeta" style="font-size:.65rem">收藏:' + v.date + ' · 最近跟练:' + lastCheck + ' · ' + v.count + '次</div>' +
       '<div class="vact" style="display:flex;gap:4px;margin-top:3px">' +
-      '<button onclick="checkinWvFav(' + i + ')" class="tl" style="font-size:.6rem;padding:3px 10px;border-radius:10px;background:var(--green-light);color:var(--green);border:1px solid var(--green)">🟢 跟练</button>' +
-      '<button onclick="delWvFav(' + i + ')" style="font-size:.6rem;padding:3px 8px;color:var(--accent)">✕</button>' +
+      '<button onclick="checkinWvFav(' + i + ')" class="tl" style="font-size:.55rem;padding:2px 8px;border-radius:8px;background:var(--green-light);color:var(--green);border:1px solid var(--green)">🟢 跟练</button>' +
+      '<button onclick="delWvFav(' + i + ')" style="font-size:.55rem;padding:2px 6px;color:var(--accent);border-radius:4px">✕</button>' +
       '</div></div></div>';
   }).join('');
 }
-function checkinWvFav(i) { S.videoFav.workout[i].checkins.push({date:today(),note:''}); S.videoFav.workout[i].count++; sv(); renderWorkoutFav(); }
-function delWvFav(i) { S.videoFav.workout.splice(i,1); sv(); renderWorkoutFav(); }
 
 // Life/Work learning
 function addLifeLearn() {
