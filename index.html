@@ -174,32 +174,87 @@ button{cursor:pointer;font-family:inherit;font-size:inherit;border:none;backgrou
 
 <!-- ===== PAGE 1: 学习 ===== -->
 <section class="page active" data-page="study">
-<div class="page-hdr">📚 学习 <span class="page-badge">英语</span></div>
+<div class="page-hdr">📚 学习 <span class="page-badge">📖📺</span></div>
+
+<!-- 英语学习 -->
 <div class="cd"><div class="cd-body">
-  <!-- Title -->
-  <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;"><span style="font-weight:600;font-size:.9rem">📖 英语学习</span></div>
-  <!-- Bilibili search -->
-  <div class="search-bar" style="display:flex;gap:6px;margin-bottom:8px">
-    <input type="text" id="biliSearch" placeholder="搜英语学习视频…" value="英语学习" onkeydown="if(event.key==='Enter')searchBili()" style="flex:1;font-size:.82rem">
-    <button onclick="searchBili()" id="biliBtn" style="padding:9px 14px;border-radius:var(--radius-sm);background:var(--primary);color:#fff;font-weight:500;font-size:.8rem;white-space:nowrap">🔍 搜索</button>
+  <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px"><span style="font-weight:600;font-size:.9rem">📖 英语学习</span></div>
+  <div class="stabs" style="margin-bottom:6px">
+    <button class="stab active" onclick="switchEngTab(this,'eng-hot')">🔥 B站热门推荐</button>
+    <button class="stab" onclick="switchEngTab(this,'eng-fav')">⭐ 个人收藏</button>
   </div>
-  <div class="stabs" id="biliTabs">
-    <button class="stab active" onclick="switchBili(this,'all')">全部</button>
-    <button class="stab" onclick="switchBili(this,'oral')">口语</button>
-    <button class="stab" onclick="switchBili(this,'grammar')">语法</button>
-    <button class="stab" onclick="switchBili(this,'listening')">听力</button>
+  <div id="eng-hot" class="stab-c active">
+    <div class="search-bar" style="display:flex;gap:6px;margin-bottom:6px">
+      <input type="text" id="biliSearch" placeholder="搜英语学习视频…" value="英语学习" onkeydown="if(event.key==='Enter')searchBili()" style="flex:1;font-size:.8rem">
+      <button onclick="searchBili()" id="biliBtn" style="padding:8px 12px;border-radius:var(--radius-sm);background:var(--primary);color:#fff;font-weight:500;font-size:.78rem">🔍 搜索</button>
+    </div>
+    <div class="stabs" style="margin-bottom:4px">
+      <button class="stab active" onclick="switchBili(this,'all')">全部</button>
+      <button class="stab" onclick="switchBili(this,'oral')">口语</button>
+      <button class="stab" onclick="switchBili(this,'grammar')">语法</button>
+      <button class="stab" onclick="switchBili(this,'listening')">听力</button>
+    </div>
+    <div id="biliRes" class="vi-list" style="max-height:280px;overflow-y:auto"></div>
   </div>
-  <div id="biliRes" class="vi-list" style="margin-bottom:10px"><div class="emp"><span class="big-e">🔍</span>点击搜索推荐视频</div></div>
+  <div id="eng-fav" class="stab-c"><div id="engFavList"></div></div>
+</div></div>
 
-  <!-- Kuake Links -->
-  <div style="display:flex;align-items:center;gap:6px;margin:10px 0 6px"><span style="font-weight:600;font-size:.82rem">📎 夸克学习链接</span><button onclick="showModal('kuake')" style="margin-left:auto;font-size:.7rem;color:var(--primary)">+ 添加</button></div>
+<!-- 夸克链接 -->
+<div class="cd"><div class="cd-body" style="padding:10px 14px">
+  <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px"><span style="font-weight:600;font-size:.82rem">📎 夸克学习链接</span><button onclick="showModal('kuake')" style="margin-left:auto;font-size:.7rem;color:var(--primary)">+ 添加</button></div>
   <div id="kuakeList"></div>
+</div></div>
 
-  <!-- Daily vocab traffic light -->
-  <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:var(--surface2);border-radius:var(--radius-sm);margin-top:10px">
+<!-- 背单词 -->
+<div class="cd"><div class="cd-body" style="padding:10px 14px">
+  <div style="display:flex;align-items:center;justify-content:space-between">
     <span style="font-size:.82rem;font-weight:500">📝 今日背单词</span><button onclick="showHistory('vocab','背单词记录')" style="font-size:.65rem;color:var(--text3);padding:2px 6px">📅</button>
     <button id="vocabBtn" class="tl gray" onclick="toggleVocab()">🔘 未打卡</button>
   </div>
+</div></div>
+
+<!-- 读书 -->
+<div class="cd"><div class="cd-body">
+  <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px"><span style="font-weight:600;font-size:.85rem">📖 读书</span><button onclick="showModal('book')" style="margin-left:auto;font-size:.7rem;color:var(--primary)">+ 添加</button></div>
+  <div class="stabs" style="margin-bottom:4px">
+    <button class="stab active" onclick="switchBookTab(this,'b-reading')">📖 在读</button>
+    <button class="stab" onclick="switchBookTab(this,'b-toread')">📋 待读</button>
+    <button class="stab" onclick="switchBookTab(this,'b-done')">✅ 读完</button>
+  </div>
+  <div id="b-reading" class="stab-c active"></div>
+  <div id="b-toread" class="stab-c"></div>
+  <div id="b-done" class="stab-c"></div>
+  <div id="bookMonthlySummary" style="margin-top:6px;padding:8px 10px;background:var(--surface2);border-radius:var(--radius-sm);font-size:.75rem;color:var(--text2);line-height:1.5"></div>
+</div></div>
+
+<!-- 生活上学习 -->
+<div class="cd"><div class="cd-hdr">🌱 生活上学习</div><div class="cd-body">
+  <div style="display:flex;gap:6px;margin-bottom:6px;flex-wrap:wrap">
+    <input type="text" id="lifeContent" placeholder="学习内容" style="flex:2;min-width:100px;font-size:.8rem">
+    <input type="url" id="lifeLink" placeholder="链接(小红书/抖音/B站)" style="flex:2;min-width:100px;font-size:.8rem">
+    <button onclick="addLifeLearn()" style="padding:8px 14px;border-radius:6px;background:var(--primary);color:#fff;font-size:.75rem">+ 添加</button>
+  </div>
+  <div class="stabs" style="margin-bottom:4px">
+    <button class="stab active" onclick="switchLifeTab(this,'life-todo')">📋 未实践</button>
+    <button class="stab" onclick="switchLifeTab(this,'life-done')">✅ 已实践</button>
+  </div>
+  <div id="life-todo" class="stab-c active"></div>
+  <div id="life-done" class="stab-c"></div>
+</div></div>
+
+<!-- 工作上学习 -->
+<div class="cd"><div class="cd-hdr">💼 工作上学习</div><div class="cd-body">
+  <div style="display:flex;gap:6px;margin-bottom:6px;flex-wrap:wrap">
+    <input type="text" id="workContent" placeholder="学习内容" style="flex:2;min-width:100px;font-size:.8rem">
+    <input type="url" id="workLink" placeholder="链接(小红书/抖音/B站)" style="flex:2;min-width:100px;font-size:.8rem">
+    <button onclick="addWorkLearn()" style="padding:8px 14px;border-radius:6px;background:var(--primary);color:#fff;font-size:.75rem">+ 添加</button>
+  </div>
+  <div class="stabs" style="margin-bottom:4px">
+    <button class="stab active" onclick="switchWorkTab(this,'work-todo')">📋 未实践</button>
+    <button class="stab" onclick="switchWorkTab(this,'work-done')">✅ 已实践</button>
+  </div>
+  <div id="work-todo" class="stab-c active"></div>
+  <div id="work-done" class="stab-c"></div>
 </div></div>
 </section>
 
@@ -238,10 +293,13 @@ button{cursor:pointer;font-family:inherit;font-size:inherit;border:none;backgrou
     <div class="sr-item" onclick="toggleCheckin('aerobic')" style="cursor:pointer"><div class="sr-num" id="aerobicStatus">🔴</div><div class="sr-lbl">🏋️ 有氧周目标</div></div>
   </div>
   <div style="font-size:.72rem;color:var(--text2);margin-bottom:6px">本周有氧运动: <span id="aerobicCount">0</span>/5 次 <button onclick="showHistory('exercise','运动记录')" style="font-size:.65rem;color:var(--text3);padding:2px 6px">📅 历史</button></div>
-  <div style="display:flex;align-items:center;gap:6px;margin:8px 0 4px"><span style="font-weight:500;font-size:.82rem">📺 跟练视频</span><button onclick="showModal('workout')" style="margin-left:auto;font-size:.7rem;color:var(--primary)">+ 添加</button></div>
-  <div id="workoutList"></div>
-  <div style="margin-top:8px">
-    <div class="stabs">
+  <div style="display:flex;align-items:center;gap:6px;margin:8px 0 4px"><span style="font-weight:500;font-size:.82rem">📺 跟练视频</span></div>
+  <div class="stabs" style="margin-bottom:4px">
+    <button class="stab active" onclick="switchWvMain(this,'wv-hot')">🔥 热门推荐</button>
+    <button class="stab" onclick="switchWvMain(this,'wv-fav')">⭐ 个人收藏</button>
+  </div>
+  <div id="wv-hot" class="stab-c active">
+    <div class="stabs" style="margin-bottom:4px">
       <button class="stab active" onclick="switchWv(this,'wv-all')">推荐</button>
       <button class="stab" onclick="switchWv(this,'wv-pamela')">帕梅拉</button>
       <button class="stab" onclick="switchWv(this,'wv-oyxc')">欧阳春晓</button>
@@ -250,6 +308,9 @@ button{cursor:pointer;font-family:inherit;font-size:inherit;border:none;backgrou
     <div id="wv-pamela" class="stab-c"></div>
     <div id="wv-oyxc" class="stab-c"></div>
     <div style="text-align:center;margin-top:4px"><button class="stab" onclick="searchWorkoutVideos()" style="background:var(--primary-light);color:var(--primary)">🔄 搜索B站运动视频</button></div>
+  </div>
+  <div id="wv-fav" class="stab-c"><div id="workoutFavList"></div></div>
+</div>
   </div>
 </div>
 <!-- 皮肤 -->
@@ -537,6 +598,8 @@ button{cursor:pointer;font-family:inherit;font-size:inherit;border:none;backgrou
 • 也可以在夸克里复制链接 → 粘贴到这里保存
 </div><div class="ma"><button class="btn btn-o" onclick="closeModal('kuake')">取消</button><button class="btn btn-p" onclick="saveKuake()">保存</button></div></div></div>
 
+<div class="mo" id="mo-book"><div class="mo-in"><h3>📖 添加图书</h3><div class="fg"><label>书名 *</label><input type="text" id="bookTitle" placeholder="书名"></div><div class="fg"><label>作者</label><input type="text" id="bookAuthor" placeholder="作者"></div><div class="fg"><label>分类</label><select id="bookStatus"><option value="reading">📖 正在读</option><option value="toread">📋 待读</option><option value="done">✅ 已经读完</option></select></div><div class="fg"><label>来源</label><select id="bookSource"><option value="">选择来源</option><option value="买">💰 购买</option><option value="借">🤝 借的</option><option value="图书馆">🏛️ 图书馆</option><option value="电子书">📱 电子书</option><option value="赠送">🎁 赠送</option><option value="其他">其他</option></select></div><div class="ma"><button class="btn btn-o" onclick="closeModal('book')">取消</button><button class="btn btn-p" onclick="saveBook()">保存</button></div></div></div>
+
 <div class="mo" id="mo-recipe"><div class="mo-in"><h3>🥗 添加菜谱</h3><div class="fg"><label>菜名 *</label><input type="text" id="rcName" placeholder="菜名"></div><div class="fg"><label>卡路里 (kcal)</label><input type="number" id="rcCal" placeholder="约多少大卡"></div><div class="fg"><label>所需食材 (逗号分隔)</label><input type="text" id="rcIng" placeholder="鸡蛋, 番茄, 洋葱"></div><div class="fg"><label>状态</label><select id="rcStatus"><option value="pending">⏳ 待制作</option><option value="done">✅ 已做过</option></select></div><div class="fg"><label>图片</label><div style="display:flex;gap:8px;align-items:center"><input type="file" id="rcImg" accept="image/*" style="flex:1" onchange="previewImage(this,'rcImgPreview')"><button class="btn btn-o btn-sm" onclick="document.getElementById('rcImg').value='';document.getElementById('rcImgPreview').innerHTML=''" style="font-size:.7rem;padding:4px 10px">✕</button></div><div id="rcImgPreview" style="margin-top:4px"></div></div><div class="ma"><button class="btn btn-o" onclick="closeModal('recipe')">取消</button><button class="btn btn-p" onclick="saveRecipe()">保存</button></div></div></div>
 
 <div class="mo" id="mo-workout"><div class="mo-in"><h3>📺 添加跟练视频</h3><div class="fg"><label>视频标题</label><input type="text" id="woTitle" placeholder="帕梅拉 20分钟有氧"></div><div class="fg"><label>B站链接或视频ID</label><input type="text" id="woUrl" placeholder="BV1... 或完整URL"></div><div class="fg"><label>分类</label><select id="woType"><option value="all">通用</option><option value="pamela">帕梅拉</option><option value="oyxc">欧阳春晓</option></select></div><div class="ma"><button class="btn btn-o" onclick="closeModal('workout')">取消</button><button class="btn btn-p" onclick="saveWorkout()">保存</button></div></div></div>
@@ -582,6 +645,16 @@ button{cursor:pointer;font-family:inherit;font-size:inherit;border:none;backgrou
   <div style="display:flex;gap:8px;margin-top:4px">
     <button class="btn btn-p" onclick="confirmBuy()" style="flex:1;padding:10px;border-radius:var(--radius-sm);background:var(--green);color:#fff;font-weight:500">✅ 确认购买</button>
     <button class="btn btn-o" onclick="closeModal('buyPrice')" style="flex:1;padding:10px;border-radius:var(--radius-sm);background:var(--surface2);font-weight:500">取消</button>
+  </div>
+</div></div>
+
+<!-- 实践弹窗 -->
+<div class="mo" id="mo-practice"><div class="mo-in"><h3 id="practiceTitle">✅ 实践记录</h3>
+  <div class="fg"><label>实践日期</label><input type="date" id="practiceDate" style="font-size:.9rem"></div>
+  <div class="fg"><label>实践感受</label><textarea id="practiceNote" placeholder="学到了什么？有什么收获？" rows="3" style="font-size:.85rem"></textarea></div>
+  <div style="display:flex;gap:8px;margin-top:4px">
+    <button class="btn btn-p" onclick="confirmPractice()" style="flex:1;padding:10px;border-radius:var(--radius-sm);background:var(--green);color:#fff;font-weight:500">✅ 确认实践</button>
+    <button class="btn btn-o" onclick="closeModal('practice')" style="flex:1;padding:10px;border-radius:var(--radius-sm);background:var(--surface2);font-weight:500">取消</button>
   </div>
 </div></div>
 
@@ -632,7 +705,10 @@ const S={
   movie:{watched:LS('mvW')||[],towatch:LS('mvTW')||[]},
   variety:{watched:LS('vrW')||[],towatch:LS('vrTW')||[]},
   trend:{weibo:[],douyin:[]},
-  ideas:LS('ideas')||[],
+  ideas:LS('ideas')||[],books:{reading:LS('bReading')||[],
+  videoFav:{english:LS('vFavEng')||[],workout:LS('vFavWo')||[]},
+  lifeLearn:{todo:LS('lifeTodo')||[],done:LS('lifeDone')||[]},
+  workLearn:{todo:LS('workTodo')||[],done:LS('workDone')||[]},toread:LS('bToread')||[],done:LS('bDone')||[]},
   me:{locked:true,emotions:{happy:[],sad:[],anxious:[],angry:[]},traits:'',ideal:'',password:'117283',savings:[]},
   github:{user:'',repo:'',token:''},
 }
@@ -644,7 +720,7 @@ function saveLocal(){
   LSS('shop',S.shop);LSS('tvW',S.tv.watched);LSS('tvTW',S.tv.towatch);LSS('mvW',S.movie.watched);LSS('mvTW',S.movie.towatch)
   LSS('vrW',S.variety.watched);LSS('vrTW',S.variety.towatch);LSS('rWantFood',S.restWant.food);LSS('rWantFun',S.restWant.fun)
   LSS('fjDone',S.fjian.done);LSS('fjLeft',S.fjian.left);LSS('ideas',S.ideas);LSS('workouts',S.workouts)
-  LSS('wCheckins',S.workoutCheckins);LSS('bike',S.bike);LSS('walk',S.walk);LSS('aerobic',S.aerobic);LSS('theme',S.theme);LSS('me',S.me);LSS('github',S.github)
+  LSS('wCheckins',S.workoutCheckins);LSS('bike',S.bike);LSS('walk',S.walk);LSS('aerobic',S.aerobic);LSS('theme',S.theme);LSS('me',S.me);LSS('github',S.github);LSS('bReading',S.books.reading);LSS('vFavEng',S.videoFav.english);LSS('vFavWo',S.videoFav.workout);LSS('lifeTodo',S.lifeLearn.todo);LSS('lifeDone',S.lifeLearn.done);LSS('workTodo',S.workLearn.todo);LSS('workDone',S.workLearn.done);LSS('bToread',S.books.toread);LSS('bDone',S.books.done)
 }
 
 /* ---- 服务器存储 (持久化) ---- */
@@ -919,7 +995,7 @@ function fullRender(){
     try{renderRestReg()}catch(e){};try{renderRestWant()}catch(e){};try{renderFjian()}catch(e){};try{renderTravel()}catch(e){}
     try{renderCraftWish()}catch(e){};try{renderPerler()}catch(e){};try{renderPastProj()}catch(e){}
     try{renderBinge('tv')}catch(e){};try{renderBinge('movie')}catch(e){};try{renderBinge('variety')}catch(e){}
-    try{renderIdeas()}catch(e){};try{renderMe()}catch(e){}
+    try{renderIdeas()}catch(e){};try{renderMe()}catch(e){};try{renderBooks()}catch(e){};try{renderEngFav()}catch(e){};try{renderWorkoutFav()}catch(e){};try{renderLifeLearn()}catch(e){};try{renderWorkLearn()}catch(e){}
   }catch(e){}
   _rendering=0
 }
@@ -1121,6 +1197,12 @@ function showStorageInfo(){
 Html=String.raw
 
 // ===== 1. STUDY =====
+function _decodeHTML(str){
+  if(!str) return '';
+  var t = document.createElement('textarea');
+  t.innerHTML = str;
+  return t.value;
+}
 async function searchBili(q){
   q=q||document.getElementById('biliSearch').value.trim()||'英语学习'
   const c=document.getElementById('biliRes');c.innerHTML='<div class="loading" style="text-align:center;padding:20px"><div style="width:28px;height:28px;border:3px solid var(--border);border-top-color:var(--primary);border-radius:50%;animation:spin .7s linear infinite;margin:0 auto"></div></div>'
@@ -1134,17 +1216,60 @@ async function searchBili(q){
     if(!r.ok)throw Error('http')
     const d=await r.json();const v=d?.data?.result||[]
     if(!v.length)throw Error('empty')
-    renderVideos(c,v.slice(0,18))
-  }catch(e){renderVideos(c,fallbackVideos(kw))}
+    renderVideos(c,v.slice(0,20))
+  }catch(e){
+    // 使用更可靠的推荐内容
+    renderVideos(c,getRecVideos(kw))
+  }
   document.getElementById('biliBtn').disabled=false
 }
-function renderVideos(c,v){c.innerHTML=v.map(v=>{
-  const pic=(v.pic||'').startsWith('//')?'https:'+v.pic:v.pic||''
-  const url=v.bvid?`https://www.bilibili.com/video/${v.bvid}`:`https://search.bilibili.com/all?keyword=${encodeURIComponent(v.title||'')}`
-  return `<div class="vi" onclick="window.open('${url}','_blank')"><div class="vthumb" style="background:var(--border);display:flex;align-items:center;justify-content:center;font-size:1.6rem">📺</div><div class="vinfo"><div class="vtitle">${v.title||'视频'}</div><div class="vmeta"><span>👁️ ${fmt(v.play)}</span><span>👍 ${fmt(v.like)}</span></div></div></div>`
-}).join('')}
+function renderVideos(c,v){
+  c.innerHTML=v.map(function(item){
+    var title = _decodeHTML(item.title||'推荐视频');
+    var bvid = item.bvid || '';
+    var url = bvid ? 'https://www.bilibili.com/video/' + bvid : (item.url||'#');
+    var pic = item.pic || '';
+    if(pic && pic.startsWith('//')) pic = 'https:' + pic;
+    var plays = item.play !== undefined ? fmt(item.play) : '';
+    var likes = item.like !== undefined ? fmt(item.like) : '';
+    var duration = item.duration || '';
+    return '<div class="vi" onclick="window.open(\''+url+'\',\'_blank\')">' +
+      (pic ? '<img class="vthumb" src="'+pic+'" alt="" loading="lazy" onerror="this.style.display=\'none\'">' : '<div class="vthumb" style="display:flex;align-items:center;justify-content:center;font-size:1.4rem;background:var(--border)">\u{1F4FA}</div>') +
+      '<div class="vinfo"><div class="vtitle">'+title+'</div>' +
+      '<div class="vmeta">' + (plays?'\u{1F441} '+plays:'') + (likes?' \u{1F44D} '+likes:'') + (duration?' ⏱ '+duration:'') + '</div></div></div>';
+  }).join('');
+  // Add save buttons
+  var items = c.querySelectorAll('.vi');
+  items.forEach(function(el, idx){
+    if(idx < v.length) {
+      var btn = document.createElement('button');
+      btn.textContent = '⭐';
+      btn.style.cssText = 'font-size:.6rem;padding:2px 6px;border-radius:4px;background:var(--orange-light);color:var(--orange);margin:4px 0 0 4px';
+      btn.onclick = function(e){
+        e.stopPropagation();
+        var vitem = v[idx];
+        var t = _decodeHTML(vitem.title||'');
+        var b = vitem.bvid||'';
+        var u = b ? 'https://www.bilibili.com/video/'+b : (vitem.url||'#');
+        saveToEngFav(t, u);
+      };
+      var meta = el.querySelector('.vmeta');
+      if(meta) { meta.appendChild(document.createTextNode(' ')); meta.appendChild(btn); }
+    }
+  });
+}
 function fmt(n){n=Number(n);if(isNaN(n))return'-';return n>=10000?(n/10000).toFixed(1)+'万':n.toLocaleString()}
-function fallbackVideos(kw){return[1,2,3,4,5,6].map(i=>({title:`${i}. 【推荐】${kw} 精选课程`,play:Math.floor(Math.random()*200+50)+'万',like:Math.floor(Math.random()*5+1)+'万',bvid:''}))}
+function getRecVideos(kw){
+  var list = [
+    {title:'BBC英语听力精选 - 日常对话',play:'156万',like:'3.2万',duration:'28:15',url:'https://search.bilibili.com/all?keyword=BBC英语听力'},
+    {title:'【合集】英语语法从零开始',play:'89万',like:'2.1万',duration:'3:15:30',url:'https://search.bilibili.com/all?keyword=英语语法从零开始'},
+    {title:'美式口语发音技巧大全',play:'67万',like:'1.5万',duration:'45:20',url:'https://search.bilibili.com/all?keyword=美式口语发音技巧'},
+    {title:'每天10分钟英语听力训练',play:'45万',like:'9800',duration:'12:15',url:'https://search.bilibili.com/all?keyword=英语听力训练每天10分钟'},
+    {title:'TED演讲精选 - 值得反复听的8篇',play:'34万',like:'7200',duration:'38:50',url:'https://search.bilibili.com/all?keyword=TED演讲精选英语学习'},
+    {title:'英语单词记忆法 - 词根词缀',play:'56万',like:'1.2万',duration:'22:10',url:'https://search.bilibili.com/all?keyword=英语单词词根词缀记忆法'},
+  ];
+  return list;
+}
 function switchBili(el,t){document.querySelectorAll('#biliTabs .stab').forEach(x=>x.classList.remove('active'));el.classList.add('active');searchBili()}
 
 // Kuake
@@ -1194,6 +1319,183 @@ function manualCopy(text){
 }
 function toggleVocab(){const t=today();S.vocab[t]=!S.vocab[t];sv();renderVocab()}
 function renderVocab(){const t=today(),d=S.vocab[t];const btn=document.getElementById('vocabBtn');btn.className='tl '+(d?'green':'red');btn.textContent=d?'✅ 已打卡':'🔴 未打卡';btn.innerHTML=d?'🟢 已打卡':'🔴 未打卡'}
+
+/* ===== 读书模块 ===== */
+const B_SRC = {'买':'💰','借':'🤝','图书馆':'🏛️','电子书':'📱','赠送':'🎁','其他':'📌'}
+function saveBook(){
+  const title=document.getElementById('bookTitle').value.trim(),author=document.getElementById('bookAuthor').value.trim()
+  const status=document.getElementById('bookStatus').value,source=document.getElementById('bookSource').value
+  if(!title) return toast('请输入书名','error')
+  S.books[status].unshift({title,author,source,date:today()})
+  sv();renderBooks();closeModal('book')
+  document.getElementById('bookTitle').value='';document.getElementById('bookAuthor').value=''
+  toast('📖 已添加')
+}
+function switchBookTab(el,id){
+  el.closest('.cd-body').querySelectorAll('.stabs .stab').forEach(x=>x.classList.remove('active'))
+  el.closest('.cd-body').querySelectorAll('.stab-c').forEach(x=>x.classList.remove('active'))
+  el.classList.add('active');document.getElementById(id).classList.add('active')
+}
+function moveBook(from,to,i){
+  if(to==='done'&&from!=='done'){S.books[to].unshift({...S.books[from][i],finishDate:today()});S.books[from].splice(i,1)}
+  else if(from==='done'&&to!=='done'){S.books[to].unshift({...S.books[from][i],finishDate:undefined});S.books[from].splice(i,1)}
+  else {S.books[to].unshift(S.books[from].splice(i,1)[0])}
+  sv();renderBooks()
+}
+function delBook(cat,i){S.books[cat].splice(i,1);sv();renderBooks()}
+function renderBooks(){
+  const labels={reading:'📖 在读',toread:'📋 待读',done:'✅ 读完'}
+  const moves={reading:{next:'done',label:'✅ 读完'},toread:{next:'reading',label:'📖 开始读'},done:{next:'reading',label:'↩️ 重读'}}
+  ;['reading','toread','done'].forEach(cat=>{
+    const c=document.getElementById('b-'+cat)
+    if(!S.books[cat].length) return c.innerHTML='<div class="emp" style="padding:8px;font-size:.75rem">暂无</div>'
+    c.innerHTML=S.books[cat].map((b,i)=>`<div class="tri"><div class="tr-info"><div class="tr-name">${b.title}</div><div class="tr-meta">${b.author?'✍️ '+b.author:''} ${b.source?'· '+B_SRC[b.source]||''+b.source:''} ${b.finishDate?'· ✅ '+b.finishDate:''}</div></div><div class="record-actions" style="display:flex;gap:2px"><button onclick="moveBook('${cat}','${moves[cat].next}',${i})" style="font-size:.6rem;padding:4px 7px;border-radius:4px;background:var(--green-light);color:var(--green)">${moves[cat].label}</button><button onclick="delBook('${cat}',${i})" style="font-size:.6rem;padding:4px 7px;color:var(--accent)">✕</button></div></div>`).join('')
+  })
+  renderBookMonthly()
+}
+function renderBookMonthly(){
+  const el=document.getElementById('bookMonthlySummary')
+  const finished=S.books.done.filter(b=>b.finishDate)
+  // 按月分组
+  const months={}
+  finished.forEach(b=>{
+    const m=b.finishDate.slice(0,7);if(!months[m])months[m]=[]
+    months[m].push(b)
+  })
+  const keys=Object.keys(months).sort().reverse()
+  if(!keys.length&&!S.books.reading.length&&!S.books.toread.length)
+    return el.innerHTML='📚 添加图书后，这里会显示月读书单'
+  let html='📅 <strong>月读书单</strong><br>'
+  keys.forEach(m=>{
+    const arr=months[m];const total=arr.length
+    html+=`<span style="font-weight:500">${m}</span> (${total}本): ${arr.map(b=>b.title).join('、')}<br>`
+  })
+  if(!keys.length) html+='<span style="color:var(--text3)">还没有读完的书，加油 📖</span><br>'
+  const totalAll=S.books.done.length;const readingCount=S.books.reading.length;const toreadCount=S.books.toread.length
+  html+=`<span style="color:var(--text3);font-size:.72rem">📊 共${totalAll}本读完 · ${readingCount}本在读 · ${toreadCount}本待读</span>`
+  el.innerHTML=html
+}
+
+
+
+/* ===== 视频收藏 & 学习实践 ===== */
+var _practiceSrc = '';
+function switchEngTab(el, id) {
+  el.closest('.cd-body').querySelectorAll('.stabs .stab').forEach(function(x){x.classList.remove('active')});
+  el.closest('.cd-body').querySelectorAll('.stab-c').forEach(function(x){x.classList.remove('active')});
+  el.classList.add('active'); document.getElementById(id).classList.add('active');
+}
+function saveToEngFav(title, url) {
+  S.videoFav.english.unshift({title:title, url:url, checkins:[], count:0, date:today()});
+  sv(); renderEngFav(); toast('⭐ 已收藏');
+}
+function checkinEngFav(i) {
+  S.videoFav.english[i].checkins.push({date:today(), note:''});
+  S.videoFav.english[i].count++;
+  sv(); renderEngFav();
+}
+function delEngFav(i) { S.videoFav.english.splice(i,1); sv(); renderEngFav(); }
+function renderEngFav() {
+  var c = document.getElementById('engFavList');
+  var items = S.videoFav.english;
+  if(!items.length) return c.innerHTML = '<div class="emp" style="padding:12px"><span class="big-e">⭐</span>还没有收藏视频，在“热门推荐”中搜索后点⭐收藏</div>';
+  c.innerHTML = items.map(function(v,i){
+    var lastCheck = v.checkins.length > 0 ? v.checkins[v.checkins.length-1].date : '未学习';
+    return '<div class="vi" style="cursor:default">' +
+      '<div class="vthumb" style="display:flex;align-items:center;justify-content:center;font-size:1.4rem">📺</div>' +
+      '<div class="vinfo"><div class="vtitle" onclick="window.open(\'' + v.url + '\',\'_blank\')" style="color:var(--primary);cursor:pointer">' + v.title + '</div>' +
+      '<div class="vmeta" style="font-size:.7rem">📅 最近: ' + lastCheck + ' · 🎵 ' + v.count + '次</div>' +
+      '<div class="vact" style="display:flex;gap:4px;margin-top:3px">' +
+      '<button onclick="checkinEngFav(' + i + ')" class="tl" style="font-size:.6rem;padding:3px 10px;border-radius:10px;background:var(--green-light);color:var(--green);border:1px solid var(--green)">🟢 打卡</button>' +
+      '<button onclick="delEngFav(' + i + ')" style="font-size:.6rem;padding:3px 8px;color:var(--accent)">✕</button>' +
+      '</div></div></div>';
+  }).join('');
+}
+function switchWvMain(el, id) {
+  document.querySelectorAll('#h-exer .stabs .stab').forEach(function(x){x.classList.remove('active')});
+  document.querySelectorAll('#h-exer .stab-c').forEach(function(x){x.classList.remove('active')});
+  el.classList.add('active'); document.getElementById(id).classList.add('active');
+}
+function renderWorkoutFav() {
+  var c = document.getElementById('workoutFavList');
+  var items = S.videoFav.workout;
+  if(!items.length) return c.innerHTML = '<div class="emp" style="padding:12px"><span class="big-e">⭐</span>还没有收藏跟练视频</div>';
+  c.innerHTML = items.map(function(v,i){
+    var lastCheck = v.checkins.length > 0 ? v.checkins[v.checkins.length-1].date : '未跟练';
+    return '<div class="vi" style="cursor:default">' +
+      '<div class="vthumb" style="display:flex;align-items:center;justify-content:center;font-size:1.4rem">🏋</div>' +
+      '<div class="vinfo"><div class="vtitle" onclick="window.open(\'' + v.url + '\',\'_blank\')" style="color:var(--primary);cursor:pointer">' + v.title + '</div>' +
+      '<div class="vmeta" style="font-size:.7rem">📅 最近: ' + lastCheck + ' · 🎵 ' + v.count + '次</div>' +
+      '<div class="vact" style="display:flex;gap:4px;margin-top:3px">' +
+      '<button onclick="checkinWvFav(' + i + ')" class="tl" style="font-size:.6rem;padding:3px 10px;border-radius:10px;background:var(--green-light);color:var(--green);border:1px solid var(--green)">🟢 跟练</button>' +
+      '<button onclick="delWvFav(' + i + ')" style="font-size:.6rem;padding:3px 8px;color:var(--accent)">✕</button>' +
+      '</div></div></div>';
+  }).join('');
+}
+function checkinWvFav(i) { S.videoFav.workout[i].checkins.push({date:today(),note:''}); S.videoFav.workout[i].count++; sv(); renderWorkoutFav(); }
+function delWvFav(i) { S.videoFav.workout.splice(i,1); sv(); renderWorkoutFav(); }
+
+// Life/Work learning
+function addLifeLearn() {
+  var content = document.getElementById('lifeContent').value.trim();
+  var link = document.getElementById('lifeLink').value.trim();
+  if(!content) return toast('请输入学习内容','error');
+  S.lifeLearn.todo.unshift({content:content, link:link, date:today()});
+  sv(); renderLifeLearn();
+  document.getElementById('lifeContent').value=''; document.getElementById('lifeLink').value='';
+  toast('已添加');
+}
+function switchLifeTab(el,id) {
+  el.closest('.cd-body').querySelectorAll('.stabs .stab').forEach(function(x){x.classList.remove('active')});
+  el.closest('.cd-body').querySelectorAll('.stab-c').forEach(function(x){x.classList.remove('active')});
+  el.classList.add('active'); document.getElementById(id).classList.add('active');
+}
+function practiceItem(type,i) {
+  _practiceSrc = type + ',' + i;
+  var item = type==='life' ? S.lifeLearn.todo[i] : S.workLearn.todo[i];
+  document.getElementById('practiceTitle').textContent = '✅ 实践记录 - ' + item.content;
+  document.getElementById('practiceDate').value = today();
+  document.getElementById('practiceNote').value = '';
+  document.getElementById('mo-practice').classList.add('show');
+}
+function confirmPractice() {
+  var parts = _practiceSrc.split(',');
+  var type = parts[0], i = parseInt(parts[1]);
+  var date = document.getElementById('practiceDate').value;
+  var note = document.getElementById('practiceNote').value.trim();
+  var src = type==='life' ? S.lifeLearn : S.workLearn;
+  var item = src.todo.splice(i,1)[0];
+  src.done.unshift({content:item.content, link:item.link, date:item.date, practiceDate:date, practiceNote:note});
+  sv();
+  if(type==='life') renderLifeLearn(); else renderWorkLearn();
+  closeModal('practice');
+  toast('✅ 实践记录已保存');
+}
+function delLearnItem(type,cat,i) {
+  var src = type==='life' ? S.lifeLearn : S.workLearn;
+  src[cat].splice(i,1); sv();
+  if(type==='life') renderLifeLearn(); else renderWorkLearn();
+}
+function renderLifeLearn() {
+  renderLearn('life', 'life-todo', 'life-done');
+}
+function renderWorkLearn() {
+  renderLearn('work', 'work-todo', 'work-done');
+}
+function renderLearn(type, todoId, doneId) {
+  var src = type==='life' ? S.lifeLearn : S.workLearn;
+  var todoEl = document.getElementById(todoId);
+  var doneEl = document.getElementById(doneId);
+  var lab = type==='life' ? 'U0001F331' : 'U0001F4BC';
+  if(!src.todo.length) todoEl.innerHTML = '<div class="emp" style="padding:8px;font-size:.75rem">暂无</div>';
+  else todoEl.innerHTML = src.todo.map(function(v,i){
+    return '<div class="tri"><div class="tr-info"><div class="tr-name">' + v.content + '</div><div class="tr-meta">' + (v.link?'U0001F517 ' + v.link:'') + (v.date?' · ' + v.date:'') + '</div></div><div class="record-actions" style="display:flex;gap:2px"><button onclick="practiceItem(\''+type+'\','+i+')" style="font-size:.6rem;padding:4px 7px;border-radius:4px;background:var(--green-light);color:var(--green)">✅ 实践</button><button onclick="delLearnItem(\''+type+'\',\'todo\','+i+')" style="font-size:.6rem;padding:4px 7px;color:var(--accent)">✕</button></div></div>';
+  }).join('');
+  if(!src.done.length) doneEl.innerHTML = '<div class="emp" style="padding:8px;font-size:.75rem">暂无</div>';
+  else doneEl.innerHTML = src.done.map(function(v,i){
+    return '<div class="tri" style="background:var(--surface2);border-radius:6px;margin-bottom:2px;padding:6px 10px"><div class="tr-info"><div class="tr-name">' + v.content + '</div><div class="tr-meta">✅ 实践日期: ' + v.practiceDate + (v.practiceNote?' · ' + v.practiceNote:'') + '</div></div><div class="record-actions"><button onclick="delLearnItem(\''+type+'\',\'done\','+i+')" style="font-size:.6rem;padding:4px 7px;color:var(--accent)">✕</button></div></div>';
+  }).join('');
+}
 
 // ===== 2. HEALTH =====
 function switchH(el,id){
