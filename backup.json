@@ -1,0 +1,90 @@
+{
+  "theme": "light",
+  "kuakeLinks": [],
+  "vocab": {
+    "2026-07-30": true
+  },
+  "recipes": [],
+  "bike": {},
+  "walk": {},
+  "aerobic": {},
+  "workouts": [],
+  "workoutCheckins": {},
+  "skin": {
+    "cream": {},
+    "mask": {},
+    "hydra": {},
+    "iso": {},
+    "doctor": []
+  },
+  "water": {},
+  "weights": [],
+  "periods": [],
+  "shop": {
+    "pp": {
+      "p": [],
+      "q": [
+        {
+          "name": "鸭子肉",
+          "price": ""
+        }
+      ]
+    },
+    "sm": {
+      "p": [],
+      "q": []
+    },
+    "ol": {
+      "p": [],
+      "q": []
+    },
+    "cam": {
+      "p": [],
+      "q": []
+    }
+  },
+  "restReg": [],
+  "restWant": {
+    "food": [],
+    "fun": []
+  },
+  "fjian": {
+    "done": [],
+    "left": []
+  },
+  "travel": [],
+  "craftWish": [],
+  "perlerC": [],
+  "perlerP": [],
+  "pastProj": [],
+  "tv": {
+    "watched": [],
+    "towatch": []
+  },
+  "movie": {
+    "watched": [],
+    "towatch": []
+  },
+  "variety": {
+    "watched": [],
+    "towatch": []
+  },
+  "ideas": [],
+  "me": {
+    "locked": true,
+    "emotions": {
+      "happy": [],
+      "sad": [],
+      "anxious": [],
+      "angry": []
+    },
+    "traits": "",
+    "ideal": "",
+    "password": "117283",
+    "savings": []
+  },
+  "_backup": {
+    "time": "2026-07-30T08:07:50.434Z",
+    "version": "2.0"
+  }
+}
