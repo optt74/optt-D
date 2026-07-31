@@ -280,7 +280,7 @@ button{cursor:pointer;font-family:inherit;font-size:inherit;border:none;backgrou
     <button class="tl gray" id="skinIso" onclick="toggleSkin('iso')" style="justify-content:center">💊 异维A酸</button>
   </div>
   <div style="text-align:right;margin-bottom:4px"><button onclick="showHistory('skin','皮肤记录')" style="font-size:.65rem;color:var(--text3);padding:2px 6px">📅 查看皮肤历史记录</button></div>
-  <div style="display:flex;align-items:center;gap:6px;margin:10px 0 4px"><span style="font-weight:500;font-size:.82rem">🏥 皮肤科看诊</span><button onclick="addDoctorVisit()" style="margin-left:auto;font-size:.7rem;color:var(--primary)">+ 记录</button></div>
+  <div style="display:flex;align-items:center;gap:6px;margin:10px 0 4px;flex-wrap:wrap"><span style="font-weight:500;font-size:.82rem">🏥 皮肤科看诊</span><input type="date" id="doctorDate" style="font-size:.7rem;padding:4px 8px;width:auto;flex-shrink:0"><button onclick="addDoctorVisit()" style="font-size:.7rem;color:var(--primary)">+ 记录</button></div>
   <div id="doctorVisits"></div>
 </div>
 <!-- 喝水 -->
@@ -676,10 +676,11 @@ const S={
   movie:{watched:LS('mvW')||[],towatch:LS('mvTW')||[]},
   variety:{watched:LS('vrW')||[],towatch:LS('vrTW')||[]},
   trend:{weibo:[],douyin:[]},
-  ideas:LS('ideas')||[],books:{reading:LS('bReading')||[],
+  ideas:LS('ideas')||[],
+  books:{reading:LS('bReading')||[],toread:LS('bToread')||[],done:LS('bDone')||[]},
   videoFav:{english:LS('vFavEng')||[],workout:LS('vFavWo')||[]},
   lifeLearn:{todo:LS('lifeTodo')||[],done:LS('lifeDone')||[]},
-  workLearn:{todo:LS('workTodo')||[],done:LS('workDone')||[]},toread:LS('bToread')||[],done:LS('bDone')||[]},
+  workLearn:{todo:LS('workTodo')||[],done:LS('workDone')||[]},
   me:{locked:true,emotions:{happy:[],sad:[],anxious:[],angry:[]},traits:'',ideal:'',password:'117283',savings:[]},
   github:{user:'',repo:'',token:''},
 }
@@ -1393,17 +1394,32 @@ function renderLearn(type, todoId, doneId) {
   var src = type==='life' ? S.lifeLearn : S.workLearn;
   var todoEl = document.getElementById(todoId);
   var doneEl = document.getElementById(doneId);
-  var lab = type==='life' ? 'U0001F331' : 'U0001F4BC';
   if(!src.todo.length) todoEl.innerHTML = '<div class="emp" style="padding:8px;font-size:.75rem">暂无</div>';
   else todoEl.innerHTML = src.todo.map(function(v,i){
-    return '<div class="tri"><div class="tr-info"><div class="tr-name">' + v.content + '</div><div class="tr-meta">' + (v.link?'U0001F517 ' + v.link:'') + (v.date?' · ' + v.date:'') + '</div></div><div class="record-actions" style="display:flex;gap:2px"><button onclick="practiceItem(\''+type+'\','+i+')" style="font-size:.6rem;padding:4px 7px;border-radius:4px;background:var(--green-light);color:var(--green)">✅ 实践</button><button onclick="delLearnItem(\''+type+'\',\'todo\','+i+')" style="font-size:.6rem;padding:4px 7px;color:var(--accent)">✕</button></div></div>';
+    var linkHtml = '';
+    if(v.link){
+      var plat = getPlat(v.link);
+      linkHtml = '<div style="margin-top:2px"><a href="' + v.link + '" target="_blank" style="font-size:.65rem;color:var(--primary);text-decoration:underline">' + plat + ' 打开链接</a></div>';
+    }
+    return '<div class="tri"><div class="tr-info"><div class="tr-name">' + v.content + '</div><div class="tr-meta">' + (v.date ? '📅 ' + v.date : '') + '</div>' + linkHtml + '</div><div class="record-actions" style="display:flex;gap:2px"><button onclick="practiceItem(\''+type+'\','+i+')" style="font-size:.6rem;padding:4px 7px;border-radius:4px;background:var(--green-light);color:var(--green)">✅ 实践</button><button onclick="delLearnItem(\''+type+'\',\'todo\','+i+')" style="font-size:.6rem;padding:4px 7px;color:var(--accent)">✕</button></div></div>';
   }).join('');
   if(!src.done.length) doneEl.innerHTML = '<div class="emp" style="padding:8px;font-size:.75rem">暂无</div>';
   else doneEl.innerHTML = src.done.map(function(v,i){
-    return '<div class="tri" style="background:var(--surface2);border-radius:6px;margin-bottom:2px;padding:6px 10px"><div class="tr-info"><div class="tr-name">' + v.content + '</div><div class="tr-meta">✅ 实践日期: ' + v.practiceDate + (v.practiceNote?' · ' + v.practiceNote:'') + '</div></div><div class="record-actions"><button onclick="delLearnItem(\''+type+'\',\'done\','+i+')" style="font-size:.6rem;padding:4px 7px;color:var(--accent)">✕</button></div></div>';
+    var linkHtml = '';
+    if(v.link){
+      var plat = getPlat(v.link);
+      linkHtml = '<div style="margin-top:2px"><a href="' + v.link + '" target="_blank" style="font-size:.65rem;color:var(--primary);text-decoration:underline">' + plat + ' 打开链接</a></div>';
+    }
+    return '<div class="tri" style="background:var(--surface2);border-radius:6px;margin-bottom:2px;padding:6px 10px"><div class="tr-info"><div class="tr-name">' + v.content + '</div><div class="tr-meta">✅ 实践日期: ' + v.practiceDate + (v.practiceNote?' · ' + v.practiceNote:'') + '</div>' + linkHtml + '</div><div class="record-actions"><button onclick="delLearnItem(\''+type+'\',\'done\','+i+')" style="font-size:.6rem;padding:4px 7px;color:var(--accent)">✕</button></div></div>';
   }).join('');
 }
-
+function getPlat(url){
+  if(url.indexOf('xiaohongshu')>0||url.indexOf('xhslink')>0) return '📕 小红书';
+  if(url.indexOf('douyin')>0||url.indexOf('v.douyin')>0) return '🎵 抖音';
+  if(url.indexOf('bilibili')>0||url.indexOf('b23')>0||url.indexOf('bvid')>0) return '📺 B站';
+  if(url.indexOf('quark')>0||url.indexOf('sm.cn')>0) return '📎 夸克';
+  return '🔗 打开链接';
+}
 // ===== 2. HEALTH =====
 function switchH(el,id){
   document.querySelectorAll('#healthTabs .stab').forEach(x=>x.classList.remove('active'))
@@ -1508,7 +1524,11 @@ function renderSkin(){
   renderDoctorVisits()
 }
 function addDoctorVisit(){
-  const t=today();S.skin.doctor.push({date:t,note:'皮肤科看诊',time:now()});sv();renderDoctorVisits();toast('已记录看诊')
+  const dateInput=document.getElementById('doctorDate')
+  const t=dateInput && dateInput.value ? dateInput.value : today()
+  S.skin.doctor.push({date:t,note:'皮肤科看诊',time:now()})
+  sv();renderDoctorVisits();toast('已记录看诊')
+  if(dateInput) dateInput.value=''
 }
 function renderDoctorVisits(){
   const c=document.getElementById('doctorVisits')
