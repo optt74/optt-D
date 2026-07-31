@@ -23,7 +23,7 @@ button{cursor:pointer;font-family:inherit;font-size:inherit;border:none;backgrou
 ::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
 /* App Shell */
 #app{display:block;max-width:100%;padding-bottom:calc(var(--nav-h) + var(--safe-b) + 20px)}
-.app-header{height:var(--header-h);flex-shrink:0;display:flex;align-items:center;justify-content:space-between;padding:0 14px;padding-top:env(safe-area-inset-top,0);background:var(--surface);border-bottom:1px solid var(--border);z-index:10}
+.app-header{min-height:calc(var(--header-h) + env(safe-area-inset-top,0px));flex-shrink:0;display:flex;align-items:center;justify-content:space-between;padding:0 14px;padding-top:calc(env(safe-area-inset-top,0px) + 0px);padding-bottom:0;background:var(--surface);border-bottom:1px solid var(--border);z-index:10}
 .app-header h1{font-size:1.05rem;font-weight:700;background:linear-gradient(135deg,#ff8aae,#ff6b9d);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;white-space:nowrap}
 .hdr-right{display:flex;align-items:center;gap:8px}
 .hdr-date{font-size:.65rem;color:var(--text3);white-space:nowrap}
