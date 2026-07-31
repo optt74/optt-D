@@ -168,28 +168,8 @@ button{cursor:pointer;font-family:inherit;font-size:inherit;border:none;backgrou
 
 <!-- 英语学习 -->
 <div class="cd"><div class="cd-body">
-  <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px"><span style="font-weight:600;font-size:.9rem">📖 英语学习</span></div>
-  <div class="stabs" style="margin-bottom:6px">
-    <button class="stab active" onclick="switchEngTab(this,'eng-hot')">🔥 B站热门推荐</button>
-    <button class="stab" onclick="switchEngTab(this,'eng-fav')">⭐ 个人收藏</button>
-  </div>
-  <div id="eng-hot" class="stab-c active">
-    <div class="search-bar" style="display:flex;gap:6px;margin-bottom:6px">
-      <input type="text" id="biliSearch" placeholder="搜英语学习视频…" value="英语学习" onkeydown="if(event.key==='Enter')searchBili()" style="flex:1;font-size:.8rem">
-      <button onclick="searchBili()" id="biliBtn" style="padding:8px 12px;border-radius:var(--radius-sm);background:var(--primary);color:#fff;font-weight:500;font-size:.78rem">🔍 搜索</button>
-    </div>
-    <div class="stabs" style="margin-bottom:4px">
-      <button class="stab active" onclick="switchBili(this,'all')">全部</button>
-      <button class="stab" onclick="switchBili(this,'oral')">口语</button>
-      <button class="stab" onclick="switchBili(this,'grammar')">语法</button>
-      <button class="stab" onclick="switchBili(this,'listening')">听力</button>
-    </div>
-    <div id="biliRes" class="vi-list" style="max-height:280px;overflow-y:auto"></div>
-  </div>
-  <div id="eng-fav" class="stab-c">
-    <div style="text-align:right;margin-bottom:4px"><button onclick="showModal('addVideo')" style="font-size:.7rem;color:var(--primary);padding:2px 8px;border-radius:6px;border:1px solid var(--border)">+ 手动添加</button></div>
-    <div id="engFavList"></div>
-  </div>
+  <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px"><span style="font-weight:600;font-size:.9rem">📖 英语学习视频收藏</span><button onclick="showModal('addVideo')" style="margin-left:auto;font-size:.7rem;color:var(--primary);padding:2px 8px;border-radius:6px;border:1px solid var(--border)">+ 添加</button></div>
+  <div id="engFavList"></div>
 </div></div>
 
 <!-- 夸克链接 -->
@@ -286,26 +266,8 @@ button{cursor:pointer;font-family:inherit;font-size:inherit;border:none;backgrou
     <div class="sr-item" onclick="toggleCheckin('aerobic')" style="cursor:pointer"><div class="sr-num" id="aerobicStatus">🔴</div><div class="sr-lbl">🏋️ 有氧周目标</div></div>
   </div>
   <div style="font-size:.72rem;color:var(--text2);margin-bottom:6px">本周有氧运动: <span id="aerobicCount">0</span>/5 次 <button onclick="showHistory('exercise','运动记录')" style="font-size:.65rem;color:var(--text3);padding:2px 6px">📅 历史</button></div>
-  <div style="display:flex;align-items:center;gap:6px;margin:8px 0 4px"><span style="font-weight:500;font-size:.82rem">📺 跟练视频</span></div>
-  <div class="stabs" style="margin-bottom:4px">
-    <button class="stab active" onclick="switchWvMain(this,'wv-hot')">🔥 热门推荐</button>
-    <button class="stab" onclick="switchWvMain(this,'wv-fav')">⭐ 个人收藏</button>
-  </div>
-  <div id="wv-hot" class="stab-c active">
-    <div class="stabs" style="margin-bottom:4px">
-      <button class="stab active" onclick="switchWv(this,'wv-all')">推荐</button>
-      <button class="stab" onclick="switchWv(this,'wv-pamela')">帕梅拉</button>
-      <button class="stab" onclick="switchWv(this,'wv-oyxc')">欧阳春晓</button>
-    </div>
-    <div id="wv-all" class="stab-c active"></div>
-    <div id="wv-pamela" class="stab-c"></div>
-    <div id="wv-oyxc" class="stab-c"></div>
-    <div style="text-align:center;margin-top:4px"><button class="stab" onclick="searchWorkoutVideos()" style="background:var(--primary-light);color:var(--primary)">🔄 搜索B站运动视频</button></div>
-  </div>
-  <div id="wv-fav" class="stab-c">
-    <div style="text-align:right;margin-bottom:4px"><button onclick="showModal('addVideoWo')" style="font-size:.7rem;color:var(--primary);padding:2px 8px;border-radius:6px;border:1px solid var(--border)">+ 手动添加</button></div>
-    <div id="workoutFavList"></div>
-  </div>
+  <div style="display:flex;align-items:center;gap:6px;margin:8px 0 4px"><span style="font-weight:500;font-size:.82rem">📺 跟练视频收藏</span><button onclick="showModal('addVideoWo')" style="margin-left:auto;font-size:.7rem;color:var(--primary);padding:2px 8px;border-radius:6px;border:1px solid var(--border)">+ 添加</button></div>
+  <div id="workoutFavList"></div>
 </div>
   </div>
 </div>
@@ -755,9 +717,11 @@ async function saveServer(){
 
 /** 统一的保存函数：本地即时 + 服务器防抖 */
 function sv(){
-  saveLocal()
   clearTimeout(_saveTimer)
-  _saveTimer = setTimeout(() => saveServer(), 800)
+  _saveTimer = setTimeout(() => {
+    try{saveLocal()}catch(e){}
+    saveServer()
+  }, 150)
 }
 
 /** 启动时从服务器加载数据，合并到本地状态 */
@@ -995,7 +959,7 @@ function fullRender(){
     try{renderVocab()}catch(e){}
     try{renderRecipes()}catch(e){}
     try{renderExercise()}catch(e){}
-    try{renderWorkouts()}catch(e){}
+    
     try{renderSkin()}catch(e){}
     try{renderWater()}catch(e){}
     try{renderWeight()}catch(e){}
@@ -1016,7 +980,7 @@ document.getElementById('dateDisplay').textContent=(()=>{const d=new Date(),w=['
 
 // ===== UTILS =====
 function toast(m,t='success'){const e=document.createElement('div');e.className='ts '+t;e.textContent=m;document.body.appendChild(e);setTimeout(()=>e.remove(),2000)}
-function switchPage(p){try{document.querySelectorAll(".page").forEach(function(x){x.classList.remove("active")});document.querySelectorAll(".nav-i").forEach(function(x){x.classList.remove("active")});var pg=document.querySelector(".page[data-page=""+p+""]");var nv=document.querySelector(".nav-i[data-page=""+p+""]");if(pg)pg.classList.add("active");if(nv)nv.classList.add("active");if(pg)pg.scrollTop=0;if(p==="me")renderMe()}catch(e){}}enderMe()}
+function switchPage(p){try{document.querySelectorAll('.page').forEach(function(x){x.classList.remove('active')});document.querySelectorAll('.nav-i').forEach(function(x){x.classList.remove('active')});var pg=document.querySelector('.page[data-page="'+p+'"]');var nv=document.querySelector('.nav-i[data-page="'+p+'"]');if(pg)pg.classList.add('active');if(nv)nv.classList.add('active');if(pg)pg.scrollTop=0;lazyRender(p)}catch(e){}}
 function showModal(id){document.getElementById('mo-'+id).classList.add('show')}
 function closeModal(id){document.getElementById('mo-'+id).classList.remove('show')}
 document.querySelectorAll('.mo').forEach(el=>{el.addEventListener('click',e=>{if(e.target===el)el.classList.remove('show')})})
@@ -1206,81 +1170,6 @@ function showStorageInfo(){
 Html=String.raw
 
 // ===== 1. STUDY =====
-function _decodeHTML(str){
-  if(!str) return '';
-  var t = document.createElement('textarea');
-  t.innerHTML = str;
-  return t.value;
-}
-async function searchBili(q){
-  q=q||document.getElementById('biliSearch').value.trim()||'英语学习'
-  const c=document.getElementById('biliRes');c.innerHTML='<div class="loading" style="text-align:center;padding:20px"><div style="width:28px;height:28px;border:3px solid var(--border);border-top-color:var(--primary);border-radius:50%;animation:spin .7s linear infinite;margin:0 auto"></div></div>'
-  document.getElementById('biliBtn').disabled=true
-  const tab=document.querySelector('#biliTabs .stab.active'),tk=tab?tab.textContent.trim():'全部'
-  const sf={全部:'',口语:' 英语口语',语法:' 英语语法',听力:' 英语听力'}
-  const kw=q+(sf[tk]||'')
-  try{
-    const ctrl=new AbortController();setTimeout(()=>ctrl.abort(),5000)
-    const r=await fetch(`https://api.bilibili.com/x/web-interface/search/type?search_type=video&keyword=${encodeURIComponent(kw)}`,{headers:{Accept:'application/json'},signal:ctrl.signal})
-    if(!r.ok)throw Error('http')
-    const d=await r.json();const v=d?.data?.result||[]
-    if(!v.length)throw Error('empty')
-    renderVideos(c,v.slice(0,20))
-  }catch(e){
-    // 使用更可靠的推荐内容
-    renderVideos(c,getRecVideos(kw))
-  }
-  document.getElementById('biliBtn').disabled=false
-}
-function renderVideos(c,v){
-  c.innerHTML=v.map(function(item){
-    var title = _decodeHTML(item.title||'推荐视频');
-    var bvid = item.bvid || '';
-    var url = bvid ? 'https://www.bilibili.com/video/' + bvid : (item.url||'#');
-    var pic = item.pic || '';
-    if(pic && pic.startsWith('//')) pic = 'https:' + pic;
-    var plays = item.play !== undefined ? fmt(item.play) : '';
-    var likes = item.like !== undefined ? fmt(item.like) : '';
-    var duration = item.duration || '';
-    return '<div class="vi" onclick="window.open(\''+url+'\',\'_blank\')">' +
-      (pic ? '<img class="vthumb" src="'+pic+'" alt="" loading="lazy" onerror="this.style.display=\'none\'">' : '<div class="vthumb" style="display:flex;align-items:center;justify-content:center;font-size:1.4rem;background:var(--border)">\u{1F4FA}</div>') +
-      '<div class="vinfo"><div class="vtitle">'+title+'</div>' +
-      '<div class="vmeta">' + (plays?'\u{1F441} '+plays:'') + (likes?' \u{1F44D} '+likes:'') + (duration?' ⏱ '+duration:'') + '</div></div></div>';
-  }).join('');
-  // Add save buttons
-  var items = c.querySelectorAll('.vi');
-  items.forEach(function(el, idx){
-    if(idx < v.length) {
-      var btn = document.createElement('button');
-      btn.textContent = '⭐';
-      btn.style.cssText = 'font-size:.6rem;padding:2px 6px;border-radius:4px;background:var(--orange-light);color:var(--orange);margin:4px 0 0 4px';
-      btn.onclick = function(e){
-        e.stopPropagation();
-        var vitem = v[idx];
-        var t = _decodeHTML(vitem.title||'');
-        var b = vitem.bvid||'';
-        var u = b ? 'https://www.bilibili.com/video/'+b : (vitem.url||'#');
-        saveToEngFav(t, u);
-      };
-      var meta = el.querySelector('.vmeta');
-      if(meta) { meta.appendChild(document.createTextNode(' ')); meta.appendChild(btn); }
-    }
-  });
-}
-function fmt(n){n=Number(n);if(isNaN(n))return'-';return n>=10000?(n/10000).toFixed(1)+'万':n.toLocaleString()}
-function getRecVideos(kw){
-  var list = [
-    {title:'BBC英语听力精选 - 日常对话',play:'156万',like:'3.2万',duration:'28:15',url:'https://search.bilibili.com/all?keyword=BBC英语听力'},
-    {title:'【合集】英语语法从零开始',play:'89万',like:'2.1万',duration:'3:15:30',url:'https://search.bilibili.com/all?keyword=英语语法从零开始'},
-    {title:'美式口语发音技巧大全',play:'67万',like:'1.5万',duration:'45:20',url:'https://search.bilibili.com/all?keyword=美式口语发音技巧'},
-    {title:'每天10分钟英语听力训练',play:'45万',like:'9800',duration:'12:15',url:'https://search.bilibili.com/all?keyword=英语听力训练每天10分钟'},
-    {title:'TED演讲精选 - 值得反复听的8篇',play:'34万',like:'7200',duration:'38:50',url:'https://search.bilibili.com/all?keyword=TED演讲精选英语学习'},
-    {title:'英语单词记忆法 - 词根词缀',play:'56万',like:'1.2万',duration:'22:10',url:'https://search.bilibili.com/all?keyword=英语单词词根词缀记忆法'},
-  ];
-  return list;
-}
-function switchBili(el,t){document.querySelectorAll('#biliTabs .stab').forEach(x=>x.classList.remove('active'));el.classList.add('active');searchBili()}
-
 // Kuake
 function saveKuake(){const t=document.getElementById('kuakeTitle').value.trim(),u=document.getElementById('kuakeUrl').value.trim();if(!t||!u)return toast('请填写完整','error');S.kuakeLinks.unshift({title:t,url:u,date:today(),done:false});sv();renderKuake();closeModal('kuake');document.getElementById('kuakeTitle').value='';document.getElementById('kuakeUrl').value='';toast('已添加夸克链接')}
 function toggleKuake(i){S.kuakeLinks[i].done=!S.kuakeLinks[i].done;sv();renderKuake()}
@@ -1389,11 +1278,6 @@ function renderBookMonthly(){
 
 /* ===== 视频收藏 & 学习实践 ===== */
 var _practiceSrc = '';
-function switchEngTab(el, id) {
-  el.closest('.cd-body').querySelectorAll('.stabs .stab').forEach(function(x){x.classList.remove('active')});
-  el.closest('.cd-body').querySelectorAll('.stab-c').forEach(function(x){x.classList.remove('active')});
-  el.classList.add('active'); document.getElementById(id).classList.add('active');
-}
 function saveToEngFav(title, url) {
   S.videoFav.english.unshift({title:title, url:url, checkins:[], count:0, date:today()});
   sv(); renderEngFav(); toast('⭐ 已收藏');
@@ -1440,11 +1324,6 @@ function renderEngFav() {
       '<button onclick="delEngFav(' + i + ')" style="font-size:.55rem;padding:2px 6px;color:var(--accent);border-radius:4px">✕</button>' +
       '</div></div></div>';
   }).join('');
-}
-function switchWvMain(el, id) {
-  document.querySelectorAll('#h-exer .stabs .stab').forEach(function(x){x.classList.remove('active')});
-  document.querySelectorAll('#h-exer .stab-c').forEach(function(x){x.classList.remove('active')});
-  el.classList.add('active'); document.getElementById(id).classList.add('active');
 }
 function renderWorkoutFav() {
   var c = document.getElementById('workoutFavList');
@@ -1614,45 +1493,6 @@ function renderExercise(){
 }
 function getWeekKey(){const d=new Date();const y=d.getFullYear();const jan1=new Date(y,0,1);const days=Math.floor((d-jan1)/86400000);return `${y}-W${String(Math.ceil((days+jan1.getDay()+1)/7)).padStart(2,'0')}`}
 function getWeekDates(){const d=new Date(),day=d.getDay(),diff=d.getDate()-day+(day===0?-6:1);const mon=new Date(d.setDate(diff));return Array.from({length:7},(_,i)=>{const dt=new Date(mon);dt.setDate(mon.getDate()+i);return dt.toISOString().split('T')[0]})}
-function switchWv(el,id){
-  document.querySelectorAll('#h-exer .stabs .stab').forEach(x=>x.classList.remove('active'))
-  document.querySelectorAll('.stab-c[id^="wv-"]').forEach(x=>x.classList.remove('active'))
-  el.classList.add('active');document.getElementById(id).classList.add('active')
-}
-
-const WORKOUT_VIDEOS=[
-  {title:'帕梅拉 20分钟全身有氧燃脂',type:'pamela',url:'https://www.bilibili.com/video/BV1Qa411c7QM',checkins:[],count:0},
-  {title:'帕梅拉 15分钟瘦腰腹',type:'pamela',url:'https://www.bilibili.com/video/BV1t44y1q7KJ',checkins:[],count:0},
-  {title:'欧阳春晓 改善驼背圆肩',type:'oyxc',url:'https://www.bilibili.com/video/BV1e44y1o7qK',checkins:[],count:0},
-  {title:'欧阳春晓 瘦大腿改善梨形',type:'oyxc',url:'https://www.bilibili.com/video/BV1uY411T7fR',checkins:[],count:0},
-  {title:'帕梅拉 10分钟改善体态',type:'pamela',url:'https://www.bilibili.com/video/BV1N44y1o7Rz',checkins:[],count:0},
-  {title:'30分钟有氧燃脂全程站立',type:'all',url:'https://www.bilibili.com/video/BV1hT4y1j7wY',checkins:[],count:0},
-]
-function saveWorkout(){
-  const t=document.getElementById('woTitle').value.trim(),u=document.getElementById('woUrl').value.trim(),tp=document.getElementById('woType').value
-  if(!t||!u)return toast('请填写完整','error')
-  S.workouts.unshift({title:t,url:u,type:tp,checkins:[],count:0,date:today()})
-  sv();renderWorkouts();closeModal('workout')
-  document.getElementById('woTitle').value='';document.getElementById('woUrl').value=''
-  toast('已添加跟练视频')
-}
-function checkinWorkout(i){const t=today();if(!S.workouts[i].checkins.includes(t)){S.workouts[i].checkins.push(t);S.workouts[i].count++}sv();renderWorkouts()}
-function renderWorkouts(){
-  const videos=[...WORKOUT_VIDEOS,...S.workouts]
-  ;['all','pamela','oyxc'].forEach(type=>{
-    const c=document.getElementById('wv-'+type)
-    const items=videos.filter(v=>v.type===type||type==='all')
-    if(!items.length)return c.innerHTML='<div class="emp"><span class="big-e">📺</span>暂无视频</div>'
-    c.innerHTML=items.map((v,i)=>{
-      const idx=S.workouts.indexOf(v)
-      const realI=idx>=0?idx:i
-      const isCustom=idx>=0
-      return `<div class="vi" style="cursor:default"><div class="vthumb" style="display:flex;align-items:center;justify-content:center;font-size:1.4rem">🏋️</div><div class="vinfo"><div class="vtitle" onclick="window.open('${v.url}','_blank')" style="color:var(--primary);cursor:pointer">${v.title}</div><div class="vmeta"><span>👁️ ${v.checkins.length}次跟练</span></div><div class="vact"><button onclick="checkinWorkout(${realI})" class="tl" style="font-size:.65rem;padding:3px 10px;border-radius:12px;background:var(--green-light);color:var(--green);border:1px solid var(--green)">✅ 跟练</button>${isCustom?`<button onclick="delWorkout(${realI})" style="font-size:.65rem;padding:3px 8px;color:var(--accent)">✕</button>`:''}</div></div></div>`
-    }).join('')
-  })
-}
-function delWorkout(i){S.workouts.splice(i,1);sv();renderWorkouts()}
-async function searchWorkoutVideos(){const terms=['帕梅拉 有氧运动','欧阳春晓 改善驼背','帕梅拉 瘦腿','有氧运动 跟练'];for(const t of terms){try{const r=await fetch(`https://api.bilibili.com/x/web-interface/search/type?search_type=video&keyword=${encodeURIComponent(t)}&page=1`);const d=await r.json();const vs=d?.data?.result||[];if(vs.length){const v=vs[0];S.workouts.unshift({title:v.title,url:v.bvid?`https://www.bilibili.com/video/${v.bvid}`:'',type:t.includes('帕梅拉')?'pamela':t.includes('欧阳')?'oyxc':'all',checkins:[],count:0,date:today()})}}catch(e){}}sv();renderWorkouts();toast('已搜索并添加推荐视频')}
 
 // -- Skin --
 function toggleSkin(type){const t=today();S.skin[type][t]=!S.skin[type][t];sv();renderSkin()}
@@ -2378,23 +2218,29 @@ function drawMeSaveChart(){
   })
 }
 
+
+/* ===== 惰性渲染 ===== */
+var _pageRendered={};
+function lazyRender(p){
+  if(_pageRendered[p])return;
+  _pageRendered[p]=true;
+  switch(p){
+    case 'study': try{renderKuake()}catch(e){};try{renderVocab()}catch(e){};try{renderBooks()}catch(e){};try{renderEngFav()}catch(e){};try{renderLifeLearn()}catch(e){};try{renderWorkLearn()}catch(e){};break;
+    case 'health': try{getDietTip()}catch(e){};try{renderRecipes()}catch(e){};try{renderExercise()}catch(e){};try{renderSkin()}catch(e){};try{renderWater()}catch(e){};try{renderWeight()}catch(e){};try{renderPeriod()}catch(e){};break;
+    case 'shopping': try{renderShop('pp')}catch(e){};try{renderShop('sm')}catch(e){};try{renderShop('ol')}catch(e){};try{renderShop('cam')}catch(e){};break;
+    case 'out': try{renderRestReg()}catch(e){};try{renderRestWant()}catch(e){};try{renderFjian()}catch(e){};try{renderTravel()}catch(e){};break;
+    case 'craft': try{renderCraftWish()}catch(e){};try{renderPerler()}catch(e){};try{renderPastProj()}catch(e){};break;
+    case 'binge': try{renderBinge('tv')}catch(e){};try{renderBinge('movie')}catch(e){};try{renderBinge('variety')}catch(e){};break;
+    case 'trend': try{renderIdeas()}catch(e){};try{refreshTrend()}catch(e){};break;
+    case 'me': try{initMeSaveDropdown()}catch(e){};try{renderMe()}catch(e){};break;
+  }
+}
 // ===== INIT =====
-function init(){console.log("OPTT vMS87IYJN");
-  // 先渲染本地数据（秒开）
-  try{renderKuake()}catch(e){};try{renderVocab()}catch(e){};try{getDietTip()}catch(e){};try{renderRecipes()}catch(e){};try{renderExercise()}catch(e){};try{renderWorkouts()}catch(e){}
-  try{renderSkin()}catch(e){};try{renderWater()}catch(e){};try{renderWeight()}catch(e){};try{renderPeriod()}catch(e){}
-  try{renderShop('pp')}catch(e){};try{renderShop('sm')}catch(e){};try{renderShop('ol')}catch(e){};try{renderShop('cam')}catch(e){}
-  try{renderRestReg()}catch(e){};try{renderRestWant()}catch(e){};try{renderFjian()}catch(e){};try{renderTravel()}catch(e){}
-  try{renderCraftWish()}catch(e){};try{renderPerler()}catch(e){};try{renderPastProj()}catch(e){}
-  try{renderBinge('tv')}catch(e){};try{renderBinge('movie')}catch(e){};try{renderBinge('variety')}catch(e){}
-  try{renderIdeas()}catch(e){};try{initMeSaveDropdown()}catch(e){};try{renderMe()}catch(e){}
-  // 检测首次加载，尝试云恢复
+function init(){console.log("OPTT v2.0-FAST");
+  // 只渲染默认页面（学习），其他页面首次访问时再渲染
+  lazyRender('study')
+  // 首次加载检测
   try{checkFirstLoad()}catch(e){}
-  // 搜索和热点（错开时间，减少并发）
-  setTimeout(()=>searchBili('英语学习'),600)
-  setTimeout(()=>refreshTrend(),2000)
-  // 异步从服务器加载最新数据并合并
-  setTimeout(()=>loadServerData(), 1500)
 }
 // Style injection for loading
 const st=document.createElement('style');st.textContent='@keyframes spin{to{transform:rotate(360deg)}}';document.head.appendChild(st)
