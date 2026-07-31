@@ -161,7 +161,7 @@ button{cursor:pointer;font-family:inherit;font-size:inherit;border:none;backgrou
 </head>
 <body>
 <div id="app">
-<div style="background:linear-gradient(90deg,#ff8aae,#ff6b9d);color:#fff;text-align:center;padding:4px 10px;font-size:.7rem;font-weight:600">V2.2-FINAL · 修复版 · 学习/健康外页面已修复</div><div id="errBox" style="display:none;background:#ffebee;color:#c62828;padding:6px 10px;font-size:.7rem"></div><header class="app-header"><h1>🐰 OP TT 生活台 <span id="verBadge" style="font-size:.5rem;background:var(--green-light);color:var(--green);padding:1px 6px;border-radius:8px;-webkit-text-fill-color:var(--green);font-weight:600">V2.0</span></h1><div class="hdr-right"><span class="hdr-date" id="dateDisplay"></span><button onclick="showStorageInfo()" style="width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:var(--surface2);font-size:.8rem" title="存储信息">💾</button><button onclick="exportData()" style="width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:var(--surface2);font-size:.85rem" title="导出数据">📤</button><button onclick="document.getElementById('importFile').click()" style="width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:var(--surface2);font-size:.85rem" title="导入数据">📥</button><input type="file" id="importFile" accept=".json" style="display:none" onchange="importData(event)"><button onclick="setupGithub()" style="width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:var(--surface2);font-size:.8rem" title="GitHub云备份">☁️</button><button class="theme-btn" onclick="toggleTheme()" style="width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:var(--surface2);font-size:.9rem">🌓</button></div></header>
+<header class="app-header"><h1>🐰 OP TT 生活台 <span id="verBadge" style="font-size:.5rem;background:var(--green-light);color:var(--green);padding:1px 6px;border-radius:8px;-webkit-text-fill-color:var(--green);font-weight:600">V2.5</span></h1><div class="hdr-right"><span class="hdr-date" id="dateDisplay"></span><button onclick="showStorageInfo()" style="width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:var(--surface2);font-size:.8rem" title="存储信息">💾</button><button onclick="exportData()" style="width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:var(--surface2);font-size:.85rem" title="导出数据">📤</button><button onclick="document.getElementById('importFile').click()" style="width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:var(--surface2);font-size:.85rem" title="导入数据">📥</button><input type="file" id="importFile" accept=".json" style="display:none" onchange="importData(event)"><button onclick="setupGithub()" style="width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:var(--surface2);font-size:.8rem" title="GitHub云备份">☁️</button><button class="theme-btn" onclick="toggleTheme()" style="width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:var(--surface2);font-size:.9rem">🌓</button></div></header>
 
 <div class="pages-container" id="pagesContainer">
 
@@ -2323,20 +2323,18 @@ function lazyRender(p){
   }
 }
 // ===== INIT =====
-function showErr(msg){try{var eb=document.getElementById("errBox");if(eb){eb.style.display="block";eb.textContent+=msg+" | ";}}catch(e){}}
-function showReport(){try{var eb=document.getElementById("errBox");if(!eb)return;eb.style.display="block";var names={"s-pp":"购物","restRegList":"常去","travelList":"旅游","craftWishList":"手工收藏","tv-watched":"电视剧","mv-watched":"电影","vr-watched":"综艺","ideaList":"灵感","b-reading":"读书","life-todo":"生活学习","work-todo":"工作学习","engFavList":"英语收藏","workoutFavList":"跟练收藏"};var report="📊 状态: ";for(var id in names){var el=document.getElementById(id);var len=el?el.innerHTML.length:-1;report+=names[id]+"="+len+" ";}eb.textContent=report;}catch(e){}}
 function init(){console.log("OPTT v2.2-FINAL");
   // 迁移旧数据
   try{ migrateData() }catch(e){}
   // 一次性渲染所有页面（最可靠）
-  try{renderKuake()}catch(e){showErr("renderKuake:"+e.message)};try{renderVocab()}catch(e){showErr("renderVocab:"+e.message)};try{getDietTip()}catch(e){};try{renderBooks()}catch(e){showErr("renderBooks:"+e.message)};try{renderEngFav()}catch(e){showErr("renderEngFav:"+e.message)};try{renderLifeLearn()}catch(e){showErr("renderLifeLearn:"+e.message)};try{renderWorkLearn()}catch(e){showErr("renderWorkLearn:"+e.message)}
+  try{renderKuake()}catch(e){};try{renderVocab()}catch(e){};try{getDietTip()}catch(e){};try{renderBooks()}catch(e){};try{renderEngFav()}catch(e){};try{renderLifeLearn()}catch(e){};try{renderWorkLearn()}catch(e){}
   try{renderRecipes()}catch(e){};try{renderExercise()}catch(e){};try{renderSkin()}catch(e){};try{renderWater()}catch(e){};try{renderWeight()}catch(e){};try{renderPeriod()}catch(e){}
   try{renderShop('pp')}catch(e){};try{renderShop('sm')}catch(e){};try{renderShop('ol')}catch(e){};try{renderShop('cam')}catch(e){}
   try{renderRestReg()}catch(e){};try{renderRestWant()}catch(e){};try{renderFjian()}catch(e){};try{renderTravel()}catch(e){}
   try{renderCraftWish()}catch(e){};try{renderPerler()}catch(e){};try{renderPastProj()}catch(e){}
   try{renderBinge('tv')}catch(e){};try{renderBinge('movie')}catch(e){};try{renderBinge('variety')}catch(e){}
   try{renderIdeas()}catch(e){};try{initMeSaveDropdown()}catch(e){};try{renderMe()}catch(e){}
-  try{showReport()}catch(e){}
+
   // 首次加载检测
   try{checkFirstLoad()}catch(e){}
 }// Style injection for loading
@@ -2348,7 +2346,6 @@ document.getElementById('fjType').addEventListener('change',function(){document.
 document.getElementById('fjRemainingGroup').style.display='none'
 init()
 
-window.onerror=function(msg){try{var eb=document.getElementById("errBox");if(eb){eb.style.display="block";eb.textContent+="全局错误:"+msg+" | ";}}catch(e2){}};
 </script>
 </body>
 </html>
