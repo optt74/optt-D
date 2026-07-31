@@ -1016,7 +1016,7 @@ document.getElementById('dateDisplay').textContent=(()=>{const d=new Date(),w=['
 
 // ===== UTILS =====
 function toast(m,t='success'){const e=document.createElement('div');e.className='ts '+t;e.textContent=m;document.body.appendChild(e);setTimeout(()=>e.remove(),2000)}
-function switchPage(p){document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));document.querySelectorAll('.nav-i').forEach(x=>x.classList.remove('active'));document.querySelector(`.page[data-page="${p}"]`).classList.add('active');document.querySelector(`.nav-i[data-page="${p}"]`).classList.add('active');document.querySelector(`.page[data-page="${p}"]`).scrollTop=0;if(p==='me')renderMe()}
+function switchPage(p){try{document.querySelectorAll(".page").forEach(function(x){x.classList.remove("active")});document.querySelectorAll(".nav-i").forEach(function(x){x.classList.remove("active")});var pg=document.querySelector(".page[data-page=""+p+""]");var nv=document.querySelector(".nav-i[data-page=""+p+""]");if(pg)pg.classList.add("active");if(nv)nv.classList.add("active");if(pg)pg.scrollTop=0;if(p==="me")renderMe()}catch(e){}}enderMe()}
 function showModal(id){document.getElementById('mo-'+id).classList.add('show')}
 function closeModal(id){document.getElementById('mo-'+id).classList.remove('show')}
 document.querySelectorAll('.mo').forEach(el=>{el.addEventListener('click',e=>{if(e.target===el)el.classList.remove('show')})})
