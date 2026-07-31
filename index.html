@@ -14,7 +14,7 @@
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 :root{--bg:#f0f2f5;--surface:#fff;--surface2:#f5f6f8;--border:#e8eaed;--text:#1a1a2e;--text2:#5a5a7a;--text3:#9a9ab0;--primary:#5b7fff;--primary-light:#e8edff;--accent:#ff6b6b;--accent-light:#ffe8e8;--green:#2ecc71;--green-light:#e8f8f0;--orange:#f39c12;--orange-light:#fef5e7;--purple:#9b59b6;--purple-light:#f0e6ff;--bili:#fb7299;--weibo:#ff8200;--shadow:0 2px 12px rgba(0,0,0,.07);--shadow-lg:0 8px 30px rgba(0,0,0,.12);--radius:12px;--radius-sm:8px;--radius-lg:16px;--nav-h:58px;--header-h:52px;--safe-b:env(safe-area-inset-bottom,0px);--font:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;--transition:.25s cubic-bezier(.4,0,.2,1)}
 [data-theme=dark]{--bg:#0f0f1e;--surface:#18182e;--surface2:#1e1e3a;--border:#2a2a45;--text:#e0e0f0;--text2:#9090b0;--text3:#505070;--shadow:0 2px 12px rgba(0,0,0,.4);--shadow-lg:0 8px 30px rgba(0,0,0,.5);--primary-light:#1a1a3e;--accent-light:#3a1a1a;--green-light:#1a2e1a;--orange-light:#2e2a1a;--purple-light:#2a1a3e}
-html,body{height:100%;overflow:hidden}
+html,body{overflow-x:hidden}
 body{font-family:var(--font);background:var(--bg);color:var(--text);font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased;transition:background var(--transition),color var(--transition)}
 input,textarea,select{font-family:inherit;font-size:16px!important;color:inherit;background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:9px 12px;outline:0;width:100%;-webkit-appearance:none;transition:border var(--transition)}
 input:focus,textarea:focus,select:focus{border-color:var(--primary)}
@@ -22,14 +22,14 @@ button{cursor:pointer;font-family:inherit;font-size:inherit;border:none;backgrou
 ::-webkit-scrollbar{width:3px;height:3px}
 ::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
 /* App Shell */
-#app{display:flex;flex-direction:column;height:100%;height:100dvh;overflow:hidden;max-width:100%;padding-bottom:calc(var(--nav-h) + var(--safe-b))}
+#app{display:block;max-width:100%;padding-bottom:calc(var(--nav-h) + var(--safe-b) + 20px)}
 .app-header{height:var(--header-h);flex-shrink:0;display:flex;align-items:center;justify-content:space-between;padding:0 14px;padding-top:env(safe-area-inset-top,0);background:var(--surface);border-bottom:1px solid var(--border);z-index:10}
 .app-header h1{font-size:1.05rem;font-weight:700;background:linear-gradient(135deg,#ff8aae,#ff6b9d);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;white-space:nowrap}
 .hdr-right{display:flex;align-items:center;gap:8px}
 .hdr-date{font-size:.65rem;color:var(--text3);white-space:nowrap}
-.pages-container{flex:1;overflow:hidden;position:relative;background:var(--bg)}
+.pages-container{position:relative;background:var(--bg)}
 /* Pages */
-.page{display:none;height:100%;overflow-y:auto;overflow-x:hidden;padding:10px 12px;padding-bottom:calc(var(--nav-h) + var(--safe-b) + 60px);-webkit-overflow-scrolling:touch}
+.page{display:none;padding:10px 12px;padding-bottom:calc(var(--nav-h) + var(--safe-b) + 60px)}
 .page.active{display:block!important}
 .page-hdr{font-size:1rem;font-weight:600;margin-bottom:10px;display:flex;align-items:center;gap:8px}
 .page-hdr .page-badge{font-size:.6rem;padding:2px 10px;border-radius:20px;background:var(--primary-light);color:var(--primary);font-weight:500;margin-left:auto;-webkit-text-fill-color:var(--primary)}
@@ -48,7 +48,7 @@ button{cursor:pointer;font-family:inherit;font-size:inherit;border:none;backgrou
 .stab{padding:6px 14px;border-radius:18px;font-size:.76rem;transition:var(--transition);font-weight:500;white-space:nowrap;background:var(--surface2);color:var(--text2);flex-shrink:0}
 .stab.active{background:var(--primary);color:#fff}
 .stab-c{display:none}
-.stab-c.active{display:block}
+.stab-c.active{display:block!important}
 /* Traffic Light Button */
 .tl{display:inline-flex;align-items:center;gap:4px;padding:7px 14px;border-radius:20px;font-size:.78rem;font-weight:500;transition:var(--transition)}
 .tl:active{transform:scale(.94)}
