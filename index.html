@@ -685,6 +685,69 @@ const S={
   github:{user:'',repo:'',token:''},
 }
 
+/* ===== 数据迁移：兼容旧版本数据结构 ===== */
+function migrateData(){
+  try{
+    // 1. Shop: 旧版 pupu/sam/online → 新版 pp/sm/ol
+    var rawShop = null;
+    try{ rawShop = JSON.parse(localStorage.getItem('ot2_shop')); }catch(e){}
+    if(rawShop && typeof rawShop === 'object'){
+      var newShop = {pp:{p:[],q:[]},sm:{p:[],q:[]},ol:{p:[],q:[]},cam:{p:[],q:[]}};
+      if(rawShop.pupu){newShop.pp=rawShop.pupu}
+      if(rawShop.sam){newShop.sm=rawShop.sam}
+      if(rawShop.online){newShop.ol=rawShop.online}
+      if(rawShop.cam){newShop.cam=rawShop.cam}
+      // 如果新版键已存在则保留新版
+      if(rawShop.pp)newShop.pp=rawShop.pp
+      if(rawShop.sm)newShop.sm=rawShop.sm
+      if(rawShop.ol)newShop.ol=rawShop.ol
+      S.shop = newShop
+    }
+
+    // 2. 确保 videoFav / lifeLearn / workLearn 结构正确
+    if(!S.videoFav || typeof S.videoFav !== 'object') S.videoFav = {english:[],workout:[]}
+    if(!S.videoFav.english) S.videoFav.english = []
+    if(!S.videoFav.workout) S.videoFav.workout = []
+    if(!S.lifeLearn || typeof S.lifeLearn !== 'object') S.lifeLearn = {todo:[],done:[]}
+    if(!S.lifeLearn.todo) S.lifeLearn.todo = []
+    if(!S.lifeLearn.done) S.lifeLearn.done = []
+    if(!S.workLearn || typeof S.workLearn !== 'object') S.workLearn = {todo:[],done:[]}
+    if(!S.workLearn.todo) S.workLearn.todo = []
+    if(!S.workLearn.done) S.workLearn.done = []
+
+    // 3. 确保 books 结构正确，并从损坏结构中找回数据
+    if(!S.books || typeof S.books !== 'object') S.books = {reading:[],toread:[],done:[]}
+    if(!S.books.reading) S.books.reading = []
+    if(!S.books.toread) S.books.toread = []
+    if(!S.books.done) S.books.done = []
+    // 从损坏的 books 中找回被嵌套的 videoFav/lifeLearn/workLearn
+    if(S.books.videoFav && !S.videoFav) S.videoFav = S.books.videoFav
+    if(S.books.lifeLearn && !S.lifeLearn) S.lifeLearn = S.books.lifeLearn
+    if(S.books.workLearn && !S.workLearn) S.workLearn = S.books.workLearn
+    delete S.books.videoFav; delete S.books.lifeLearn; delete S.books.workLearn
+
+    // 4. 确保 skin 结构正确
+    if(!S.skin) S.skin = {cream:{},mask:{},hydra:{},iso:{},doctor:[]}
+    if(!S.skin.cream) S.skin.cream = {}
+    if(!S.skin.mask) S.skin.mask = {}
+    if(!S.skin.hydra) S.skin.hydra = {}
+    if(!S.skin.iso) S.skin.iso = {}
+    if(!S.skin.doctor) S.skin.doctor = []
+
+    // 5. 确保 tv/movie/variety 结构正确
+    if(!S.tv || !S.tv.watched) S.tv = {watched:[],towatch:[]}
+    if(!S.movie || !S.movie.watched) S.movie = {watched:[],towatch:[]}
+    if(!S.variety || !S.variety.watched) S.variety = {watched:[],towatch:[]}
+
+    // 6. 确保 fjian / restWant 结构正确
+    if(!S.fjian) S.fjian = {done:[],left:[]}
+    if(!S.restWant || !S.restWant.food) S.restWant = {food:[],fun:[]}
+
+    // 保存迁移结果
+    try{ saveLocal() }catch(e){}
+  }catch(e){}
+}
+
 /* ---- 本地存储 (即时) ---- */
 function saveLocal(){
   Object.keys(S).forEach(k=>{if(k==='skin'||k==='shop'||k==='restWant'||k==='fjian'||k==='tv'||k==='movie'||k==='variety'||k==='trend')return;LSS(k,S[k])})
@@ -2257,6 +2320,8 @@ function lazyRender(p){
 }
 // ===== INIT =====
 function init(){console.log("OPTT v2.0-FAST");
+  // 迁移旧数据
+  migrateData();
   // 只渲染默认页面（学习），其他页面首次访问时再渲染
   lazyRender('study')
   // 首次加载检测
