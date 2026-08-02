@@ -2,9 +2,21 @@
   "theme": "light",
   "kuakeLinks": [],
   "vocab": {
-    "2026-07-30": true
+    "2026-07-30": true,
+    "2026-08-02": true
   },
-  "recipes": [],
+  "recipes": [
+    {
+      "name": "酸萝卜老鸭汤",
+      "cal": "165",
+      "ingredients": [
+        "毛哥酸萝卜、鸭肉、葱姜花椒干辣椒"
+      ],
+      "status": "done",
+      "img": "",
+      "date": "2026-08-02"
+    }
+  ],
   "bike": {},
   "walk": {},
   "aerobic": {},
@@ -22,22 +34,50 @@
   ],
   "workoutCheckins": {},
   "skin": {
-    "cream": {},
+    "cream": {
+      "2026-08-02": true
+    },
     "mask": {},
-    "hydra": {},
+    "hydra": {
+      "2026-08-02": true
+    },
     "iso": {},
     "doctor": []
   },
   "water": {},
-  "weights": [],
+  "weights": [
+    {
+      "value": 70.65,
+      "date": "2026-08-02",
+      "time": "22:15"
+    }
+  ],
   "periods": [],
   "shop": {
     "pp": {
-      "p": [],
+      "p": [
+        {
+          "name": "鸭肉",
+          "price": "11"
+        },
+        {
+          "name": "罗氏虾",
+          "price": "65"
+        }
+      ],
       "q": []
     },
     "sm": {
-      "p": [],
+      "p": [
+        {
+          "name": "冷冻虾仁",
+          "price": "99.9"
+        },
+        {
+          "name": "鸡蛋",
+          "price": "18.9"
+        }
+      ],
       "q": []
     },
     "ol": {
@@ -96,7 +136,13 @@
   "me": {
     "locked": false,
     "emotions": {
-      "happy": [],
+      "happy": [
+        {
+          "content": "“朋友”的分享",
+          "date": "2026-08-02",
+          "time": "22:16"
+        }
+      ],
       "sad": [],
       "anxious": [],
       "angry": []
@@ -107,7 +153,7 @@
     "savings": []
   },
   "_backup": {
-    "time": "2026-08-02T14:14:49.698Z",
+    "time": "2026-08-02T14:19:09.746Z",
     "version": "2.0"
   }
 }
