@@ -76,21 +76,38 @@
     "towatch": []
   },
   "ideas": [],
+  "books": {
+    "reading": [],
+    "toread": [],
+    "done": []
+  },
+  "videoFav": {
+    "english": [],
+    "workout": []
+  },
+  "lifeLearn": {
+    "todo": [],
+    "done": []
+  },
+  "workLearn": {
+    "todo": [],
+    "done": []
+  },
   "me": {
-    "locked": true,
+    "locked": false,
     "emotions": {
       "happy": [],
       "sad": [],
       "anxious": [],
       "angry": []
     },
-    "traits": "",
+    "traits": "👸ESFH\n有福气、本心纯粹、温柔善良、真诚、待人热枕、利他向善、共情细腻、情绪自愈",
     "ideal": "",
     "password": "117283",
     "savings": []
   },
   "_backup": {
-    "time": "2026-07-30T09:01:23.102Z",
+    "time": "2026-08-02T14:14:49.698Z",
     "version": "2.0"
   }
 }
