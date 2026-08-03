@@ -144,7 +144,7 @@
     "done": []
   },
   "me": {
-    "locked": true,
+    "locked": false,
     "emotions": {
       "happy": [],
       "sad": [],
@@ -157,7 +157,7 @@
     "savings": []
   },
   "_backup": {
-    "time": "2026-08-03T01:00:23.574Z",
+    "time": "2026-08-03T01:00:37.380Z",
     "version": "2.5"
   }
 }
