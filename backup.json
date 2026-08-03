@@ -1,13 +1,6 @@
 {
   "theme": "light",
-  "kuakeLinks": [
-    {
-      "title": "刘晓燕语法补弱",
-      "url": "https://pan.quark.cn/s/deb2ffca7b34",
-      "date": "2026-08-03",
-      "done": false
-    }
-  ],
+  "kuakeLinks": [],
   "vocab": {
     "2026-08-03": true
   },
@@ -23,8 +16,12 @@
       "date": "2026-08-03"
     }
   ],
-  "bike": {},
-  "walk": {},
+  "bike": {
+    "2026-08-03": true
+  },
+  "walk": {
+    "2026-08-03": true
+  },
   "aerobic": {},
   "workouts": [],
   "workoutCheckins": {},
@@ -164,7 +161,7 @@
     "savings": []
   },
   "_backup": {
-    "time": "2026-08-03T09:00:48.797Z",
-    "version": "2.5"
+    "time": "2026-08-03T11:04:07.014Z",
+    "version": "2.0"
   }
 }
