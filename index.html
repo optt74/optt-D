@@ -689,6 +689,84 @@ const S={
 }
 
 /* ===== 数据迁移：兼容旧版本数据结构 ===== */
+
+/* ===== IndexedDB 永久存储 Token ===== */
+function idbSave(key, val){
+  try{
+    var req = indexedDB.open('opttDB', 1);
+    req.onupgradeneeded = function(e){ var db=e.target.result; if(!db.objectStoreNames.contains('kv')) db.createObjectStore('kv'); };
+    req.onsuccess = function(e){
+      var db = e.target.result;
+      var tx = db.transaction('kv','readwrite');
+      tx.objectStore('kv').put(val, key);
+    };
+  }catch(e){}
+}
+function idbLoad(key, cb){
+  try{
+    var req = indexedDB.open('opttDB', 1);
+    req.onupgradeneeded = function(e){ var db=e.target.result; if(!db.objectStoreNames.contains('kv')) db.createObjectStore('kv'); };
+    req.onsuccess = function(e){
+      var db = e.target.result;
+      var tx = db.transaction('kv','readonly');
+      var rq = tx.objectStore('kv').get(key);
+      rq.onsuccess = function(){ if(cb) cb(rq.result); };
+    };
+  }catch(e){ if(cb) cb(null); }
+}
+
+/* ===== 自动备份到 GitHub（静默） ===== */
+var _autoBackupTimer = null;
+function autoBackup(){
+  try{
+    if(!S.github || !S.github.user || !S.github.repo || !S.github.token) return;
+    clearTimeout(_autoBackupTimer);
+    _autoBackupTimer = setTimeout(function(){
+      // 静默推送，不显示提示
+      var data = {};
+      var keys = Object.keys(S);
+      keys.forEach(function(k){ if(k==='trend'||k==='github') return; data[k] = JSON.parse(JSON.stringify(S[k])); });
+      data._backup = { time: new Date().toISOString(), version: '2.5' };
+      var content = btoa(unescape(encodeURIComponent(JSON.stringify(data, null, 2))));
+      fetch('https://api.github.com/repos/'+S.github.user+'/'+S.github.repo+'/contents/backup.json', { headers:{'Authorization':'token '+S.github.token} })
+        .then(function(r){ return r.ok ? r.json() : Promise.reject(); })
+        .then(function(d){
+          var body = { message: '🔄 自动备份 '+new Date().toISOString().split('T')[0], content: content };
+          if(d.sha) body.sha = d.sha;
+          return fetch('https://api.github.com/repos/'+S.github.user+'/'+S.github.repo+'/contents/backup.json', {
+            method:'PUT', headers:{'Authorization':'token '+S.github.token,'Content-Type':'application/json'}, body: JSON.stringify(body)
+          });
+        })
+        .catch(function(){});
+    }, 8000); // 停止操作8秒后自动备份
+  }catch(e){}
+}
+
+/* ===== 自动从 GitHub 恢复（静默） ===== */
+function autoRestore(cb){
+  try{
+    if(!S.github || !S.github.user || !S.github.repo || !S.github.token) { if(cb)cb(false); return; }
+    fetch('https://api.github.com/repos/'+S.github.user+'/'+S.github.repo+'/contents/backup.json', { headers:{'Authorization':'token '+S.github.token} })
+      .then(function(r){ return r.ok ? r.json() : Promise.reject(); })
+      .then(function(d){
+        var text = decodeURIComponent(escape(atob(d.content)));
+        var data = JSON.parse(text);
+        var importKeys = ['kuakeLinks','vocab','recipes','bike','walk','aerobic','workouts','water','weights','periods','restReg','travel','craftWish','perlerC','perlerP','pastProj','ideas','theme','me','books','videoFav','lifeLearn','workLearn'];
+        importKeys.forEach(function(k){ if(data[k] !== undefined) S[k] = JSON.parse(JSON.stringify(data[k])); });
+        if(data.skin){ Object.keys(data.skin).forEach(function(k){ S.skin[k] = JSON.parse(JSON.stringify(data.skin[k])); }); }
+        if(data.shop) S.shop = JSON.parse(JSON.stringify(data.shop));
+        if(data.restWant) S.restWant = JSON.parse(JSON.stringify(data.restWant));
+        if(data.fjian) S.fjian = JSON.parse(JSON.stringify(data.fjian));
+        if(data.tv) S.tv = JSON.parse(JSON.stringify(data.tv));
+        if(data.movie) S.movie = JSON.parse(JSON.stringify(data.movie));
+        if(data.variety) S.variety = JSON.parse(JSON.stringify(data.variety));
+        try{ saveLocal(); }catch(e){}
+        if(cb) cb(true);
+      })
+      .catch(function(){ if(cb) cb(false); });
+  }catch(e){ if(cb) cb(false); }
+}
+
 function migrateData(){
   try{
     // 1. Shop: 旧版 pupu/sam/online → 新版 pp/sm/ol
@@ -788,6 +866,7 @@ function sv(){
   _saveTimer = setTimeout(() => {
     try{saveLocal()}catch(e){}
     saveServer()
+    autoBackup()
   }, 150)
 }
 
@@ -928,12 +1007,13 @@ function setupGithub(){
   document.getElementById('ghStatus').textContent = S.github.user ? '✅ 已配置，可点击"立即备份"' : '请填写 GitHub 信息'
   document.getElementById('mo-github').classList.add('show')
 }
+  try{idbLoad('githubConfig', function(v){ if(v){ var cfg=JSON.parse(v); if(cfg.token && !document.getElementById('ghToken').value){ document.getElementById('ghUser').value=cfg.user||''; document.getElementById('ghRepo').value=cfg.repo||''; document.getElementById('ghToken').value=cfg.token; } } });}catch(e){}
 function saveGithubConfig(){
   S.github.user = document.getElementById('ghUser').value.trim()
   S.github.repo = document.getElementById('ghRepo').value.trim()
   S.github.token = document.getElementById('ghToken').value.trim()
   if(!S.github.user || !S.github.repo || !S.github.token) return toast('请填写完整信息','error')
-  sv(); toast('✅ GitHub 配置已保存')
+  sv(); toast('✅ GitHub 配置已保存'); try{idbSave('githubConfig', JSON.stringify(S.github))}catch(e){}
 }
 async function backupToGithub(){
   if(!S.github.user || !S.github.repo || !S.github.token) return toast('请先配置 GitHub 信息','error')
@@ -2335,6 +2415,14 @@ function init(){console.log("OPTT v2.2-FINAL");
   try{renderBinge('tv')}catch(e){};try{renderBinge('movie')}catch(e){};try{renderBinge('variety')}catch(e){}
   try{renderIdeas()}catch(e){};try{initMeSaveDropdown()}catch(e){};try{renderMe()}catch(e){}
 
+  // 从 IndexedDB 恢复 Token
+  try{idbLoad('githubConfig', function(v){ if(v){ try{ var cfg=JSON.parse(v); if(cfg.token && (!S.github.token)){ S.github=cfg; } }catch(e){} } });}catch(e){}
+  // 自动恢复：如果本地数据为空，从 GitHub 拉取
+  var hasLocalData = false;
+  try{ hasLocalData = (S.weights.length>0 || S.recipes.length>0 || Object.keys(S.vocab).length>0); }catch(e){}
+  if(!hasLocalData){
+    setTimeout(function(){ autoRestore(function(ok){ if(ok){ try{ fullRender(); }catch(e){} } }); }, 3000);
+  }
   // 首次加载检测
   try{checkFirstLoad()}catch(e){}
 }// Style injection for loading
@@ -2346,6 +2434,8 @@ document.getElementById('fjType').addEventListener('change',function(){document.
 document.getElementById('fjRemainingGroup').style.display='none'
 init()
 
+
+window.addEventListener('pagehide', function(){ try{ autoBackup(); }catch(e){} });
 </script>
 </body>
 </html>
