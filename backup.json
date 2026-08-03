@@ -1,7 +1,9 @@
 {
   "theme": "light",
   "kuakeLinks": [],
-  "vocab": {},
+  "vocab": {
+    "2026-08-03": true
+  },
   "recipes": [],
   "bike": {},
   "walk": {},
@@ -94,7 +96,7 @@
     "savings": []
   },
   "_backup": {
-    "time": "2026-08-03T00:50:44.667Z",
-    "version": "2.0"
+    "time": "2026-08-03T00:51:07.251Z",
+    "version": "2.5"
   }
 }
