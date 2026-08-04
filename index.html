@@ -258,7 +258,13 @@ button{cursor:pointer;font-family:inherit;font-size:inherit;border:none;backgrou
   </div>
   <div id="r-try" class="stab-c active"></div>
   <div id="r-done" class="stab-c"></div>
-  <div style="margin-top:8px;padding:8px 10px;background:var(--primary-light);border-radius:var(--radius-sm);font-size:.72rem;color:var(--text2);line-height:1.5">
+  <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:var(--surface2);border-radius:var(--radius-sm);margin-top:8px">
+    <span style="font-size:.82rem;font-weight:500">🍽️ 晚饭打卡</span>
+    <button id="dinnerBtn" class="tl gray" onclick="toggleDinner()">🔘 未打卡</button>
+  </div>
+  <div style="font-weight:500;font-size:.82rem;margin:8px 0 6px">📅 本月晚饭打卡表</div>
+  <div id="dinnerCalendar"></div>
+    <div style="margin-top:8px;padding:8px 10px;background:var(--primary-light);border-radius:var(--radius-sm);font-size:.72rem;color:var(--text2);line-height:1.5">
     💡 <strong>每日健康饮食知识</strong><br><span id="dietTip">加载中…</span>
   </div>
 </div>
@@ -676,6 +682,7 @@ const S={
   skin:{cream:LS('sCream')||{},mask:LS('sMask')||{},hydra:LS('sHydra')||{},iso:LS('sIso')||{},doctor:LS('sDoctor')||[]},
   water:LS('water')||{},
   sleep:LS('sleep')||{},
+  dinner:LS('dinner')||{},
   weights:LS('weights')||[],
   periods:LS('periods')||[],
   shop:LS('shop')||{pp:{p:[],q:[]},sm:{p:[],q:[]},ol:{p:[],q:[]},cam:{p:[],q:[]}},
@@ -844,7 +851,7 @@ function saveLocal(){
   LSS('shop',S.shop);LSS('tvW',S.tv.watched);LSS('tvTW',S.tv.towatch);LSS('mvW',S.movie.watched);LSS('mvTW',S.movie.towatch)
   LSS('vrW',S.variety.watched);LSS('vrTW',S.variety.towatch);LSS('rWantFood',S.restWant.food);LSS('rWantFun',S.restWant.fun)
   LSS('fjDone',S.fjian.done);LSS('fjLeft',S.fjian.left);LSS('ideas',S.ideas);LSS('workouts',S.workouts)
-  LSS('wCheckins',S.workoutCheckins);LSS('bike',S.bike);LSS('walk',S.walk);LSS('aerobic',S.aerobic);LSS('theme',S.theme);LSS('me',S.me);LSS('github',S.github);LSS('sleep',S.sleep);LSS('bReading',S.books.reading);LSS('vFavEng',S.videoFav.english);LSS('vFavWo',S.videoFav.workout);LSS('lifeTodo',S.lifeLearn.todo);LSS('lifeDone',S.lifeLearn.done);LSS('workTodo',S.workLearn.todo);LSS('workDone',S.workLearn.done);LSS('bToread',S.books.toread);LSS('bDone',S.books.done)
+  LSS('wCheckins',S.workoutCheckins);LSS('bike',S.bike);LSS('walk',S.walk);LSS('aerobic',S.aerobic);LSS('theme',S.theme);LSS('me',S.me);LSS('github',S.github);LSS('sleep',S.sleep);LSS('dinner',S.dinner);LSS('bReading',S.books.reading);LSS('vFavEng',S.videoFav.english);LSS('vFavWo',S.videoFav.workout);LSS('lifeTodo',S.lifeLearn.todo);LSS('lifeDone',S.lifeLearn.done);LSS('workTodo',S.workLearn.todo);LSS('workDone',S.workLearn.done);LSS('bToread',S.books.toread);LSS('bDone',S.books.done)
 }
 
 /* ---- 服务器存储 (持久化) ---- */
@@ -1709,6 +1716,28 @@ function renderWaterCalendar(){
   html+='</div>';c.innerHTML=html
 }
 /* ===== 通用月度日历 ===== */
+/* ===== 晚饭打卡 ===== */
+function toggleDinner(){
+  var t=today();
+  S.dinner[t]=!S.dinner[t];
+  sv(); renderDinner();
+  toast(S.dinner[t]?'U0001F7E2 已记录不吃晚饭':'U0001F534 已记录吃晚饭');
+}
+function renderDinner(){
+  var t=today();
+  var btn=document.getElementById('dinnerBtn');
+  var done=S.dinner[t]||false;
+  if(btn){
+    btn.className='tl '+(done?'green':'red');
+    btn.innerHTML=done?'U0001F7E2 不吃':'U0001F534 吃了';
+  }
+  var cal=document.getElementById('dinnerCalendar');
+  if(cal){
+    cal.innerHTML=buildMonthCalendar(function(ds){return S.dinner[ds]||false});
+    var total=Object.keys(S.dinner).filter(function(k){return S.dinner[k]}).length;
+    cal.innerHTML+='<div style="margin-top:6px;color:var(--text2);font-size:.75rem">🍽️ 本月不吃晚饭 '+total+' 天</div>';
+  }
+}
 function buildMonthCalendar(isDone){
   var now=new Date(),y=now.getFullYear(),m=now.getMonth();
   var days=new Date(y,m+1,0).getDate(),fd=new Date(y,m,1).getDay();
@@ -2445,7 +2474,7 @@ function init(){console.log("OPTT v2.2-FINAL");
   try{ migrateData() }catch(e){}
   // 一次性渲染所有页面（最可靠）
   try{renderKuake()}catch(e){};try{renderVocab()}catch(e){};try{getDietTip()}catch(e){};try{renderBooks()}catch(e){};try{renderEngFav()}catch(e){};try{renderLifeLearn()}catch(e){};try{renderWorkLearn()}catch(e){}
-  try{renderRecipes()}catch(e){};try{renderExercise()}catch(e){};try{renderSkin()}catch(e){};try{renderWater()}catch(e){};try{renderWeight()}catch(e){};try{renderPeriod()}catch(e){}
+  try{renderRecipes()}catch(e){};try{renderDinner()}catch(e){};try{renderExercise()}catch(e){};try{renderSkin()}catch(e){};try{renderWater()}catch(e){};try{renderWeight()}catch(e){};try{renderPeriod()}catch(e){}
   try{renderShop('pp')}catch(e){};try{renderShop('sm')}catch(e){};try{renderShop('ol')}catch(e){};try{renderShop('cam')}catch(e){}
   try{renderRestReg()}catch(e){};try{renderRestWant()}catch(e){};try{renderFjian()}catch(e){};try{renderTravel()}catch(e){}
   try{renderCraftWish()}catch(e){};try{renderPerler()}catch(e){};try{renderPastProj()}catch(e){}
