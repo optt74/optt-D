@@ -244,6 +244,7 @@ button{cursor:pointer;font-family:inherit;font-size:inherit;border:none;backgrou
   <button class="stab" onclick="switchH(this,'h-exer')">🏃 运动</button>
   <button class="stab" onclick="switchH(this,'h-skin')">🧴 皮肤</button>
   <button class="stab" onclick="switchH(this,'h-water')">💧 喝水</button>
+    <button class="stab" onclick="switchH(this,'h-sleep')">😴 睡眠</button>
   <button class="stab" onclick="switchH(this,'h-wt')">⚖️ 体重</button>
   <button class="stab" onclick="switchH(this,'h-period')">🌸 生理期</button>
 </div>
@@ -296,7 +297,16 @@ button{cursor:pointer;font-family:inherit;font-size:inherit;border:none;backgrou
   <div id="waterCalendar"></div>
 </div>
 <!-- 体重 -->
-<div id="h-wt" class="stab-c">
+<div <!-- 睡眠 -->
+<div id="h-sleep" class="stab-c">
+  <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:var(--surface2);border-radius:var(--radius-sm);margin-bottom:8px">
+    <span style="font-size:.82rem;font-weight:500">😴 今日早睡打卡</span>
+    <button id="sleepBtn" class="tl gray" onclick="toggleSleep()">🔘 未打卡</button>
+  </div>
+  <div style="font-weight:500;font-size:.82rem;margin-bottom:6px">📅 本月早睡打卡表</div>
+  <div id="sleepCalendar"></div>
+</div>
+id="h-wt" class="stab-c">
   <div class="form-row" style="display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap">
     <input type="number" id="wtInput" placeholder="体重 (kg)" step="0.1" style="flex:1;min-width:80px;font-size:.82rem">
     <button class="btn" onclick="addWeight()" style="padding:9px 16px;border-radius:var(--radius-sm);background:var(--green);color:#fff;font-weight:500;font-size:.8rem">✓ 记录</button>
@@ -668,6 +678,7 @@ const S={
   workouts:LS('workouts')||[],workoutCheckins:LS('wCheckins')||{},
   skin:{cream:LS('sCream')||{},mask:LS('sMask')||{},hydra:LS('sHydra')||{},iso:LS('sIso')||{},doctor:LS('sDoctor')||[]},
   water:LS('water')||{},
+  sleep:LS('sleep')||{},
   weights:LS('weights')||[],
   periods:LS('periods')||[],
   shop:LS('shop')||{pp:{p:[],q:[]},sm:{p:[],q:[]},ol:{p:[],q:[]},cam:{p:[],q:[]}},
@@ -836,7 +847,7 @@ function saveLocal(){
   LSS('shop',S.shop);LSS('tvW',S.tv.watched);LSS('tvTW',S.tv.towatch);LSS('mvW',S.movie.watched);LSS('mvTW',S.movie.towatch)
   LSS('vrW',S.variety.watched);LSS('vrTW',S.variety.towatch);LSS('rWantFood',S.restWant.food);LSS('rWantFun',S.restWant.fun)
   LSS('fjDone',S.fjian.done);LSS('fjLeft',S.fjian.left);LSS('ideas',S.ideas);LSS('workouts',S.workouts)
-  LSS('wCheckins',S.workoutCheckins);LSS('bike',S.bike);LSS('walk',S.walk);LSS('aerobic',S.aerobic);LSS('theme',S.theme);LSS('me',S.me);LSS('github',S.github);LSS('bReading',S.books.reading);LSS('vFavEng',S.videoFav.english);LSS('vFavWo',S.videoFav.workout);LSS('lifeTodo',S.lifeLearn.todo);LSS('lifeDone',S.lifeLearn.done);LSS('workTodo',S.workLearn.todo);LSS('workDone',S.workLearn.done);LSS('bToread',S.books.toread);LSS('bDone',S.books.done)
+  LSS('wCheckins',S.workoutCheckins);LSS('bike',S.bike);LSS('walk',S.walk);LSS('aerobic',S.aerobic);LSS('theme',S.theme);LSS('me',S.me);LSS('github',S.github);LSS('sleep',S.sleep);LSS('bReading',S.books.reading);LSS('vFavEng',S.videoFav.english);LSS('vFavWo',S.videoFav.workout);LSS('lifeTodo',S.lifeLearn.todo);LSS('lifeDone',S.lifeLearn.done);LSS('workTodo',S.workLearn.todo);LSS('workDone',S.workLearn.done);LSS('bToread',S.books.toread);LSS('bDone',S.books.done)
 }
 
 /* ---- 服务器存储 (持久化) ---- */
@@ -1187,43 +1198,34 @@ function showHistory(type, title){
 
   switch(type){
     case 'vocab': {
-      let html = '<div style="margin-bottom:8px;font-weight:500">📝 背单词记录</div><div style="display:flex;flex-wrap:wrap;gap:4px">'
-      days.forEach(d => {
-        const done = S.vocab[d]
-        const isToday = d === today()
-        html += `<div style="width:36px;height:36px;border-radius:6px;display:flex;flex-direction:column;align-items:center;justify-content:center;background:${done?'var(--green-light)':isToday?'var(--surface2)':'var(--surface2)'};border:${isToday?'1.5px solid var(--primary)':'1px solid var(--border)'};font-size:.6rem;color:${done?'var(--green)':'var(--text3)'}"><span>${new Date(d).getDate()}</span><span>${done?'🟢':'⚪'}</span></div>`
-      })
-      html += '</div>'
+      let html = '<div style="margin-bottom:8px;font-weight:500">📝 背单词打卡日历</div>'
+      html += buildMonthCalendar(function(ds){ return S.vocab[ds] || false })
       const total = Object.keys(S.vocab).filter(k => S.vocab[k]).length
-      html += `<div style="margin-top:8px;color:var(--text2);font-size:.75rem">✅ 累计打卡 ${total} 天</div>`
+      html += '<div style="margin-top:8px;color:var(--text2);font-size:.75rem">✅ 累计打卡 ' + total + ' 天</div>'
       content.innerHTML = html
       break
     }
     case 'exercise': {
-      let html = '<div style="margin-bottom:8px;font-weight:500">🚴 运动记录 (最近30天)</div>'
-      html += '<table style="width:100%;border-collapse:collapse">'
-      html += '<tr style="font-size:.7rem;color:var(--text3);border-bottom:1px solid var(--border)"><th style="padding:4px;text-align:left">日期</th><th style="padding:4px;text-align:center">🚴 自行车</th><th style="padding:4px;text-align:center">🚶 快走</th></tr>'
-      days.forEach(d => {
-        const bike = S.bike[d], walk = S.walk[d]
-        const isToday = d === today()
-        html += `<tr style="border-bottom:1px solid var(--border);font-size:.78rem;background:${isToday?'var(--primary-light)':'transparent'}"><td style="padding:4px">${d}</td><td style="padding:4px;text-align:center">${bike?'🟢':'🔴'}</td><td style="padding:4px;text-align:center">${walk?'🟢':'🔴'}</td></tr>`
-      })
-      html += '</table>'
+      let html = '<div style="margin-bottom:8px;font-weight:500">🚴 自行车打卡日历</div>'
+      html += buildMonthCalendar(function(ds){ return S.bike[ds] || false })
       const bikeCount = Object.keys(S.bike).filter(k=>S.bike[k]).length
+      html += '<div style="margin-top:8px;color:var(--text2);font-size:.75rem">🚴 自行车 ' + bikeCount + ' 天</div>'
+      html += '<div style="margin-top:12px;margin-bottom:8px;font-weight:500">🚶 快走打卡日历</div>'
+      html += buildMonthCalendar(function(ds){ return S.walk[ds] || false })
       const walkCount = Object.keys(S.walk).filter(k=>S.walk[k]).length
-      html += `<div style="margin-top:8px;color:var(--text2);font-size:.75rem">🚴 自行车 ${bikeCount}天 · 🚶 快走 ${walkCount}天</div>`
+      html += '<div style="margin-top:8px;color:var(--text2);font-size:.75rem">🚶 快走 ' + walkCount + ' 天</div>'
       content.innerHTML = html
       break
     }
     case 'skin': {
-      let html = '<div style="margin-bottom:8px;font-weight:500">🧴 皮肤记录 (最近30天)</div>'
-      html += '<table style="width:100%;border-collapse:collapse">'
-      html += '<tr style="font-size:.7rem;color:var(--text3);border-bottom:1px solid var(--border)"><th style="padding:4px;text-align:left">日期</th><th style="padding:4px;text-align:center">🧴 药膏</th><th style="padding:4px;text-align:center">🧹 泥膜</th><th style="padding:4px;text-align:center">💦 面膜</th><th style="padding:4px;text-align:center">💊 异维A</th></tr>'
-      days.forEach(d => {
-        const isToday = d === today()
-        html += `<tr style="border-bottom:1px solid var(--border);font-size:.76rem;background:${isToday?'var(--primary-light)':'transparent'}"><td style="padding:3px">${d.slice(5)}</td><td style="padding:3px;text-align:center">${S.skin.cream[d]?'🟢':'🔴'}</td><td style="padding:3px;text-align:center">${S.skin.mask[d]?'🟢':'🔴'}</td><td style="padding:3px;text-align:center">${S.skin.hydra[d]?'🟢':'🔴'}</td><td style="padding:3px;text-align:center">${S.skin.iso[d]?'🟢':'🔴'}</td></tr>`
-      })
-      html += '</table>'
+      let html = '<div style="margin-bottom:8px;font-weight:500">🧴 药膏打卡日历</div>'
+      html += buildMonthCalendar(function(ds){ return S.skin.cream[ds] || false })
+      html += '<div style="margin-top:12px;margin-bottom:8px;font-weight:500">🧹 清洁泥膜打卡日历</div>'
+      html += buildMonthCalendar(function(ds){ return S.skin.mask[ds] || false })
+      html += '<div style="margin-top:12px;margin-bottom:8px;font-weight:500">💦 补水面膜打卡日历</div>'
+      html += buildMonthCalendar(function(ds){ return S.skin.hydra[ds] || false })
+      html += '<div style="margin-top:12px;margin-bottom:8px;font-weight:500">💊 异维A酸打卡日历</div>'
+      html += buildMonthCalendar(function(ds){ return S.skin.iso[ds] || false })
       content.innerHTML = html
       break
     }
@@ -1708,6 +1710,44 @@ function renderWaterCalendar(){
     html+=`<div class="wday ${done?'done':''} ${isToday?'today':''}"><span class="wdn">${d}</span>${done?'💧':''}</div>`
   }
   html+='</div>';c.innerHTML=html
+}
+/* ===== 通用月度日历 ===== */
+function buildMonthCalendar(isDone){
+  var now=new Date(),y=now.getFullYear(),m=now.getMonth();
+  var days=new Date(y,m+1,0).getDate(),fd=new Date(y,m,1).getDay();
+  var blank=fd===0?6:fd-1;
+  var html='<div class="wcal">';
+  ['一','二','三','四','五','六','日'].forEach(function(d){html+='<div style="text-align:center;font-size:.6rem;color:var(--text3);padding:2px">'+d+'</div>'});
+  for(var i=0;i<blank;i++)html+='<div></div>';
+  for(var d=1;d<=days;d++){
+    var ds=y+'-'+String(m+1).padStart(2,'0')+'-'+String(d).padStart(2,'0');
+    var done=isDone(ds), isToday=ds===today();
+    html+='<div class="wday '+(done?'done':'')+' '+(isToday?'today':'')+'"><span class="wdn">'+d+'</span>'+'</div>';
+  }
+  html+='</div>';
+  return html;
+}
+
+/* ===== 睡眠打卡 ===== */
+function toggleSleep(){
+  var t=today();
+  S.sleep[t]=!S.sleep[t];
+  sv(); renderSleep();
+  toast(S.sleep[t]?'惄 已记录早睡':'已取消');
+}
+function renderSleep(){
+  var t=today();
+  var btn=document.getElementById('sleepBtn');
+  var done=S.sleep[t]||false;
+  if(btn){ btn.className='tl '+(done?'green':'red'); btn.innerHTML=done?'U0001F7E2 已早睡':'U0001F534 未打卡'; }
+  renderSleepCalendar();
+}
+function renderSleepCalendar(){
+  var c=document.getElementById('sleepCalendar');
+  if(!c) return;
+  c.innerHTML=buildMonthCalendar(function(ds){return S.sleep[ds]||false});
+  var total=Object.keys(S.sleep).filter(function(k){return S.sleep[k]}).length;
+  c.innerHTML+='<div style="margin-top:6px;color:var(--text2);font-size:.75rem">惄 本月早睡 '+total+' 天</div>';
 }
 
 // -- Weight --
@@ -2393,7 +2433,7 @@ function lazyRender(p){
   _pageRendered[p]=true;
   switch(p){
     case 'study': try{renderKuake()}catch(e){};try{renderVocab()}catch(e){};try{renderBooks()}catch(e){};try{renderEngFav()}catch(e){};try{renderLifeLearn()}catch(e){};try{renderWorkLearn()}catch(e){};break;
-    case 'health': try{getDietTip()}catch(e){};try{renderRecipes()}catch(e){};try{renderExercise()}catch(e){};try{renderSkin()}catch(e){};try{renderWater()}catch(e){};try{renderWeight()}catch(e){};try{renderPeriod()}catch(e){};break;
+    case 'health': try{getDietTip()}catch(e){};try{renderRecipes()}catch(e){};try{renderExercise()}catch(e){};try{renderSkin()}catch(e){};try{renderWater()}catch(e){};try{renderSleep()}catch(e){};try{renderWeight()}catch(e){};try{renderPeriod()}catch(e){};break;
     case 'shopping': try{renderShop('pp')}catch(e){};try{renderShop('sm')}catch(e){};try{renderShop('ol')}catch(e){};try{renderShop('cam')}catch(e){};break;
     case 'out': try{renderRestReg()}catch(e){};try{renderRestWant()}catch(e){};try{renderFjian()}catch(e){};try{renderTravel()}catch(e){};break;
     case 'craft': try{renderCraftWish()}catch(e){};try{renderPerler()}catch(e){};try{renderPastProj()}catch(e){};break;
