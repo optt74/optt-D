@@ -49,6 +49,9 @@
   "water": {
     "2026-08-03": true
   },
+  "sleep": {
+    "2026-08-04": false
+  },
   "weights": [
     {
       "value": 71.6,
@@ -201,7 +204,7 @@
     "done": []
   },
   "me": {
-    "locked": false,
+    "locked": true,
     "emotions": {
       "happy": [],
       "sad": [],
@@ -211,15 +214,10 @@
     "traits": "",
     "ideal": "",
     "password": "117283",
-    "savings": [
-      {
-        "month": "2026-08",
-        "amount": 83371.98
-      }
-    ]
+    "savings": []
   },
   "_backup": {
-    "time": "2026-08-04T00:39:23.618Z",
+    "time": "2026-08-04T01:41:07.057Z",
     "version": "2.5"
   }
 }
